@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "ATMProject.Banking/1.0.0": {
+        "dependencies": {
+          "ATMProject.System": "1.0.0"
+        },
+        "runtime": {
+          "ATMProject.Banking.dll": {}
+        }
+      },
+      "ATMProject.System/1.0.0": {
+        "runtime": {
+          "ATMProject.System.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "ATMProject.Banking/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ATMProject.System/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

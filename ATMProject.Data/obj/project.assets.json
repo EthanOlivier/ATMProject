@@ -1,11 +1,90 @@
 {
   "version": 3,
   "targets": {
-    "net8.0": {}
+    "net8.0": {
+      "ATMProject.Application/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "ATMProject.Banking": "1.0.0",
+          "ATMProject.System": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/ATMProject.Application.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ATMProject.Application.dll": {}
+        }
+      },
+      "ATMProject.Banking/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "ATMProject.System": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/ATMProject.Banking.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ATMProject.Banking.dll": {}
+        }
+      },
+      "ATMProject.Composition/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "ATMProject.Application": "1.0.0",
+          "ATMProject.Banking": "1.0.0",
+          "ATMProject.System": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/ATMProject.Composition.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ATMProject.Composition.dll": {}
+        }
+      },
+      "ATMProject.System/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/ATMProject.System.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ATMProject.System.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "ATMProject.Application/1.0.0": {
+      "type": "project",
+      "path": "../ATMProject.Application/ATMProject.Application.csproj",
+      "msbuildProject": "../ATMProject.Application/ATMProject.Application.csproj"
+    },
+    "ATMProject.Banking/1.0.0": {
+      "type": "project",
+      "path": "../ATMProject.Banking/ATMProject.Banking.csproj",
+      "msbuildProject": "../ATMProject.Banking/ATMProject.Banking.csproj"
+    },
+    "ATMProject.Composition/1.0.0": {
+      "type": "project",
+      "path": "../ATMProject.Composition/ATMProject.Composition.csproj",
+      "msbuildProject": "../ATMProject.Composition/ATMProject.Composition.csproj"
+    },
+    "ATMProject.System/1.0.0": {
+      "type": "project",
+      "path": "../ATMProject.System/ATMProject.System.csproj",
+      "msbuildProject": "../ATMProject.System/ATMProject.System.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    "net8.0": []
+    "net8.0": [
+      "ATMProject.Application >= 1.0.0",
+      "ATMProject.Banking >= 1.0.0",
+      "ATMProject.Composition >= 1.0.0",
+      "ATMProject.System >= 1.0.0"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\Ethan\\.nuget\\packages\\": {},
@@ -39,7 +118,20 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject.Application\\ATMProject.Application.csproj": {
+              "projectPath": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject.Application\\ATMProject.Application.csproj"
+            },
+            "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject.Banking\\ATMProject.Banking.csproj": {
+              "projectPath": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject.Banking\\ATMProject.Banking.csproj"
+            },
+            "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject.Composition\\ATMProject.Composition.csproj": {
+              "projectPath": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject.Composition\\ATMProject.Composition.csproj"
+            },
+            "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject.System\\ATMProject.System.csproj": {
+              "projectPath": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject.System\\ATMProject.System.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

@@ -1,7 +1,5 @@
-﻿namespace ATMProject.Data.ModifyData
+﻿namespace ATMProject.Data.ModifyData;
+public interface IReadFile
 {
-    public interface IReadFile
-    {
-        void ReadAllFilesContents();
-    }
+    void ReadAllFilesContents();
 }

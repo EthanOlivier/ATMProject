@@ -1,0 +1,12 @@
+C:\Users\Ethan\source\repos\ATMProject\ATMProject.System\obj\Debug\net8.0\ATMProject.System.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Ethan\source\repos\ATMProject\ATMProject.System\obj\Debug\net8.0\ATMProject.System.AssemblyInfoInputs.cache
+C:\Users\Ethan\source\repos\ATMProject\ATMProject.System\obj\Debug\net8.0\ATMProject.System.AssemblyInfo.cs
+C:\Users\Ethan\source\repos\ATMProject\ATMProject.System\obj\Debug\net8.0\ATMProject.System.csproj.CoreCompileInputs.cache
+C:\Users\Ethan\source\repos\ATMProject\ATMProject.System\obj\Debug\net8.0\ATMProject.System.sourcelink.json
+C:\Users\Ethan\source\repos\ATMProject\ATMProject.System\bin\Debug\net8.0\ATMProject.System.deps.json
+C:\Users\Ethan\source\repos\ATMProject\ATMProject.System\bin\Debug\net8.0\ATMProject.System.dll
+C:\Users\Ethan\source\repos\ATMProject\ATMProject.System\bin\Debug\net8.0\ATMProject.System.pdb
+C:\Users\Ethan\source\repos\ATMProject\ATMProject.System\obj\Debug\net8.0\ATMProject.System.dll
+C:\Users\Ethan\source\repos\ATMProject\ATMProject.System\obj\Debug\net8.0\refint\ATMProject.System.dll
+C:\Users\Ethan\source\repos\ATMProject\ATMProject.System\obj\Debug\net8.0\ATMProject.System.pdb
+C:\Users\Ethan\source\repos\ATMProject\ATMProject.System\obj\Debug\net8.0\ref\ATMProject.System.dll

@@ -6,12 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ATMProject.Data.ModifyData
+namespace ATMProject.Data.ModifyData;
+public interface IWriteToFile
 {
-    public interface IWriteToFile
-    {
-        void UpdateUsersFile(string givenUserId, MockDatabaseUserModel newUser);
-        void UpdateAccountsFile(string givenAccountId, MockDatabaseAccountModel newAccount);
-        void UpdateTransactionsAndAuditsFile(MockDatabaseTransactionModel newTransaction, MockDatabaseAuditModel newAudit, string[] accountIds);
-    }
+    void UpdateUsersFile(string givenUserId, MockDatabaseUserModel newUser);
+    void UpdateAccountsFile(string givenAccountId, MockDatabaseAccountModel newAccount);
+    void UpdateTransactionsAndAuditsFile(MockDatabaseTransactionModel newTransaction, MockDatabaseAuditModel newAudit, string[] accountIds);
 }

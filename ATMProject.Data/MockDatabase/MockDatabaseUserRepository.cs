@@ -29,7 +29,7 @@ public class MockDatabaseUserRepository : IDataSource
                 AccountIds: bUser.AccountIds
         );
     }
-    public IEnumerable<AccountInfo> GetAccountsByUserId(string userId)
+    public IEnumerable<AccountModel> GetAccountsByUserId(string userId)
     {
         MockDatabaseUserModel user = MockDatabaseFileRead.Users.Where(acct => acct.UserId == userId).FirstOrDefault()!;
 
@@ -45,7 +45,7 @@ public class MockDatabaseUserRepository : IDataSource
             throw new Exception($"Could not find any account for User with Id: " + user.UserId);
         }
 
-        return dbAccounts.Select(account => new AccountInfo(
+        return dbAccounts.Select(account => new AccountModel(
             AccountId: account.AccountId,
             UserId: account.UserId,
             Type: account.Type,

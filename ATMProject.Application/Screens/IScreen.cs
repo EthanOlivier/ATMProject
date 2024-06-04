@@ -1,12 +1,10 @@
-﻿namespace ATMProject.Application.Screens
+﻿namespace ATMProject.Application.Screens;
+public interface IScreen
 {
-    public interface IScreen
-    {
-        void ShowScreen();
-    }
+    void ShowScreen();
+}
 
-    public interface IReceivableScreen : IScreen
-    {
-        void ReceiveData<T>(T data) where T : class;
-    }
+public interface IReceivableScreen : IScreen
+{
+    void ReceiveData<T>(T data) where T : class;
 }

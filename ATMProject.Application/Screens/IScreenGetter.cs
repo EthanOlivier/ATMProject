@@ -1,7 +1,5 @@
-﻿namespace ATMProject.Application.Screens
+﻿namespace ATMProject.Application.Screens;
+public interface IScreenGetter
 {
-    public interface IScreenGetter
-    {
-        IScreen GetScreen(ScreenNames screenName);
-    }
+    IScreen GetScreen(ScreenNames screenName);
 }

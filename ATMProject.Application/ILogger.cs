@@ -1,14 +1,12 @@
-﻿namespace ATMProject.Application
+﻿namespace ATMProject.Application;
+public interface ILogger
 {
-    public interface ILogger
+    void Log(string message);
+}
+public class ConsoleLogger : ILogger
+{
+    public void Log(string message)
     {
-        void Log(string message);
-    }
-    public class ConsoleLogger : ILogger
-    {
-        public void Log(string message)
-        {
-            Console.WriteLine(message);
-        }
+        Console.WriteLine(message);
     }
 }
