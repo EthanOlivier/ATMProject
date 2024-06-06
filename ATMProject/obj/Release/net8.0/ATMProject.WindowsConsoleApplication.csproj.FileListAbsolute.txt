@@ -1,9 +1,3 @@
-C:\Users\Ethan\source\repos\ATMProject\ATMProject\obj\Release\net8.0\ATMProject.WindowsConsoleApplication.csproj.AssemblyReference.cache
-C:\Users\Ethan\source\repos\ATMProject\ATMProject\obj\Release\net8.0\ATMProject.WindowsConsoleApplication.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\Ethan\source\repos\ATMProject\ATMProject\obj\Release\net8.0\ATMProject.WindowsConsoleApplication.AssemblyInfoInputs.cache
-C:\Users\Ethan\source\repos\ATMProject\ATMProject\obj\Release\net8.0\ATMProject.WindowsConsoleApplication.AssemblyInfo.cs
-C:\Users\Ethan\source\repos\ATMProject\ATMProject\obj\Release\net8.0\ATMProject.WindowsConsoleApplication.csproj.CoreCompileInputs.cache
-C:\Users\Ethan\source\repos\ATMProject\ATMProject\obj\Release\net8.0\ATMProject.WindowsConsoleApplication.sourcelink.json
 C:\Users\Ethan\source\repos\ATMProject\ATMProject\bin\Release\net8.0\ATMProject.WindowsConsoleApplication.exe
 C:\Users\Ethan\source\repos\ATMProject\ATMProject\bin\Release\net8.0\ATMProject.WindowsConsoleApplication.deps.json
 C:\Users\Ethan\source\repos\ATMProject\ATMProject\bin\Release\net8.0\ATMProject.WindowsConsoleApplication.runtimeconfig.json
@@ -21,6 +15,12 @@ C:\Users\Ethan\source\repos\ATMProject\ATMProject\bin\Release\net8.0\ATMProject.
 C:\Users\Ethan\source\repos\ATMProject\ATMProject\bin\Release\net8.0\ATMProject.Composition.pdb
 C:\Users\Ethan\source\repos\ATMProject\ATMProject\bin\Release\net8.0\ATMProject.Data.pdb
 C:\Users\Ethan\source\repos\ATMProject\ATMProject\bin\Release\net8.0\ATMProject.System.pdb
+C:\Users\Ethan\source\repos\ATMProject\ATMProject\obj\Release\net8.0\ATMProject.WindowsConsoleApplication.csproj.AssemblyReference.cache
+C:\Users\Ethan\source\repos\ATMProject\ATMProject\obj\Release\net8.0\ATMProject.WindowsConsoleApplication.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Ethan\source\repos\ATMProject\ATMProject\obj\Release\net8.0\ATMProject.WindowsConsoleApplication.AssemblyInfoInputs.cache
+C:\Users\Ethan\source\repos\ATMProject\ATMProject\obj\Release\net8.0\ATMProject.WindowsConsoleApplication.AssemblyInfo.cs
+C:\Users\Ethan\source\repos\ATMProject\ATMProject\obj\Release\net8.0\ATMProject.WindowsConsoleApplication.csproj.CoreCompileInputs.cache
+C:\Users\Ethan\source\repos\ATMProject\ATMProject\obj\Release\net8.0\ATMProject.WindowsConsoleApplication.sourcelink.json
 C:\Users\Ethan\source\repos\ATMProject\ATMProject\obj\Release\net8.0\ATMProje.C5CD4F5B.Up2Date
 C:\Users\Ethan\source\repos\ATMProject\ATMProject\obj\Release\net8.0\ATMProject.WindowsConsoleApplication.dll
 C:\Users\Ethan\source\repos\ATMProject\ATMProject\obj\Release\net8.0\refint\ATMProject.WindowsConsoleApplication.dll

@@ -89,7 +89,7 @@ public class MockDatabaseUserRepository : IDataSource
 
     public bool AreUserCredentialsCorrect(string userId, string password)
     {
-        MockDatabaseUserModel user = MockDatabaseFileRead.Users.Where(acct => acct.UserId == userId).FirstOrDefault()!;
+        MockDatabaseUserModel user = MockDatabaseFileRead.Users.Where(user => user.UserId == userId).FirstOrDefault()!;
 
         if (user != null)
         {

@@ -50,6 +50,8 @@ public class Result : IResult
     }
 }
 
+
+
 public class Result<TResultType> : IResult where TResultType : class
 {
     private bool _success;
