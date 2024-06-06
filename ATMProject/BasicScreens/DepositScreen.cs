@@ -44,6 +44,7 @@ public class DepositScreen : IScreen
         double amount = GetAmount();
 
         _depositToAccountOp.Execute(new IDepositToAccountOperation.Request(accountId, amount));
+        
         _screenManager.ShowScreen(ScreenNames.BasicOverview);
     }
     private IEnumerable<ViewModel> GetData()

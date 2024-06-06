@@ -12,7 +12,7 @@ public class DeleteAccountScreen : IScreen
     private readonly IScreenManager _screenManager;
     private readonly IScreenGetter _screenGetter;
     private readonly IUserRepository _userRepository;
-    private readonly IDeleteAccount _deleteAccountOperations;
+    private readonly IDeleteAccount _deleteAccountOp;
     private readonly IFindUser _findUser;
     public DeleteAccountScreen(IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenGetter, IUserRepository userRepository, IDeleteAccount deleteAccount, IFindUser findUser)
     {
@@ -20,7 +20,7 @@ public class DeleteAccountScreen : IScreen
         _screenManager = screenManager;
         _screenGetter = screenGetter;
         _userRepository = userRepository;
-        _deleteAccountOperations = deleteAccount;
+        _deleteAccountOp = deleteAccount;
         _findUser = findUser;
     }
 
@@ -59,7 +59,10 @@ public class DeleteAccountScreen : IScreen
         ViewModel viewModel = BuildViewModel(userId);
         DisplayUser(viewModel);
         string accountId = SelectAccount(viewModel);
-        DeleteAccount(userId, accountId);
+        ConfirmDeleteAccount(userId, accountId);
+
+        _deleteAccountOp.Execute(new IDeleteAccount.Request(accountId, _userContextService.GetUserContext().UserId));
+
         _screenManager.ShowScreen(ScreenNames.AdminOverview);
     }
 
@@ -163,18 +166,14 @@ public class DeleteAccountScreen : IScreen
 
         return accountId;
     }
-    private void DeleteAccount(string userId, string accountId)
+    private void ConfirmDeleteAccount(string userId, string accountId)
     {
         Console.WriteLine("\nAre you sure you want to delete this account?\nType Y for yes, Type N for No");
         string confirm = Console.ReadLine() ?? "";
-        if (confirm.ToUpper() == "Y")
-        {
-            _deleteAccountOperations.DeleteAccount(accountId, _userContextService.GetUserContext().UserId);
-            Console.WriteLine("Account Deleted Successfully");
-        }
-        else
+        if (confirm.ToUpper() != "Y")
         {
             Console.WriteLine("Account Removal Canceled");
+            _screenManager.ShowScreen(ScreenNames.AdminOverview);
         }
     }
 }

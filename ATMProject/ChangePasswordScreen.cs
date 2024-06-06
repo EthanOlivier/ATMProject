@@ -9,7 +9,7 @@ public class ChangePasswordScreen : IScreen
     private readonly IUserContextService _userContextService;
     private readonly IScreenManager _screenManager;
     private readonly IScreenGetter _screenGetter;
-    private readonly IChangeUserPasswordOperation _changePasswordOperation;
+    private readonly IChangeUserPasswordOperation _changePasswordOp;
     private UserRole UserRole;
 
     public ChangePasswordScreen(IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenFactory, IChangeUserPasswordOperation modifyChangePasswordData)
@@ -17,7 +17,7 @@ public class ChangePasswordScreen : IScreen
         _userContextService = userContextService;
         _screenManager = screenManager;
         _screenGetter = screenFactory;
-        _changePasswordOperation = modifyChangePasswordData;
+        _changePasswordOp = modifyChangePasswordData;
     }
 
     public void Recieve<T>(T data) where T : class
@@ -44,11 +44,14 @@ public class ChangePasswordScreen : IScreen
                 _screenManager.ShowScreen(ScreenNames.AdminOverview);
             }
         }
-        EnterNewPasswordScreen();
+        string newPassword = EnterNewPasswordScreen();
+
+        _changePasswordOp.Execute(new IChangeUserPasswordOperation.Request(_userContextService.GetUserContext(), newPassword));
+
         _userContextService.Logout();
         _screenManager.ShowScreen(ScreenNames.Login);
     }
-    private void EnterNewPasswordScreen()
+    private string EnterNewPasswordScreen()
     {
         string newPassword;
         string confirm;
@@ -57,14 +60,22 @@ public class ChangePasswordScreen : IScreen
         newPassword = newPassword == String.Empty ? "password" : newPassword;
         Console.WriteLine($"Do you want to confirm change your password to [{newPassword}]?\nType Y for yes, Type N for No");
         confirm = Console.ReadLine() ?? "";
-        if (confirm.ToUpper() == "Y")
+        if (confirm.ToUpper() != "Y")
         {
-            _changePasswordOperation.ChangeUserPassword(_userContextService.GetUserContext(), newPassword);
-            Console.WriteLine("Password Changed Successfully");
+            Console.WriteLine("Password Change Canceled");
+            if (UserRole == UserRole.Basic)
+            {
+                _screenManager.ShowScreen(ScreenNames.BasicOverview);
+            }
+            else if (UserRole == UserRole.Admin)
+            {
+                _screenManager.ShowScreen(ScreenNames.AdminOverview);
+            }
+            throw new Exception("Invalid User Role given when Cancelling Password Change");
         }
         else
         {
-            Console.WriteLine("Password Change Canceled");
+            return newPassword;
         }
     }
 }

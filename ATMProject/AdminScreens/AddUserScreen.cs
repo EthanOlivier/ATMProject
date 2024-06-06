@@ -13,7 +13,7 @@ public class AddUserScreen : IScreen
     private readonly IScreenGetter _screenGetter;
     private readonly IGetUserIdentifyInfo _identityInfo;
     private readonly ICreateUserId _createUserId;
-    private readonly IAddUser _addUser;
+    private readonly IAddUser _addUserOp;
     private string UserId;
     public AddUserScreen(IUserContextService userContextService, IUserRepository userRepository, IScreenManager screenManager, IScreenGetter screenGetter, IGetUserIdentifyInfo getUserIdentifyInfo, ICreateUserId createUserId, IAddUser addUser)
     {
@@ -23,7 +23,7 @@ public class AddUserScreen : IScreen
         _screenGetter = screenGetter;
         _identityInfo = getUserIdentifyInfo;
         _createUserId = createUserId;
-        _addUser = addUser;
+        _addUserOp = addUser;
     }
     public void Recieve<T>(T data) where T : class
     {
@@ -66,7 +66,8 @@ public class AddUserScreen : IScreen
             ConfirmEditCancel();
 
             UserId = _createUserId.CreateUserId();
-            _addUser.AddUser(userInfo.Item1, userInfo.Item2, userInfo.Item3, userInfo.Item4, userInfo.Item5, userInfo.Item6, UserId, _userContextService.GetUserContext().UserId);
+
+            _addUserOp.Execute(new IAddUser.Request(userInfo.Item1, userInfo.Item2, userInfo.Item3, userInfo.Item4, userInfo.Item5, userInfo.Item6, UserId, _userContextService.GetUserContext().UserId));
 
             _screenManager.ShowScreen(ScreenNames.AddAccount, UserId);
             UserId = null;

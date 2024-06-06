@@ -10,7 +10,7 @@ public class ChangeUserPasswordScreen : IScreen
     private readonly IScreenManager _screenManager;
     private readonly IScreenGetter _screenGetter;
     private readonly IUserRepository _userRepository;
-    private readonly IChangeBasicUserPassword _changeBasicUserPassword;
+    private readonly IChangeBasicUserPassword _changeBasicUserPasswordOp;
     private readonly IFindUser _findUser;
     public ChangeUserPasswordScreen(IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenGetter, IUserRepository userRepository, IChangeBasicUserPassword changeBasicUserPassword, IFindUser findUser)
     {
@@ -18,7 +18,7 @@ public class ChangeUserPasswordScreen : IScreen
         _screenManager = screenManager;
         _screenGetter = screenGetter;
         _userRepository = userRepository;
-        _changeBasicUserPassword = changeBasicUserPassword;
+        _changeBasicUserPasswordOp = changeBasicUserPassword;
         _findUser = findUser;
     }
 
@@ -55,7 +55,9 @@ public class ChangeUserPasswordScreen : IScreen
         string userId = SelectUser();
         ViewModel viewModel = BuildViewModel(userId);
         DisplayUser(viewModel);
-        ChangePassword(userId);
+        string newPassword = ChangePassword(userId);
+
+        _changeBasicUserPasswordOp.Execute(new IChangeBasicUserPassword.Request(userId, newPassword, _userContextService.GetUserContext().UserId));
 
         _screenManager.ShowScreen(ScreenNames.AdminOverview);
     }
@@ -126,7 +128,7 @@ public class ChangeUserPasswordScreen : IScreen
     }
 
 
-    private void ChangePassword(string userId)
+    private string ChangePassword(string userId)
     {
         Console.WriteLine("\nEnter their new password");
         string password = Console.ReadLine()!;
@@ -134,14 +136,11 @@ public class ChangeUserPasswordScreen : IScreen
 
         Console.WriteLine($"Do you want to confirm change the user's password to [{password}]?\nType Y for yes, Type N for No");
         string confirm = Console.ReadLine() ?? "";
-        if (confirm.ToUpper() == "Y")
-        {
-            _changeBasicUserPassword.ChangeBasicUserPassword(userId, password, _userContextService.GetUserContext().UserId);
-            Console.WriteLine("Password Changed Successfully");
-        }
-        else
+        if (confirm.ToUpper() != "Y")
         {
             Console.WriteLine("Password Change Canceled");
+            _screenManager.ShowScreen(ScreenNames.AdminOverview);
         }
+        return password;
     }
 }

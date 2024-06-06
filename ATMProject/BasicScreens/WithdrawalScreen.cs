@@ -41,7 +41,9 @@ public class WithdrawalScreen : IScreen
         ;
         string account = ChooseAccount(GetData());
         double amount = GetAmount();
+
         _modifyWithdrawalData.Execute(new IWithdrawFromAccountOperation.Request(account, amount));
+        
         _screenManager.ShowScreen(ScreenNames.BasicOverview);
     }
     private IEnumerable<AccountViewModel> GetData()

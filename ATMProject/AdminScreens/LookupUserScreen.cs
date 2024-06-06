@@ -11,14 +11,14 @@ public class LookupUserScreen : IScreen
     private readonly IUserContextService _userContextService;
     private readonly IScreenManager _screenManager;
     private readonly IScreenGetter _screenGetter;
-    private readonly ILookupUserOperations _lookupUserOperations;
+    private readonly ILookupUser _lookupUser;
 
-    public LookupUserScreen(IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenGetter, ILookupUserOperations lookupUserOperations)
+    public LookupUserScreen(IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenGetter, ILookupUser lookupUserOperations)
     {
         _userContextService = userContextService;
         _screenManager = screenManager;
         _screenGetter = screenGetter;
-        _lookupUserOperations = lookupUserOperations;
+        _lookupUser = lookupUserOperations;
     }
 
 
@@ -83,7 +83,7 @@ public class LookupUserScreen : IScreen
             input = Console.ReadLine();
         }
 
-        return _lookupUserOperations.LookupUserInfo(field, input, _userContextService.GetUserContext().UserId);
+        return _lookupUser.LookupUserInfo(field, input, _userContextService.GetUserContext().UserId);
     }
     private void DisplayUserInfo(string[] users)
     {

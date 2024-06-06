@@ -2,6 +2,7 @@
 using ATMProject.Application.Operations;
 using ATMProject.Application.Screens;
 using ATMProject.Application.Users;
+using ATMProject.System;
 
 namespace ATMProject.WindowsConsoleApplication.AdminScreens;
 public class DeleteUserScreen : IScreen
@@ -10,7 +11,7 @@ public class DeleteUserScreen : IScreen
     private readonly IScreenManager _screenManager;
     private readonly IScreenGetter _screenGetter;
     private readonly IUserRepository _userRepository;
-    private readonly IDeleteUser _deleteUserOperations;
+    private readonly IDeleteUser _deleteUserOp;
     private readonly IFindUser _findUser;
     public DeleteUserScreen(IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenGetter, IUserRepository userRepository, IDeleteUser deleteUser, IFindUser findUser)
     {
@@ -18,7 +19,7 @@ public class DeleteUserScreen : IScreen
         _screenManager = screenManager;
         _screenGetter = screenGetter;
         _userRepository = userRepository;
-        _deleteUserOperations = deleteUser;
+        _deleteUserOp = deleteUser;
         _findUser = findUser;
     }
     private record ViewModel
@@ -55,6 +56,8 @@ public class DeleteUserScreen : IScreen
         ViewModel viewModel = BuildViewModel(userId);
         DisplayUser(viewModel);
         DeleteUser(viewModel, userId);
+
+        _deleteUserOp.Execute(new IDeleteUser.Request(userId, _userContextService.GetUserContext().UserId));
 
         _screenManager.ShowScreen(ScreenNames.AdminOverview);
     }
@@ -136,14 +139,10 @@ public class DeleteUserScreen : IScreen
         {
             Console.WriteLine("Are you sure you want to delete this user?\nType Y for yes, Type N for No");
             string confirm = Console.ReadLine() ?? "";
-            if (confirm.ToUpper() == "Y")
-            {
-                _deleteUserOperations.DeleteUser(userId, _userContextService.GetUserContext().UserId);
-                Console.WriteLine("User Deleted Successfully");
-            }
-            else
+            if (confirm.ToUpper() != "Y")
             {
                 Console.WriteLine("User Removal Canceled");
+                _screenManager.ShowScreen(ScreenNames.AdminOverview);
             }
         }
         else

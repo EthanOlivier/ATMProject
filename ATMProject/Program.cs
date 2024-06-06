@@ -15,10 +15,6 @@ public static class Program
 {
     public static void Main(string[] args)
     {
-        string dateTime = (new DateTime(2024, 2, 2)).ToString();
-        // Creating a ServiceCollection,
-        // whenever everything has been added to it
-        // build a service provider
         var services = new ServiceCollection();
         AddServices(services);
         AddServiceConfigurations(services);
@@ -34,7 +30,6 @@ public static class Program
 
     private static void AddServices(ServiceCollection services)
     {
-        // When the constructor asks for an interface, it gives a new class
         services.AddSingleton<IReadFile, MockDatabaseFileRead>();
         services.AddSingleton<IWriteToFile, MockDatabaseFileWrite>();
         services.AddSingleton<IDataSource, MockDatabaseUserRepository>();
@@ -49,24 +44,30 @@ public static class Program
 
 
 
-        // go through all types implemented within the assembly where
-        // LoginScreen is located.
-        // For each of those types check if any of them implement IScreen
-        // if they do for each of them register them as their own singleton.
-
-        // LoginScreen is chosen because it is able to access all of the other screens
-        // and therefore when finding all the types looks through all screens
-
-        // GetInterfaces gets all interfaces the screen imlpements, and sees if any of them are IScreen
-
-        // ToList is done because without it
-        // there are some edge cases in which the linq wont run
         typeof(LoginScreen).Assembly.GetTypes()
             .Where((t) => t.GetInterfaces().Any(ti => ti == typeof(IScreen)))
             .ToList()
             .ForEach(screenType =>
             {
                 services.AddSingleton(screenType);
+            });
+
+        var borInterfaces = typeof(IBasicOperationRepository).GetInterfaces();
+        borInterfaces
+            .Where(t => !borInterfaces.Any(ogInterface => ogInterface.GetInterfaces().Contains(t)))
+            .ToList()
+            .ForEach(screenType =>
+            {
+                services.AddSingleton(screenType, typeof(BasicOperationRepository));
+            });
+
+        var aorInterfaces = typeof(IAdminOperationsRepository).GetInterfaces();
+        aorInterfaces
+            .Where(t => !aorInterfaces.Any(ogInterface => ogInterface.GetInterfaces().Contains(t)))
+            .ToList()
+            .ForEach(screenType =>
+            {
+                services.AddSingleton(screenType, typeof(AdminOperationsRepository));
             });
     }
 

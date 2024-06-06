@@ -10,7 +10,7 @@ public class TransactionTransferScreen : IScreen
     private readonly IUserContextService _userContextService;
     private readonly IScreenManager _screenManager;
     private readonly IScreenGetter _screenGetter;
-    private readonly ITransferBetweenAccountsOperation _modifyTransferData;
+    private readonly ITransferBetweenAccountsOperation _transferBeteenAccountsOp;
 
     public TransactionTransferScreen(IUserRepository userRepository, IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenFactory, ITransferBetweenAccountsOperation modifyTransferData)
     {
@@ -18,7 +18,7 @@ public class TransactionTransferScreen : IScreen
         _userContextService = userContextService;
         _screenManager = screenManager;
         _screenGetter = screenFactory;
-        _modifyTransferData = modifyTransferData;
+        _transferBeteenAccountsOp = modifyTransferData;
     }
     public record AccountViewModel
     (
@@ -43,7 +43,9 @@ public class TransactionTransferScreen : IScreen
 
         (withdrawalAccount, depositAccount) = ChooseAccounts(GetData());
         amount = GetAmount();
-        _modifyTransferData.TransferBetweenAccounts(withdrawalAccount, depositAccount, amount);
+
+        _transferBeteenAccountsOp.Execute(new ITransferBetweenAccountsOperation.Request(withdrawalAccount, depositAccount, amount));
+        
         _screenManager.ShowScreen(ScreenNames.BasicOverview);
     }
     private IEnumerable<AccountViewModel> GetData()

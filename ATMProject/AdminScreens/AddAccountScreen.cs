@@ -12,7 +12,7 @@ public class AddAccountScreen : IReceivableScreen
     private readonly IScreenGetter _screenGetter;
     private readonly IUserRepository _userRepository;
     private readonly IFindUser _findUser;
-    private readonly IAddAccount _addAccount;
+    private readonly IAddAccount _addAccountOp;
     private string UserId;
     public AddAccountScreen(IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenGetter, IUserRepository userRepository, IFindUser findUser, IAddAccount addAccount)
     {
@@ -21,7 +21,7 @@ public class AddAccountScreen : IReceivableScreen
         _screenGetter = screenGetter;
         _userRepository = userRepository;
         _findUser = findUser;
-        _addAccount = addAccount;
+        _addAccountOp = addAccount;
     }
     private record ViewModel
     (
@@ -81,7 +81,9 @@ public class AddAccountScreen : IReceivableScreen
         ViewModel viewModel = BuildViewModel();
         DisplayUserInfoFromUserId(viewModel);
 
-        EnterAccountInfo();
+        (AccountType accountType, double balance) = EnterAccountInfo();
+
+        _addAccountOp.Execute(new IAddAccount.Request(UserId, accountType, balance, _userContextService.GetUserContext().UserId));
 
         if (wasSupplied)
         {
@@ -163,7 +165,7 @@ public class AddAccountScreen : IReceivableScreen
             Console.WriteLine("None");
         }
     }
-    private void EnterAccountInfo()
+    private (AccountType, double) EnterAccountInfo()
     {
         AccountType accountType;
         double balance;
@@ -195,6 +197,6 @@ public class AddAccountScreen : IReceivableScreen
         Console.WriteLine("What will the balance of this new account be?");
         balance = Convert.ToDouble(Console.ReadLine() ?? "0");
 
-        _addAccount.AddAccount(UserId, accountType, balance, _userContextService.GetUserContext().UserId);
+        return (accountType, balance);
     }
 }
