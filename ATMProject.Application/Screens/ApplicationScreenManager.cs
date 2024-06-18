@@ -22,7 +22,7 @@ public class ApplicationScreenManager : IScreenManager
         }
         else
         {
-            _logger.Log("WARNING: Attempting to send data to screen {screen} for a screen that is not a IReceivableScreen");
+            _logger.Log($"WARNING: Attempting to send data to screen {screen} for a screen that is not a IReceivableScreen");
         }
         _currentScreen.ShowScreen();
     }

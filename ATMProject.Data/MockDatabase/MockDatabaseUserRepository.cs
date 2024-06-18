@@ -38,11 +38,11 @@ public class MockDatabaseUserRepository : IDataSource
             throw new Exception("Error: Could not find information with provided User Id");
         }
 
-        var dbAccounts = MockDatabaseFileRead.Accounts.Where(acct => user.AccountIds.Contains(acct.AccountId));
+        var dbAccounts = MockDatabaseFileRead.Accounts.Where(acct => user.AccountIds.Contains(acct.AccountId)).ToArray();
 
         if (dbAccounts is null)
         {
-            throw new Exception($"Could not find any account for User with Id: " + user.UserId);
+            throw new Exception($"Could not find any accounts for User with Id: " + user.UserId);
         }
 
         return dbAccounts.Select(account => new AccountModel(
