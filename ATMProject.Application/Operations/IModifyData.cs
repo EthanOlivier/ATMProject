@@ -27,34 +27,28 @@ public interface IChangeUserPasswordOperation : IOperation<IChangeUserPasswordOp
 
 public interface IAdminOperationsRepository : IFindUser, IGetUserIdentifyInfo, IGetAudits, IGetUsersTotals, ICreateUserId, ILookupUser, IChangeBasicUserPassword, IAddUser, IAddAccount, IDeleteUser, IDeleteAccount;
 
-[RequiresAdmin]
 public interface IFindUser
 {
     bool DoesUserExist(string userId);
 }
-[RequiresAdmin]
 public interface IGetUserIdentifyInfo
 {
     (string, string, string, string, string, string) GetUserIdentifyInfo(string userId);
 }
-[RequiresAdmin]
 public interface IGetAudits
 {
     List<string> GetAudits(string userId);
 }
-[RequiresAdmin]
 public interface IGetUsersTotals
 {
     int GetTotalUsers();
     int GetTotalAccounts();
     double GetTotalBalance();
 }
-[RequiresAdmin]
 public interface ICreateUserId
 {
     string CreateUserId();
 }
-[RequiresAdmin]
 public interface ILookupUser
 {
     string[] LookupUserInfo(IdentityFields field, string input, string userId);

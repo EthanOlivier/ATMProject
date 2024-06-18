@@ -1,7 +1,10 @@
 ﻿using ATMProject.Application;
 using ATMProject.Application.Operations;
+using ATMProject.Application.Operations.Authorization;
 using ATMProject.Application.Screens;
 using ATMProject.Application.Users;
+using ATMProject.System;
+using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 
 namespace ATMProject.WindowsConsoleApplication.BasicScreens;
 public class TransactionTransferScreen : IScreen
@@ -10,15 +13,20 @@ public class TransactionTransferScreen : IScreen
     private readonly IUserContextService _userContextService;
     private readonly IScreenManager _screenManager;
     private readonly IScreenGetter _screenGetter;
-    private readonly ITransferBetweenAccountsOperation _transferBeteenAccountsOp;
+    private readonly ILogger _logger;
+    private readonly IOperation<ITransferBetweenAccountsOperation.Request, IResult> _transferBetweenAccountsOperation;
 
-    public TransactionTransferScreen(IUserRepository userRepository, IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenFactory, ITransferBetweenAccountsOperation modifyTransferData)
+    public TransactionTransferScreen(IUserRepository userRepository, IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenFactory, ILogger logger, ITransferBetweenAccountsOperation modifyTransferData)
     {
         _userRepository = userRepository;
         _userContextService = userContextService;
         _screenManager = screenManager;
         _screenGetter = screenFactory;
-        _transferBeteenAccountsOp = modifyTransferData;
+        _logger = logger;
+
+        _transferBetweenAccountsOperation = modifyTransferData;
+        _transferBetweenAccountsOperation = new LoggingOperationDecorator<ITransferBetweenAccountsOperation.Request, IResult>(_transferBetweenAccountsOperation, _userContextService, _logger);
+        _transferBetweenAccountsOperation = new AuthorizationOperationDecorator<ITransferBetweenAccountsOperation.Request, IResult>(_transferBetweenAccountsOperation, _userContextService);
     }
     public record AccountViewModel
     (
@@ -44,7 +52,7 @@ public class TransactionTransferScreen : IScreen
         (withdrawalAccount, depositAccount) = ChooseAccounts(GetData());
         amount = GetAmount();
 
-        _transferBeteenAccountsOp.Execute(new ITransferBetweenAccountsOperation.Request(withdrawalAccount, depositAccount, amount));
+        _transferBetweenAccountsOperation.Execute(new ITransferBetweenAccountsOperation.Request(withdrawalAccount, depositAccount, amount));
         
         _screenManager.ShowScreen(ScreenNames.BasicOverview);
     }

@@ -1,13 +1,16 @@
 ﻿using ATMProject.Application;
 using ATMProject.Application.Operations;
+using ATMProject.Application.Operations.Authorization;
 using ATMProject.Application.Screens;
 using ATMProject.Composition;
 using ATMProject.Data.MockDatabase;
 using ATMProject.Data.MockDatabase.MockDatabase;
 using ATMProject.Data.ModifyData;
+using ATMProject.System;
 using ATMProject.WindowsConsoleApplication.AdminScreens;
 using ATMProject.WindowsConsoleApplication.BasicScreens;
 using Microsoft.Extensions.DependencyInjection;
+using System.Security.AccessControl;
 
 namespace ATMProject.WindowsConsoleApplication;
 
@@ -19,11 +22,7 @@ public static class Program
         AddServices(services);
         AddServiceConfigurations(services);
 
-        // Create Service Provider 
-        // get the ApplicationRunner service
-        // bootstrap all the services and
-        // then run the application.
-        services.BuildServiceProvider()
+      services.BuildServiceProvider()
             .GetService<ApplicationRunner>()!
             .RunApplication();
     }
@@ -42,8 +41,6 @@ public static class Program
         services.AddSingleton<IScreenManager, ApplicationScreenManager>();
         services.AddSingleton<ApplicationRunner>();
 
-
-
         typeof(LoginScreen).Assembly.GetTypes()
             .Where((t) => t.GetInterfaces().Any(ti => ti == typeof(IScreen)))
             .ToList()
@@ -54,16 +51,15 @@ public static class Program
 
         var borInterfaces = typeof(IBasicOperationRepository).GetInterfaces();
         borInterfaces
-            .Where(t => !borInterfaces.Any(ogInterface => ogInterface.GetInterfaces().Contains(t)))
+            .Where(t => !borInterfaces.Any(anyBorFace => anyBorFace.GetInterfaces().Contains(t)))
             .ToList()
             .ForEach(screenType =>
             {
                 services.AddSingleton(screenType, typeof(BasicOperationRepository));
             });
-
         var aorInterfaces = typeof(IAdminOperationsRepository).GetInterfaces();
         aorInterfaces
-            .Where(t => !aorInterfaces.Any(ogInterface => ogInterface.GetInterfaces().Contains(t)))
+            .Where(t => !aorInterfaces.Any(anyAorFace => anyAorFace.GetInterfaces().Contains(t)))
             .ToList()
             .ForEach(screenType =>
             {

@@ -1,5 +1,6 @@
 ﻿using ATMProject.Application;
 using ATMProject.Application.Operations;
+using ATMProject.Application.Operations.Authorization;
 using ATMProject.Application.Screens;
 using ATMProject.Application.Users;
 using ATMProject.System;
@@ -11,16 +12,21 @@ public class DeleteUserScreen : IScreen
     private readonly IScreenManager _screenManager;
     private readonly IScreenGetter _screenGetter;
     private readonly IUserRepository _userRepository;
-    private readonly IDeleteUser _deleteUserOp;
+    private readonly ILogger _logger;
     private readonly IFindUser _findUser;
-    public DeleteUserScreen(IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenGetter, IUserRepository userRepository, IDeleteUser deleteUser, IFindUser findUser)
+    private readonly IOperation<IDeleteUser.Request, IResult> _deleteUserOperation;
+    public DeleteUserScreen(IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenGetter, IUserRepository userRepository, ILogger logger, IFindUser findUser, IDeleteUser deleteUser)
     {
         _userContextService = userContextService;
         _screenManager = screenManager;
         _screenGetter = screenGetter;
         _userRepository = userRepository;
-        _deleteUserOp = deleteUser;
+        _logger = logger;
         _findUser = findUser;
+
+        _deleteUserOperation = deleteUser;
+        _deleteUserOperation = new LoggingOperationDecorator<IDeleteUser.Request, IResult>(_deleteUserOperation, _userContextService, _logger);
+        _deleteUserOperation = new AuthorizationOperationDecorator<IDeleteUser.Request, IResult>(_deleteUserOperation, _userContextService);
     }
     private record ViewModel
     (
@@ -57,7 +63,7 @@ public class DeleteUserScreen : IScreen
         DisplayUser(viewModel);
         DeleteUser(viewModel, userId);
 
-        _deleteUserOp.Execute(new IDeleteUser.Request(userId, _userContextService.GetUserContext().UserId));
+        _deleteUserOperation.Execute(new IDeleteUser.Request(userId, _userContextService.GetUserContext().UserId));
 
         _screenManager.ShowScreen(ScreenNames.AdminOverview);
     }

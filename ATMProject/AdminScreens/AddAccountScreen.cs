@@ -1,27 +1,35 @@
 ﻿using ATMProject.Application;
 using ATMProject.Application.Operations;
+using ATMProject.Application.Operations.Authorization;
 using ATMProject.Application.Screens;
 using ATMProject.Application.Users;
 using ATMProject.Banking;
+using ATMProject.System;
 
 namespace ATMProject.WindowsConsoleApplication.AdminScreens;
 public class AddAccountScreen : IReceivableScreen
 {
+    private string UserId;
+
     private readonly IUserContextService _userContextService;
     private readonly IScreenManager _screenManager;
     private readonly IScreenGetter _screenGetter;
     private readonly IUserRepository _userRepository;
+    private readonly ILogger _logger;
     private readonly IFindUser _findUser;
-    private readonly IAddAccount _addAccountOp;
-    private string UserId;
-    public AddAccountScreen(IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenGetter, IUserRepository userRepository, IFindUser findUser, IAddAccount addAccount)
+    private readonly IOperation<IAddAccount.Request, IResult> _addAccountOperation;
+    public AddAccountScreen(IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenGetter, IUserRepository userRepository, ILogger logger, IFindUser findUser, IAddAccount addAccount)
     {
         _userContextService = userContextService;
         _screenManager = screenManager;
         _screenGetter = screenGetter;
         _userRepository = userRepository;
+        _logger = logger;
         _findUser = findUser;
-        _addAccountOp = addAccount;
+
+        _addAccountOperation = addAccount;
+        _addAccountOperation = new LoggingOperationDecorator<IAddAccount.Request, IResult>(_addAccountOperation, _userContextService, _logger);
+        _addAccountOperation = new AuthorizationOperationDecorator<IAddAccount.Request, IResult>(_addAccountOperation, _userContextService);
     }
     private record ViewModel
     (
@@ -83,7 +91,7 @@ public class AddAccountScreen : IReceivableScreen
 
         (AccountType accountType, double balance) = EnterAccountInfo();
 
-        _addAccountOp.Execute(new IAddAccount.Request(UserId, accountType, balance, _userContextService.GetUserContext().UserId));
+        _addAccountOperation.Execute(new IAddAccount.Request(UserId, accountType, balance, _userContextService.GetUserContext().UserId));
 
         if (wasSupplied)
         {

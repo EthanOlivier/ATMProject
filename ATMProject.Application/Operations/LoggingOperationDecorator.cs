@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 
 namespace ATMProject.Application.Operations;
-public class AuditLoggingOperationDecorator<TRequest, TResponse> : IOperation<TRequest, TResponse>
+public class LoggingOperationDecorator<TRequest, TResponse> : IOperation<TRequest, TResponse>
     where TRequest : class
     where TResponse : class
 {
@@ -9,7 +9,7 @@ public class AuditLoggingOperationDecorator<TRequest, TResponse> : IOperation<TR
     private readonly IUserContextService _userContextService;
     private readonly ILogger _logger;
 
-    public AuditLoggingOperationDecorator(IOperation<TRequest, TResponse> innerOperation, IUserContextService userContextService, ILogger logger)
+    public LoggingOperationDecorator(IOperation<TRequest, TResponse> innerOperation, IUserContextService userContextService, ILogger logger)
     {
         _innerOperation = innerOperation;
         _userContextService = userContextService;

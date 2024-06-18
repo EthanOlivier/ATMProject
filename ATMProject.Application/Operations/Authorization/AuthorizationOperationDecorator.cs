@@ -7,9 +7,9 @@ public class AuthorizationOperationDecorator<TRequest, TResponse> : IOperation<T
     where TResponse : class
 {
     private readonly IOperation<TRequest, TResponse> _innerOperation;
-    private readonly UserContextService _userContextService;
+    private readonly IUserContextService _userContextService;
 
-    public AuthorizationOperationDecorator(IOperation<TRequest, TResponse> innerOperation, UserContextService userContextService)
+    public AuthorizationOperationDecorator(IOperation<TRequest, TResponse> innerOperation, IUserContextService userContextService)
     {
         _innerOperation = innerOperation;
         _userContextService = userContextService;

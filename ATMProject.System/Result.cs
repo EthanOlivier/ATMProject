@@ -1,6 +1,6 @@
 ﻿namespace ATMProject.System;
 
-public class IResult
+public interface IResult
 {
     bool Success { get; }
     string ErrorMessage { get; }
@@ -18,7 +18,7 @@ public class Result : IResult
         {
             if (Success)
             {
-                throw new Exception("Cannot retrieve ErrorMessage, as the result was successful.");
+                return String.Empty;
             }
             return _errorMessage!;
         }

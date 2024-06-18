@@ -1,7 +1,9 @@
 ﻿using ATMProject.Application;
 using ATMProject.Application.Operations;
+using ATMProject.Application.Operations.Authorization;
 using ATMProject.Application.Screens;
 using ATMProject.Application.Users;
+using ATMProject.System;
 
 namespace ATMProject.WindowsConsoleApplication.BasicScreens;
 public class WithdrawalScreen : IScreen
@@ -10,14 +12,19 @@ public class WithdrawalScreen : IScreen
     private readonly IUserContextService _userContextService;
     private readonly IScreenManager _screenManager;
     private readonly IScreenGetter _screenGetter;
-    private readonly IWithdrawFromAccountOperation _modifyWithdrawalData;
-    public WithdrawalScreen(IUserRepository userRepository, IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenFactory, IWithdrawFromAccountOperation modifyWithdrawalData)
+    private readonly ILogger _logger;
+    private readonly IOperation<IWithdrawFromAccountOperation.Request, IResult> _withdrawalFromAccountOperation;
+    public WithdrawalScreen(IUserRepository userRepository, IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenFactory, ILogger logger, IWithdrawFromAccountOperation modifyWithdrawalData)
     {
         _userRepository = userRepository;
         _userContextService = userContextService;
         _screenManager = screenManager;
         _screenGetter = screenFactory;
-        _modifyWithdrawalData = modifyWithdrawalData;
+        _logger = logger;
+
+        _withdrawalFromAccountOperation = modifyWithdrawalData;
+        _withdrawalFromAccountOperation = new LoggingOperationDecorator<IWithdrawFromAccountOperation.Request, IResult>(_withdrawalFromAccountOperation, _userContextService, _logger);
+        _withdrawalFromAccountOperation = new AuthorizationOperationDecorator<IWithdrawFromAccountOperation.Request, IResult>(_withdrawalFromAccountOperation, _userContextService);
     }
     public record AccountViewModel
     (
@@ -42,7 +49,7 @@ public class WithdrawalScreen : IScreen
         string account = ChooseAccount(GetData());
         double amount = GetAmount();
 
-        _modifyWithdrawalData.Execute(new IWithdrawFromAccountOperation.Request(account, amount));
+        _withdrawalFromAccountOperation.Execute(new IWithdrawFromAccountOperation.Request(account, amount));
         
         _screenManager.ShowScreen(ScreenNames.BasicOverview);
     }

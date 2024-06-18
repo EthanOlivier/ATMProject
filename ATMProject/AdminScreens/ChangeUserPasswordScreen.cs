@@ -1,7 +1,9 @@
 ﻿using ATMProject.Application;
 using ATMProject.Application.Operations;
+using ATMProject.Application.Operations.Authorization;
 using ATMProject.Application.Screens;
 using ATMProject.Application.Users;
+using ATMProject.System;
 
 namespace ATMProject.WindowsConsoleApplication.AdminScreens;
 public class ChangeUserPasswordScreen : IScreen
@@ -10,16 +12,21 @@ public class ChangeUserPasswordScreen : IScreen
     private readonly IScreenManager _screenManager;
     private readonly IScreenGetter _screenGetter;
     private readonly IUserRepository _userRepository;
-    private readonly IChangeBasicUserPassword _changeBasicUserPasswordOp;
+    private readonly ILogger _logger;
     private readonly IFindUser _findUser;
-    public ChangeUserPasswordScreen(IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenGetter, IUserRepository userRepository, IChangeBasicUserPassword changeBasicUserPassword, IFindUser findUser)
+    private readonly IOperation<IChangeBasicUserPassword.Request, IResult> _changeBasicUserPasswordOperation;
+    public ChangeUserPasswordScreen(IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenGetter, IUserRepository userRepository, ILogger logger, IFindUser findUser, IChangeBasicUserPassword changeBasicUserPassword)
     {
         _userContextService = userContextService;
         _screenManager = screenManager;
         _screenGetter = screenGetter;
         _userRepository = userRepository;
-        _changeBasicUserPasswordOp = changeBasicUserPassword;
+        _logger = logger;
         _findUser = findUser;
+
+        _changeBasicUserPasswordOperation = changeBasicUserPassword;
+        _changeBasicUserPasswordOperation = new LoggingOperationDecorator<IChangeBasicUserPassword.Request, IResult>(_changeBasicUserPasswordOperation, _userContextService, _logger);
+        _changeBasicUserPasswordOperation = new AuthorizationOperationDecorator<IChangeBasicUserPassword.Request, IResult>(_changeBasicUserPasswordOperation, _userContextService);
     }
 
     private record ViewModel
@@ -57,7 +64,7 @@ public class ChangeUserPasswordScreen : IScreen
         DisplayUser(viewModel);
         string newPassword = ChangePassword(userId);
 
-        _changeBasicUserPasswordOp.Execute(new IChangeBasicUserPassword.Request(userId, newPassword, _userContextService.GetUserContext().UserId));
+        _changeBasicUserPasswordOperation.Execute(new IChangeBasicUserPassword.Request(userId, newPassword, _userContextService.GetUserContext().UserId));
 
         _screenManager.ShowScreen(ScreenNames.AdminOverview);
     }

@@ -1,21 +1,25 @@
 ﻿using ATMProject.Application;
 using ATMProject.Application.Operations;
+using ATMProject.Application.Operations.Authorization;
 using ATMProject.Application.Screens;
 using ATMProject.Application.Users;
 using ATMProject.Data.MockDatabase.MockDatabase;
+using ATMProject.System;
 
 namespace ATMProject.WindowsConsoleApplication.AdminScreens;
 public class AddUserScreen : IScreen
 {
+    private string UserId;
+
     private readonly IUserContextService _userContextService;
     private readonly IUserRepository _userRepository;
     private readonly IScreenManager _screenManager;
     private readonly IScreenGetter _screenGetter;
+    private readonly ILogger _logger;
     private readonly IGetUserIdentifyInfo _identityInfo;
     private readonly ICreateUserId _createUserId;
-    private readonly IAddUser _addUserOp;
-    private string UserId;
-    public AddUserScreen(IUserContextService userContextService, IUserRepository userRepository, IScreenManager screenManager, IScreenGetter screenGetter, IGetUserIdentifyInfo getUserIdentifyInfo, ICreateUserId createUserId, IAddUser addUser)
+    private readonly IOperation<IAddUser.Request, IResult> _addUserOperation;
+    public AddUserScreen(IUserContextService userContextService, IUserRepository userRepository, IScreenManager screenManager, IScreenGetter screenGetter, ILogger logger, IGetUserIdentifyInfo getUserIdentifyInfo, ICreateUserId createUserId, IAddUser addUser)
     {
         _userContextService = userContextService;
         _userRepository = userRepository;
@@ -23,7 +27,11 @@ public class AddUserScreen : IScreen
         _screenGetter = screenGetter;
         _identityInfo = getUserIdentifyInfo;
         _createUserId = createUserId;
-        _addUserOp = addUser;
+        _logger = logger;
+
+        _addUserOperation = addUser;
+        _addUserOperation = new LoggingOperationDecorator<IAddUser.Request, IResult>(_addUserOperation, _userContextService, _logger);
+        _addUserOperation = new AuthorizationOperationDecorator<IAddUser.Request, IResult>(_addUserOperation, _userContextService);
     }
     public void Recieve<T>(T data) where T : class
     {
@@ -67,7 +75,7 @@ public class AddUserScreen : IScreen
 
             UserId = _createUserId.CreateUserId();
 
-            _addUserOp.Execute(new IAddUser.Request(userInfo.Item1, userInfo.Item2, userInfo.Item3, userInfo.Item4, userInfo.Item5, userInfo.Item6, UserId, _userContextService.GetUserContext().UserId));
+            _addUserOperation.Execute(new IAddUser.Request(userInfo.Item1, userInfo.Item2, userInfo.Item3, userInfo.Item4, userInfo.Item5, userInfo.Item6, UserId, _userContextService.GetUserContext().UserId));
 
             _screenManager.ShowScreen(ScreenNames.AddAccount, UserId);
             UserId = null;

@@ -15,7 +15,7 @@ public class MockDatabaseFileRead : IReadFile
     public void ReadAllFilesContents()
     {
 
-        string FOLDER_DIRECTORY = Path.Combine(Directory.GetParent(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)).Parent.Parent.FullName, "Resources\\");
+        string FOLDER_DIRECTORY = "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\";
 
         // ReadAllLines is fine now, things like StreamReader could be better for larger thngs
         string[] usersFileContents = File.ReadAllLines(Path.Combine(FOLDER_DIRECTORY, "Users.txt"));

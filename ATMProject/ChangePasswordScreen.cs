@@ -1,23 +1,31 @@
 ﻿using ATMProject.Application;
 using ATMProject.Application.Operations;
+using ATMProject.Application.Operations.Authorization;
 using ATMProject.Application.Screens;
 using ATMProject.Application.Users;
+using ATMProject.System;
 
 namespace ATMProject.WindowsConsoleApplication;
 public class ChangePasswordScreen : IScreen
 {
+    private UserRole UserRole;
+
     private readonly IUserContextService _userContextService;
     private readonly IScreenManager _screenManager;
     private readonly IScreenGetter _screenGetter;
-    private readonly IChangeUserPasswordOperation _changePasswordOp;
-    private UserRole UserRole;
+    private readonly ILogger _logger;
+    private readonly IOperation<IChangeUserPasswordOperation.Request, IResult> _changePasswordOperation;
 
-    public ChangePasswordScreen(IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenFactory, IChangeUserPasswordOperation modifyChangePasswordData)
+    public ChangePasswordScreen(IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenFactory, ILogger logger, IChangeUserPasswordOperation modifyChangePasswordData)
     {
         _userContextService = userContextService;
         _screenManager = screenManager;
         _screenGetter = screenFactory;
-        _changePasswordOp = modifyChangePasswordData;
+        _logger = logger;
+
+        _changePasswordOperation = modifyChangePasswordData;
+        _changePasswordOperation = new LoggingOperationDecorator<IChangeUserPasswordOperation.Request, IResult>(_changePasswordOperation, _userContextService, _logger);
+        _changePasswordOperation = new AuthorizationOperationDecorator<IChangeUserPasswordOperation.Request, IResult>(_changePasswordOperation, _userContextService);
     }
 
     public void Recieve<T>(T data) where T : class
@@ -46,7 +54,7 @@ public class ChangePasswordScreen : IScreen
         }
         string newPassword = EnterNewPasswordScreen();
 
-        _changePasswordOp.Execute(new IChangeUserPasswordOperation.Request(_userContextService.GetUserContext(), newPassword));
+        _changePasswordOperation.Execute(new IChangeUserPasswordOperation.Request(_userContextService.GetUserContext(), newPassword));
 
         _userContextService.Logout();
         _screenManager.ShowScreen(ScreenNames.Login);
