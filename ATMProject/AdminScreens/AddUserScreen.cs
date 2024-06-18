@@ -7,7 +7,7 @@ using ATMProject.Data.MockDatabase.MockDatabase;
 using ATMProject.System;
 
 namespace ATMProject.WindowsConsoleApplication.AdminScreens;
-public class AddUserScreen : IScreen
+public class AddUserScreen : IReceivableScreen
 {
     private string UserId;
 
@@ -33,7 +33,7 @@ public class AddUserScreen : IScreen
         _addUserOperation = new LoggingOperationDecorator<IAddUser.Request, IResult>(_addUserOperation, _userContextService, _logger);
         _addUserOperation = new AuthorizationOperationDecorator<IAddUser.Request, IResult>(_addUserOperation, _userContextService);
     }
-    public void Recieve<T>(T data) where T : class
+    public void ReceiveData<T>(T data) where T : class
     {
         if (data is not null)
         {
