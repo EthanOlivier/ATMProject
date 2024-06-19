@@ -6,7 +6,7 @@ using ATMProject.Application.Users;
 using ATMProject.System;
 
 namespace ATMProject.WindowsConsoleApplication;
-public class ChangePasswordScreen : IScreen
+public class ChangePasswordScreen : IReceivableScreen
 {
     private UserRole UserRole;
 
@@ -28,7 +28,7 @@ public class ChangePasswordScreen : IScreen
         _changePasswordOperation = new AuthorizationOperationDecorator<IChangeUserPasswordOperation.Request, IResult>(_changePasswordOperation, _userContextService);
     }
 
-    public void Recieve<T>(T data) where T : class
+    public void ReceiveData<T>(T data) where T : class
     {
         if (data.ToString() == "Basic")
         {
@@ -63,9 +63,21 @@ public class ChangePasswordScreen : IScreen
     {
         string newPassword;
         string confirm;
-        Console.WriteLine("Please enter your new password");
+        Console.WriteLine("Please enter your new password or type 'X' to leave the screen");
         newPassword = Console.ReadLine()!;
+
         newPassword = newPassword == String.Empty ? "password" : newPassword;
+        if (newPassword.ToUpper() == "X")
+        {
+            if (UserRole == UserRole.Basic)
+            {
+                _screenManager.ShowScreen(ScreenNames.BasicOverview);
+            }
+            else if (UserRole == UserRole.Admin)
+            {
+                _screenManager.ShowScreen(ScreenNames.AdminOverview);
+            }
+        }
         Console.WriteLine($"Do you want to confirm change your password to [{newPassword}]?\nType Y for yes, Type N for No");
         confirm = Console.ReadLine() ?? "";
         if (confirm.ToUpper() != "Y")

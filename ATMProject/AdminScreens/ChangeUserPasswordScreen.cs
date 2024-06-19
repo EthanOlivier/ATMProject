@@ -70,7 +70,7 @@ public class ChangeUserPasswordScreen : IScreen
     }
     private string SelectUser()
     {
-        Console.WriteLine("Enter the User Id for the user whose password you want to change");
+        Console.WriteLine("Enter the User Id for the user whose password you want to change or type 'X' to leave the screen");
         string? userId = Console.ReadLine();
         while (userId is null)
         {
@@ -80,8 +80,15 @@ public class ChangeUserPasswordScreen : IScreen
 
         if (!_findUser.DoesUserExist(userId))
         {
-            Console.WriteLine("Id not found. Please try again");
-            _screenManager.ShowScreen(ScreenNames.ChangeUserPassword);
+            if (userId.ToUpper() != "X")
+            {
+                Console.WriteLine("Id not found. Please try again");
+                SelectUser();
+            }
+            else
+            {
+                _screenManager.ShowScreen(ScreenNames.AdminOverview);
+            }
         }
 
         return userId;

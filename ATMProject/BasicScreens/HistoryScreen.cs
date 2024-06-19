@@ -9,21 +9,23 @@ public class HistoryScreen : IScreen
     private readonly IUserContextService _userContextService;
     private readonly IScreenManager _screenManager;
     private readonly IScreenGetter _screenGetter;
+    private readonly ILogger _logger;
 
-    public HistoryScreen(IUserRepository userRepository, IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenFactory)
+    public HistoryScreen(IUserRepository userRepository, IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenFactory, ILogger logger)
     {
         _userRepository = userRepository;
         _userContextService = userContextService;
         _screenManager = screenManager;
         _screenGetter = screenFactory;
+        _logger = logger;
     }
-    public record AccountViewModel
+    public record ViewModel
     (
         string Id,
         string Type,
         double Balance,
         DateTime CreationDate,
-        IEnumerable<AccountViewModel.TransactionsViewModel> Transactions
+        IEnumerable<ViewModel.TransactionsViewModel> Transactions
     )
     {
         public record TransactionsViewModel
@@ -51,19 +53,19 @@ public class HistoryScreen : IScreen
         ShowHistory(GetData());
         _screenManager.ShowScreen(ScreenNames.BasicOverview);
     }
-    private IEnumerable<AccountViewModel> GetData()
+    private IEnumerable<ViewModel> GetData()
     {
         var accountData = _userRepository.GetUserAccountsByUserId(_userContextService.GetUserContext().UserId);
         var transactionData = _userRepository.GetAccountTransactionsByAccountIds(accountData.Select(acct => acct.AccountId).ToArray());
 
-        return accountData.Select(accountData => new AccountViewModel(
+        return accountData.Select(accountData => new ViewModel(
             Id: accountData.AccountId,
             Type: accountData.Type.ToString(),
             Balance: accountData.Balance,
             CreationDate: accountData.CreationDate,
             Transactions: transactionData?
                 .Where(tran => tran.AccountId == accountData.AccountId)
-                .Select(tran => new AccountViewModel.TransactionsViewModel(
+                .Select(tran => new ViewModel.TransactionsViewModel(
                     Id: tran.TransactionId,
                     Type: tran.Type.ToString(),
                     Amount: tran.Amount.ToString(),
@@ -73,38 +75,54 @@ public class HistoryScreen : IScreen
                 ))
         ));
     }
-    private void ShowHistory(IEnumerable<AccountViewModel> viewModel)
+    private void ShowHistory(IEnumerable<ViewModel> viewModel)
     {
-        AccountViewModel account;
-        if (viewModel.Count() > 1)
-        {
-            string accountEntered;
-            foreach (AccountViewModel accnt in viewModel)
-            {
-                Console.WriteLine($"Type {accnt.Id} to show Transaction History from Account with Type: {accnt.Type}, Balance: {accnt.Balance}");
-            }
-            accountEntered = Console.ReadLine() ?? "";
+        ViewModel account = null;
 
-            if (!viewModel.Any(acct => acct.Id == accountEntered))
-            {
-                Console.WriteLine("Account Entered was not a valid account");
-                ShowScreen();
-            }
-
-            account = viewModel.FirstOrDefault(acct => acct.Id == accountEntered);
-        }
-        else
+        switch (viewModel.Count())
         {
-            account = viewModel.FirstOrDefault()!;
-            if (account is null)
-            {
-                Console.WriteLine("No Accounts Found");
+            case 0:
+                _logger.Log("Warning: Unable to find any usable accounts.");
+                Console.WriteLine("Unable to use Screen due to a lack of accounts.");
                 _screenManager.ShowScreen(ScreenNames.BasicOverview);
-            }
+                break;
+            case 1:
+                account = viewModel.FirstOrDefault()!;
+                if (account is null)
+                {
+                    throw new Exception("Error: Unable to find given account");
+                }
+                break;
+            default:
+                string accountEntered;
+                Console.WriteLine("Enter an Account or type 'X' to leave the screen\n");
+                foreach (var accnt in viewModel)
+                {
+                    Console.WriteLine($"Type {accnt.Id} to show Transaction History from Account with Type: {accnt.Type}, Balance: ${accnt.Balance.ToString("N2")}");
+                }
+                accountEntered = Console.ReadLine() ?? "";
+
+                if (accountEntered.ToUpper() == "X")
+                {
+                    _screenManager.ShowScreen(ScreenNames.BasicOverview);
+                }
+
+                if (!viewModel.Any(acct => acct.Id == accountEntered))
+                {
+                    Console.WriteLine("Account Entered was not a valid account");
+                    ShowScreen();
+                }
+
+                account = viewModel.FirstOrDefault(acct => acct.Id == accountEntered)!;
+                if (account is null)
+                {
+                    throw new Exception("Error: Unable to find given account");
+                }
+                break;
         }
 
 
-        if (account.Transactions.Count() > 0)
+        if (account!.Transactions.Any())
         {
             foreach (var transaction in account.Transactions)
             {

@@ -102,10 +102,14 @@ public class MockDatabaseFileWrite : IWriteToFile
         if (newTransaction is not null)
         {
             recordToAdd = newTransaction.TranasctionId + "|" + newTransaction.AccountId + "|" + newTransaction.Type + "|" + newTransaction.Amount + "|" + newTransaction.PreviousBalance + "|" + newTransaction.NewBalance + "|" + newTransaction.DateTime;
+            File.WriteAllLines(FILE_DIRECTORY, transactionsAndAuditsFileContents);
+            File.AppendAllLines(FILE_DIRECTORY, new[] { recordToAdd });
         }
         else if (newAudit is not null)
         {
             recordToAdd = newAudit.AuditId + "|" + newAudit.AdminId + "|" + newAudit.BasicId + "|" + newAudit.InteractionType + "|" + newAudit.DateTime;
+            File.WriteAllLines(FILE_DIRECTORY, transactionsAndAuditsFileContents);
+            File.AppendAllLines(FILE_DIRECTORY, new[] { recordToAdd });
         }
         else
         {
@@ -117,9 +121,8 @@ public class MockDatabaseFileWrite : IWriteToFile
                     line = null;
                 }
                 return line;
-            }).Where(line => line != null);
+            }).Where(line => line != null).ToArray();
+            File.WriteAllLines(FILE_DIRECTORY, updatedFileContent);
         }
-        File.WriteAllLines(FILE_DIRECTORY, transactionsAndAuditsFileContents);
-        File.AppendAllLines(FILE_DIRECTORY, new[] { recordToAdd });
     }
 }

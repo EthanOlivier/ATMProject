@@ -89,21 +89,28 @@ public class AddUserScreen : IReceivableScreen
     private (string, string, string, string, string, string) EnterUserInfo()
     {
         string password;
-        string confirm;
+        string confirm = "";
         string name, address, phoneNumber, email;
         string salt = "", hash = "";
         do
         {
-            Console.WriteLine("Enter a password for this new user");
+            Console.WriteLine("Enter a password for this new user or type 'X' to leave the screen");
             password = Console.ReadLine()!;
-            password = password == String.Empty ? "password" : password;
-            Console.WriteLine($"Do you want to confirm your password to be [{password}]?\nType Y for yes, Type N for No");
-            confirm = Console.ReadLine() ?? "";
-            if (confirm.ToUpper() == "Y")
+            if (password != "")
             {
-                Console.WriteLine("Password Added");
-                salt = Guid.NewGuid().ToString();
-                hash = MockDatabaseUserRepository.CreateHash(salt, password);
+                password = password == String.Empty ? "password" : password;
+                Console.WriteLine($"Do you want to confirm your password to be [{password}]?\nType Y for yes, Type N for No");
+                confirm = Console.ReadLine() ?? "";
+                if (confirm.ToUpper() == "Y")
+                {
+                    Console.WriteLine("Password Added");
+                    salt = Guid.NewGuid().ToString();
+                    hash = MockDatabaseUserRepository.CreateHash(salt, password);
+                }
+            }
+            else
+            {
+                _screenManager.ShowScreen(ScreenNames.AdminOverview);
             }
         } while (confirm.ToUpper() != "Y");
 
@@ -151,7 +158,7 @@ public class AddUserScreen : IReceivableScreen
         }
         else
         {
-            Console.WriteLine("None");
+            _logger.Log($"Warning: No Accounts found for user {UserId}");
         }
     }
     private void ConfirmEditCancel()

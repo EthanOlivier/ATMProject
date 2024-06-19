@@ -213,8 +213,10 @@ public class AdminOperationsRepository : IAdminOperationsRepository
         }
 
         MockDatabaseFileRead.Users.Remove(user);
+        MockDatabaseFileRead.Transactions.RemoveWhere(tran => user.AccountIds.Contains(tran.AccountId));
 
         _writeToFile.UpdateUsersFile(request.UserId, null);
+        _writeToFile.UpdateTransactionsAndAuditsFile(null, null, user.AccountIds.ToArray());
 
         AddAudit(request.AdminId, AdminInteraction.DeleteUser, request.UserId, DateTime.Now);
 
@@ -230,8 +232,10 @@ public class AdminOperationsRepository : IAdminOperationsRepository
         }
 
         MockDatabaseFileRead.Accounts.Remove(accountToDelete);
+        MockDatabaseFileRead.Transactions.RemoveWhere(tran => tran.AccountId == accountToDelete.AccountId);
 
         _writeToFile.UpdateAccountsFile(request.AccountId, null);
+        _writeToFile.UpdateTransactionsAndAuditsFile(null, null, new[] { accountToDelete.AccountId });
 
         AddAudit(request.AdminId, AdminInteraction.DeleteAccount, request.AccountId, DateTime.Now);
 

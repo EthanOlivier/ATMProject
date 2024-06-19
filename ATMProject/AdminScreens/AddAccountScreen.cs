@@ -105,13 +105,20 @@ public class AddAccountScreen : IReceivableScreen
     }
     private void EnterUserId()
     {
-        Console.WriteLine("Enter the User Id for the user whom you would like to add accounts to");
+        Console.WriteLine("Enter the User Id for the user whom you would like to add accounts to or type 'X' to leave the screen");
         string userId = Console.ReadLine() ?? "";
 
         if (!_findUser.DoesUserExist(userId))
         {
-            Console.WriteLine("Id not found. Please try again");
-            _screenManager.ShowScreen(ScreenNames.AddAccount);
+            if (userId.ToUpper() != "X")
+            {
+                Console.WriteLine("Id not found. Please try again");
+                _screenManager.ShowScreen(ScreenNames.AddAccount);
+            }
+            else
+            {
+                _screenManager.ShowScreen(ScreenNames.AdminOverview);
+            }
         }
         else
         {
@@ -167,21 +174,25 @@ public class AddAccountScreen : IReceivableScreen
                 Console.WriteLine($"Account Balance: ${account.Balance}");
                 Console.WriteLine($"Account Time of Creation: {account.CreationDate}\n");
             }
+            Console.WriteLine(Environment.NewLine);
         }
         else
         {
-            Console.WriteLine("None");
+            _logger.Log($"Warning: No Accounts found for user {UserId}");
         }
     }
     private (AccountType, double) EnterAccountInfo()
     {
         AccountType accountType;
         double balance;
-        Console.WriteLine("\nWhat type of account would you like to make this? Type 'C' for Checking, Type 'S' for Savings, Type 'MMA' for MMA, Type 'CD' for CD");
-        string type = Console.ReadLine() ?? "";
+        string type = "";
         while (type.ToUpper() != "C" && type.ToUpper() != "S" && type.ToUpper() != "MMA" && type.ToUpper() != "CD")
         {
-            Console.WriteLine("Please enter a correct accout type");
+            if (type != "")
+            {
+                Console.WriteLine("Please enter a correct accout type");
+            }
+            Console.WriteLine("\nWhat type of account would you like to make this? Type 'C' for Checking, Type 'S' for Savings, Type 'MMA' for MMA, Type 'CD' for CD");
             type = Console.ReadLine() ?? "";
         }
         switch (type.ToUpper())
@@ -199,7 +210,7 @@ public class AddAccountScreen : IReceivableScreen
                 accountType = AccountType.CD;
                 break;
             default:
-                throw new Exception("Incorrect Account Type Entered");
+                throw new Exception("Error: Account Type Entered could not be recognized as an Account Type");
         }
 
         Console.WriteLine("What will the balance of this new account be?");

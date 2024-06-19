@@ -25,12 +25,14 @@ public class MockDatabaseFileRead : IReadFile
             string[] userProperties = user.Split('|');
             if (userProperties.Length == 10)
             {
-                // Check if top layer is what you expect
-                UserRole userRole = (UserRole)Enum.Parse(typeof(UserRole), userProperties[3]);
-                DateTime creationDate = DateTime.Parse(userProperties[8]);
-                List<string> accountIds = new List<string>(userProperties[9].Split(';'));
+                if (int.TryParse(userProperties[0], out _))
+                {
+                    UserRole userRole = (UserRole)Enum.Parse(typeof(UserRole), userProperties[3]);
+                    DateTime creationDate = DateTime.Parse(userProperties[8]);
+                    List<string> accountIds = new List<string>(userProperties[9].Split(';'));
 
-                Users.Add(new MockDatabaseUserModel(userProperties[0], userProperties[1], userProperties[2], userRole, userProperties[4], userProperties[5], userProperties[6], userProperties[7], creationDate, accountIds));
+                    Users.Add(new MockDatabaseUserModel(userProperties[0], userProperties[1], userProperties[2], userRole, userProperties[4], userProperties[5], userProperties[6], userProperties[7], creationDate, accountIds));
+                }
             }
         }
 
@@ -41,12 +43,15 @@ public class MockDatabaseFileRead : IReadFile
             string[] accountProperties = account.Split('|');
             if (accountProperties.Length == 6)
             {
-                AccountType type = (AccountType)Enum.Parse(typeof(AccountType), accountProperties[2]);
-                double balance = Convert.ToDouble(accountProperties[3]);
-                DateTime creationDate = DateTime.Parse(accountProperties[4]);
-                List<string> transactionsAndAuditsIds = new List<string>(accountProperties[5].Split(';'));
+                if (int.TryParse(accountProperties[0], out _))
+                {
+                    AccountType type = (AccountType)Enum.Parse(typeof(AccountType), accountProperties[2]);
+                    double balance = Convert.ToDouble(accountProperties[3]);
+                    DateTime creationDate = DateTime.Parse(accountProperties[4]);
+                    List<string> transactionsAndAuditsIds = new List<string>(accountProperties[5].Split(';'));
 
-                Accounts.Add(new MockDatabaseAccountModel(accountProperties[0], accountProperties[1], type, balance, creationDate, transactionsAndAuditsIds));
+                    Accounts.Add(new MockDatabaseAccountModel(accountProperties[0], accountProperties[1], type, balance, creationDate, transactionsAndAuditsIds));
+                }
             }
         }
 
@@ -57,20 +62,26 @@ public class MockDatabaseFileRead : IReadFile
             string[] transactionProperties = transaction.Split('|');
             if (transactionProperties.Length == 7)
             {
-                TransactionType type = (TransactionType)Enum.Parse(typeof(TransactionType), transactionProperties[2]);
-                double amount = Convert.ToDouble(transactionProperties[3]);
-                double previousBalance = Convert.ToDouble(transactionProperties[4]);
-                double newBalance = Convert.ToDouble(transactionProperties[5]);
-                DateTime transactionDate = DateTime.Parse(transactionProperties[6]);
+                if (int.TryParse(transactionProperties[0], out _))
+                {
+                    TransactionType type = (TransactionType)Enum.Parse(typeof(TransactionType), transactionProperties[2]);
+                    double amount = Convert.ToDouble(transactionProperties[3]);
+                    double previousBalance = Convert.ToDouble(transactionProperties[4]);
+                    double newBalance = Convert.ToDouble(transactionProperties[5]);
+                    DateTime transactionDate = DateTime.Parse(transactionProperties[6]);
 
-                Transactions.Add(new MockDatabaseTransactionModel(transactionProperties[0], transactionProperties[1], type, amount, previousBalance, newBalance, transactionDate));
+                    Transactions.Add(new MockDatabaseTransactionModel(transactionProperties[0], transactionProperties[1], type, amount, previousBalance, newBalance, transactionDate));
+                }
             }
             else if (transactionProperties.Length == 5)
             {
-                AdminInteraction interaction = (AdminInteraction)Enum.Parse(typeof(AdminInteraction), transactionProperties[3]);
-                DateTime auditDate = DateTime.Parse(transactionProperties[4]);
+                if (int.TryParse(transactionProperties[0], out _))
+                {
+                    AdminInteraction interaction = (AdminInteraction)Enum.Parse(typeof(AdminInteraction), transactionProperties[3]);
+                    DateTime auditDate = DateTime.Parse(transactionProperties[4]);
 
-                Audits.Add(new MockDatabaseAuditModel(transactionProperties[0], transactionProperties[1], transactionProperties[2], interaction, auditDate));
+                    Audits.Add(new MockDatabaseAuditModel(transactionProperties[0], transactionProperties[1], transactionProperties[2], interaction, auditDate));
+                }
             }
         }
     }

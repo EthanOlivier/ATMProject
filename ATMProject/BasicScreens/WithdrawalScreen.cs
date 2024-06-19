@@ -26,11 +26,11 @@ public class WithdrawalScreen : IScreen
         _withdrawalFromAccountOperation = new LoggingOperationDecorator<IWithdrawFromAccountOperation.Request, IResult>(_withdrawalFromAccountOperation, _userContextService, _logger);
         _withdrawalFromAccountOperation = new AuthorizationOperationDecorator<IWithdrawFromAccountOperation.Request, IResult>(_withdrawalFromAccountOperation, _userContextService);
     }
-    public record AccountViewModel
+    public record ViewModel
     (
         string Id,
         string Type,
-        string Balance,
+        double Balance,
         DateTime CreationDate
     );
 
@@ -53,47 +53,82 @@ public class WithdrawalScreen : IScreen
         
         _screenManager.ShowScreen(ScreenNames.BasicOverview);
     }
-    private IEnumerable<AccountViewModel> GetData()
+    private IEnumerable<ViewModel> GetData()
     {
         var accountData = _userRepository.GetUserAccountsByUserId(_userContextService.GetUserContext().UserId);
 
-        return accountData.Select(accountData => new AccountViewModel(
+        accountData = accountData.Where(acct => acct.Balance > 0);
+
+        return accountData.Select(accountData => new ViewModel(
             Id: accountData.AccountId,
             Type: accountData.Type.ToString(),
-            Balance: accountData.Balance.ToString(),
+            Balance: accountData.Balance,
             CreationDate: accountData.CreationDate
         ));
     }
-    private string ChooseAccount(IEnumerable<AccountViewModel> viewModel)
+    private string ChooseAccount(IEnumerable<ViewModel> viewModel)
     {
-        string accountEntered;
-        if (viewModel.Count() >= 2)
+        string accountEntered = "";
+
+        switch (viewModel.Count())
         {
-            Console.WriteLine("Choose account: \n");
-            foreach (AccountViewModel account in viewModel)
-            {
-                Console.Write($"Type {account.Id} for Account with Type: {account.Type}, Balance: {account.Balance}\n");
-            }
-            accountEntered = Console.ReadLine() ?? "";
-            if (!viewModel.Any(acct => acct.Id == accountEntered))
-            {
-                Console.WriteLine("Account Entered was not a valid account");
-                ShowScreen();
-            }
-        }
-        else
-        {
-            accountEntered = viewModel.FirstOrDefault().Id;
-            if (accountEntered is null)
-            {
+            case 0:
+                _logger.Log("Warning: Unable to find any usable accounts.");
+                Console.WriteLine("Unable to use Screen due to a lack of accounts.");
                 _screenManager.ShowScreen(ScreenNames.BasicOverview);
-            }
+                break;
+            case 1:
+                accountEntered = viewModel.FirstOrDefault()!.Id;
+                if (accountEntered is null)
+                {
+                    throw new Exception("Error: Unable to find given account");
+                }
+                break;
+            default:
+                Console.WriteLine("Choose account: \n");
+                foreach (var account in viewModel)
+                {
+                    Console.Write($"Type {account.Id} for Account with Type: {account.Type}, Balance: ${account.Balance.ToString("N2")}\n");
+                }
+                accountEntered = Console.ReadLine() ?? "";
+                if (!viewModel.Any(acct => acct.Id == accountEntered))
+                {
+                    Console.WriteLine("\nAccount Entered was not a valid account");
+                    ShowScreen();
+                }
+                break;
         }
         return accountEntered!;
     }
     private double GetAmount()
     {
-        Console.WriteLine("Enter the amount that you want to withdrawal");
-        return Convert.ToDouble(Console.ReadLine());
+        string strAmount = "";
+        double dblAmount = 0.0;
+        bool isAmountDouble = false;
+        while (!isAmountDouble)
+        {
+            Console.WriteLine("Enter the amount you want to deposit or type 'X' to leave the screen");
+            strAmount = Console.ReadLine() ?? "";
+            if (strAmount.ToUpper() == "X")
+            {
+                _screenManager.ShowScreen(ScreenNames.BasicOverview);
+            }
+            if (Double.TryParse(strAmount, out dblAmount))
+            {
+                if (dblAmount > 0)
+                {
+                    isAmountDouble = true;
+                }
+                else
+                {
+                    Console.WriteLine("Amount must be a number greater than 0. Please Try Again");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Amount must be a number. Please Try Again");
+            }
+        }
+        return dblAmount;
     }
 }

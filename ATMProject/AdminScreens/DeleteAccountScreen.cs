@@ -74,18 +74,23 @@ public class DeleteAccountScreen : IScreen
 
     private string SelectUser()
     {
-        Console.WriteLine("Enter the User Id for the user whose account you want to delete");
-        string? userId = Console.ReadLine();
-        while (userId is null)
+        Console.WriteLine("Enter the User Id for the user whose account you want to delete or type 'X' to leave the screen");
+        string userId = Console.ReadLine() ?? "";
+        while (userId == "")
         {
-            Console.WriteLine("Please enter a User Id");
-            userId = Console.ReadLine();
+            Console.WriteLine("Please Enter a User Id");
+            userId = Console.ReadLine() ?? "";
+        }
+
+        if (userId.ToUpper() == "X")
+        {
+            _screenManager.ShowScreen(ScreenNames.AdminOverview);
         }
 
         if (!_findUser.DoesUserExist(userId))
         {
             Console.WriteLine("Id not found. Please try again.");
-            _screenManager.ShowScreen(ScreenNames.DeleteAccount);
+            SelectUser();
         }
 
         return userId;
@@ -162,12 +167,12 @@ public class DeleteAccountScreen : IScreen
         if (!viewModel.Accounts.Any(acct => acct.Id == accountId))
         {
             Console.WriteLine("Account Entered was not a valid account");
-            _screenManager.ShowScreen(ScreenNames.DeleteAccount);
+            ShowScreen();
         }
         else if (!viewModel.Accounts.Any(acct => acct.Id == accountId && acct.Balance == "0"))
         {
             Console.WriteLine("Account Entered did not have a balance of zero.");
-            _screenManager.ShowScreen(ScreenNames.DeleteAccount);
+            ShowScreen();
         }
 
         return accountId;

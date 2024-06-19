@@ -69,18 +69,23 @@ public class DeleteUserScreen : IScreen
     }
     private string SelectUser()
     {
-        Console.WriteLine("Enter the User Id for the user you want to delete");
-        string? userId = Console.ReadLine();
-        while (userId is null)
+        Console.WriteLine("Enter the User Id for the user you want to delete or type 'X' to leave the screen");
+        string userId = Console.ReadLine() ?? "";
+        while (userId == "")
         {
-            Console.WriteLine("Please enter a User Id");
-            userId = Console.ReadLine();
+            Console.WriteLine("Please Enter a User Id");
+            userId = Console.ReadLine() ?? "";
+        }
+
+        if (userId.ToUpper() == "X")
+        {
+            _screenManager.ShowScreen(ScreenNames.AdminOverview);
         }
 
         if (!_findUser.DoesUserExist(userId))
         {
             Console.WriteLine("Id not found. Please try again.");
-            _screenManager.ShowScreen(ScreenNames.DeleteUser);
+            ShowScreen();
         }
         return userId;
     }
@@ -154,6 +159,7 @@ public class DeleteUserScreen : IScreen
         else
         {
             Console.WriteLine($"\nUnable to delete user: User's accounts still contain a cumulative balance of {totalBalance.ToString("C2")}. Must withdrawal all money from accounts before continuing");
+            _screenManager.ShowScreen(ScreenNames.AdminOverview);
         }
     }
 }

@@ -24,7 +24,7 @@ public class BasicOverviewScreen : IScreen
         string Address,
         string PhoneNumber,
         string Email,
-        string UserRole,
+        UserRole UserRole,
         DateTime CreationDate,
         IEnumerable<ViewModel.Account> Accounts
     )
@@ -33,7 +33,7 @@ public class BasicOverviewScreen : IScreen
         (
             string Id,
             string Type,
-            string Balance,
+            double Balance,
             DateTime CreationDate
         );
     }
@@ -63,14 +63,14 @@ public class BasicOverviewScreen : IScreen
             Address: userInfo.Address,
             PhoneNumber: userInfo.PhoneNumber,
             Email: userInfo.Email,
-            UserRole: userInfo.UserRole.ToString(),
+            UserRole: userInfo.UserRole,
             CreationDate: userInfo.CreationDate,
             Accounts: accounts
                 .Where(account => account?.UserId == _userContextService.GetUserContext()?.UserId)
                 .Select(account => new ViewModel.Account(
                     Id: account.AccountId,
                     Type: account.Type.ToString(),
-                    Balance: account.Balance.ToString(),
+                    Balance: account.Balance,
                     CreationDate: account.CreationDate
             )
         ));
@@ -86,13 +86,13 @@ public class BasicOverviewScreen : IScreen
         Console.WriteLine($"Creation Time: {viewModel.CreationDate}");
         Console.WriteLine("\nAccounts: ");
 
-        if (viewModel.Accounts.Count() > 0)
+        if (viewModel.Accounts.Any())
         {
             foreach (var account in viewModel.Accounts)
             {
                 Console.WriteLine($"\nAccount Id: {account.Id}");
                 Console.WriteLine($"Account Type: {account.Type}");
-                Console.WriteLine($"Account Balance: ${account.Balance}");
+                Console.WriteLine($"Account Balance: ${account.Balance.ToString("N2")}");
                 Console.WriteLine($"Account Time of Creation: {account.CreationDate}");
             }
         }
@@ -101,24 +101,27 @@ public class BasicOverviewScreen : IScreen
             Console.WriteLine("None");
         }
 
-        Console.WriteLine("\n\nType 'D' for Deposit");
-        Console.WriteLine("Type 'W' for Withdraw");
-        if (viewModel.Accounts.Count() >= 2)
+        Console.WriteLine("\n\nType 'D' to Deposit");
+        if (viewModel.Accounts.Where(acct => acct.Balance > 0).Count() >= 1)
         {
-            Console.WriteLine("Type 'T' for Transfer");
+            Console.WriteLine("Type 'W' to Withdraw");
+        }
+        if (viewModel.Accounts.Count() >= 2 && viewModel.Accounts.Where(acct => acct.Balance > 0).Count() >= 1)
+        {
+            Console.WriteLine("Type 'T' to Transfer");
         }
         Console.WriteLine("Type 'H' for Transaction History");
-        Console.WriteLine("Type 'C' for Change Password");
-        Console.WriteLine("Tpye 'L' for Logout");
+        Console.WriteLine("Type 'C' to Change Password");
+        Console.WriteLine("Tpye 'L' to Logout");
     }
 
     private void ReadInput(ViewModel viewModel)
     {
-        string? input = Console.ReadLine();
-        while (input is null)
+        string input = Console.ReadLine() ?? "";
+        while (input == "")
         {
             Console.WriteLine("Please Enter a Screen");
-            input = Console.ReadLine();
+            input = Console.ReadLine() ?? "";
         }
         switch (input.ToUpper())
         {
@@ -132,18 +135,16 @@ public class BasicOverviewScreen : IScreen
                 break;
 
             case "W":
-                _screenManager.ShowScreen(ScreenNames.Withdrawal);
+                if (viewModel.Accounts.Where(acct => acct.Balance > 0).Count() >= 1)
+                {
+                    _screenManager.ShowScreen(ScreenNames.Withdrawal);
+                }
                 break;
 
             case "T":
-                if (viewModel.Accounts.Count() >= 2)
+                if (viewModel.Accounts.Count() >= 2 && viewModel.Accounts.Where(acct => acct.Balance > 0).Count() >= 1)
                 {
                     _screenManager.ShowScreen(ScreenNames.Transfer);
-                }
-                else
-                {
-                    Console.WriteLine("Incorrect Screen Entered. Please Try Again");
-                    RenderViewModel(viewModel);
                 }
                 break;
 
@@ -154,11 +155,8 @@ public class BasicOverviewScreen : IScreen
             case "C":
                 _screenManager.ShowScreen(ScreenNames.ChangePassword);
                 break;
-
-            default:
-                Console.WriteLine("Incorrect Screen Entered. Please Try Again");
-                RenderViewModel(viewModel);
-                break;
         }
+        Console.WriteLine("Incorrect Screen Entered. Please Try Again");
+        ReadInput(viewModel);
     }
 }

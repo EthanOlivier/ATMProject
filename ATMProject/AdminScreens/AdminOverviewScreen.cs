@@ -83,11 +83,11 @@ public class AdminOverviewScreen : IScreen
 
     private void ReadInput()
     {
-        string? input = Console.ReadLine();
-        while (input is null)
+        string input = Console.ReadLine() ?? "";
+        while (input == "")
         {
             Console.WriteLine("Please Enter a Screen");
-            input = Console.ReadLine();
+            input = Console.ReadLine() ?? "";
         }
         switch (input.ToUpper())
         {
@@ -126,7 +126,7 @@ public class AdminOverviewScreen : IScreen
                 break;
             default:
                 Console.WriteLine("Incorrect Screen Entered. Please Try Again.");
-                ShowScreen();
+                ReadInput();
                 break;
         }
     }

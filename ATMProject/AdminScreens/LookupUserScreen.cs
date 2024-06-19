@@ -44,7 +44,7 @@ public class LookupUserScreen : IScreen
     {
         do
         {
-            Console.WriteLine("Select the Identity Field you would like to use to find your user.");
+            Console.WriteLine("Select the Identity Field you would like to use to find your user or type 'X' to leave the screen");
             Console.WriteLine("Type 'N' to use the User's Name");
             Console.WriteLine("Type 'A' to use the User's Address");
             Console.WriteLine("Type 'P' to use the User's Phone Number");
@@ -66,6 +66,9 @@ public class LookupUserScreen : IScreen
                     return IdentityFields.PhoneNumber;
                 case "E":
                     return IdentityFields.Email;
+                case "X":
+                    _screenManager.ShowScreen(ScreenNames.AdminOverview);
+                    break;
                 default:
                     Console.WriteLine("Incorrect Identity Field Entered. Please Try Again.\n");
                     break;
@@ -76,11 +79,11 @@ public class LookupUserScreen : IScreen
     private string[] FindUserInfo(IdentityFields field)
     {
         Console.WriteLine($"Enter the {field} of the User whose User Id you would like to find.");
-        string? input = Console.ReadLine();
-        while (input is null)
+        string input = Console.ReadLine() ?? "";
+        while (input == "")
         {
-            Console.WriteLine($"Please enter a(n) {field}");
-            input = Console.ReadLine();
+            Console.WriteLine($"Please Enter a {field}");
+            input = Console.ReadLine() ?? "";
         }
 
         return _lookupUser.LookupUserInfo(field, input, _userContextService.GetUserContext().UserId);
@@ -103,7 +106,7 @@ public class LookupUserScreen : IScreen
         else
         {
             Console.WriteLine("User Id:");
-            Console.WriteLine(users.First());
+            Console.WriteLine(users.FirstOrDefault());
         }
     }
 }

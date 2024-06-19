@@ -64,7 +64,7 @@ public class LoginScreen : IScreen
         string? password = null;
         do
         {
-            Console.WriteLine("Please enter input for UserId and Password");
+            Console.WriteLine("Please enter your User Id and Password");
 
             Console.WriteLine("Enter User ID");
             userId = Console.ReadLine() ?? "";
