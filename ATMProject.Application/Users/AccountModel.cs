@@ -6,8 +6,20 @@ public record AccountModel
 (
     string AccountId,
     string UserId,
-    AccountType Type, 
-    double Balance, 
+    AccountType Type,
+    double Balance,
     DateTime CreationDate,
-    List<string> TransactionIds
-);
+    List<AccountModel.TransactionModel> TransactionIds
+)
+{
+    public record TransactionModel
+    (
+        string TransactionId,
+        string AccountId,
+        TransactionType Type,
+        double Amount,
+        double PreviousBalance,
+        double NewBalance,
+        DateTime DateTime
+    );
+};

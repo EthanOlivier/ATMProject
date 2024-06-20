@@ -32,8 +32,8 @@ public class TransactionTransferScreen : IScreen
     (
         string Id,
         string Type,
-        double Balance,
-        DateTime CreationDate
+        string Balance,
+        string CreationDate
     );
 
 
@@ -63,8 +63,8 @@ public class TransactionTransferScreen : IScreen
         return accountData.Select(accountData => new ViewModel(
             Id: accountData.AccountId,
             Type: accountData.Type.ToString(),
-            Balance: accountData.Balance,
-            CreationDate: accountData.CreationDate
+            Balance: accountData.Balance.ToString("N2"),
+            CreationDate: accountData.CreationDate.ToString()
         ));
     }
     private (string, string, double) ChooseAccounts(IEnumerable<ViewModel> viewModel)
@@ -72,7 +72,7 @@ public class TransactionTransferScreen : IScreen
         string withdrawalAccount = "", depositAccount = "";
         double withdrawalAccountBalance = 0.0;
 
-        var withdrawalableAccounts = viewModel.Where(acct => acct.Balance > 0);
+        var withdrawalableAccounts = viewModel.Where(acct => Convert.ToDouble(acct.Balance) > 0);
 
         Console.WriteLine("Enter an Account or type 'X' to leave the screen\n");
 
@@ -85,7 +85,7 @@ public class TransactionTransferScreen : IScreen
                 break;
             case 1:
                 withdrawalAccount = withdrawalableAccounts.FirstOrDefault()!.Id;
-                withdrawalAccountBalance = withdrawalableAccounts.FirstOrDefault()!.Balance;
+                withdrawalAccountBalance = Convert.ToDouble(withdrawalableAccounts.FirstOrDefault()!.Balance);
                 if (withdrawalAccount is null || withdrawalAccountBalance == 0.0)
                 {
                     throw new Exception("Error: Unable to find given account");
@@ -94,7 +94,7 @@ public class TransactionTransferScreen : IScreen
             default:
                 foreach (var account in withdrawalableAccounts)
                 {
-                    Console.WriteLine($"Type {account.Id} to transfer from Account with Type: {account.Type}, Balance: ${account.Balance.ToString("N2")}");
+                    Console.WriteLine($"Type {account.Id} to transfer from Account with Type: {account.Type}, Balance: ${account.Balance}");
                 }
                 withdrawalAccount = Console.ReadLine() ?? "";
 
@@ -110,7 +110,7 @@ public class TransactionTransferScreen : IScreen
                 }
                 else
                 {
-                    withdrawalAccountBalance = withdrawalableAccounts.Where(acct => acct.Id == withdrawalAccount).FirstOrDefault()!.Balance;
+                    withdrawalAccountBalance = Convert.ToDouble(withdrawalableAccounts.Where(acct => acct.Id == withdrawalAccount).FirstOrDefault()!.Balance);
                     if (withdrawalAccountBalance == 0.0)
                     {
                         throw new Exception("Error: Unable to find given account");
@@ -140,7 +140,7 @@ public class TransactionTransferScreen : IScreen
                 {
                     if (account.Id != withdrawalAccount)
                     {
-                        Console.WriteLine($"Type {account.Id} to transfer into Account with Type: {account.Type}, Balance: ${account.Balance.ToString("N2")}");
+                        Console.WriteLine($"Type {account.Id} to transfer into Account with Type: {account.Type}, Balance: ${account.Balance}");
                     }
                 }
                 depositAccount = Console.ReadLine() ?? "";

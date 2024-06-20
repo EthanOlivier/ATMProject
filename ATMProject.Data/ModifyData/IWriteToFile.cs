@@ -10,6 +10,7 @@ namespace ATMProject.Data.ModifyData;
 public interface IWriteToFile
 {
     void UpdateUsersFile(string givenUserId, MockDatabaseUserModel newUser);
-    void UpdateAccountsFile(string givenAccountId, MockDatabaseAccountModel newAccount);
-    void UpdateTransactionsAndAuditsFile(MockDatabaseTransactionModel newTransaction, MockDatabaseAuditModel newAudit, string[] accountIds);
+    void UpdateAccountsFile(string[] givenAccountIds, MockDatabaseAccountModel newAccount);
+    void UpdateTransactionsFile(MockDatabaseTransactionModel newTransaction, string[] accountIds);
+    void UpdateAuditsFile(MockDatabaseAuditModel newAudit);
 }

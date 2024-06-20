@@ -24,7 +24,7 @@ public class HistoryScreen : IScreen
         string Id,
         string Type,
         double Balance,
-        DateTime CreationDate,
+        string CreationDate,
         IEnumerable<ViewModel.TransactionsViewModel> Transactions
     )
     {
@@ -35,7 +35,7 @@ public class HistoryScreen : IScreen
             string Amount,
             string PreviousBalance,
             string NewBalance,
-            DateTime DateTime
+            string DateTime
         );
     }
 
@@ -56,14 +56,13 @@ public class HistoryScreen : IScreen
     private IEnumerable<ViewModel> GetData()
     {
         var accountData = _userRepository.GetUserAccountsByUserId(_userContextService.GetUserContext().UserId);
-        var transactionData = _userRepository.GetAccountTransactionsByAccountIds(accountData.Select(acct => acct.AccountId).ToArray());
 
         return accountData.Select(accountData => new ViewModel(
             Id: accountData.AccountId,
             Type: accountData.Type.ToString(),
             Balance: accountData.Balance,
-            CreationDate: accountData.CreationDate,
-            Transactions: transactionData?
+            CreationDate: accountData.CreationDate.ToString(),
+            Transactions: accountData.TransactionIds?
                 .Where(tran => tran.AccountId == accountData.AccountId)
                 .Select(tran => new ViewModel.TransactionsViewModel(
                     Id: tran.TransactionId,
@@ -71,7 +70,7 @@ public class HistoryScreen : IScreen
                     Amount: tran.Amount.ToString(),
                     PreviousBalance: tran.PreviousBalance.ToString(),
                     NewBalance: tran.NewBalance.ToString(),
-                    DateTime: tran.DateTime
+                    DateTime: tran.DateTime.ToString()
                 ))
         ));
     }

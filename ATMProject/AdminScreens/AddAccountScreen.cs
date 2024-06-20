@@ -38,7 +38,7 @@ public class AddAccountScreen : IReceivableScreen
         string PhoneNumber,
         string Email,
         string UserRole,
-        DateTime CreationDate,
+        string CreationDate,
         IEnumerable<ViewModel.Account> Accounts
     )
     {
@@ -47,7 +47,7 @@ public class AddAccountScreen : IReceivableScreen
             string Id,
             string Type,
             string Balance,
-            DateTime CreationDate
+            string CreationDate
         );
     }
 
@@ -144,14 +144,14 @@ public class AddAccountScreen : IReceivableScreen
             PhoneNumber: userInfo.PhoneNumber,
             Email: userInfo.Email,
             UserRole: userInfo.UserRole.ToString(),
-            CreationDate: userInfo.CreationDate,
+            CreationDate: userInfo.CreationDate.ToString(),
             Accounts: accountData?
                 .Where(account => account?.UserId == UserId)
                 .Select(account => new ViewModel.Account(
                     Id: account.AccountId,
                     Type: account.Type.ToString(),
                     Balance: account.Balance.ToString(),
-                    CreationDate: account.CreationDate
+                    CreationDate: account.CreationDate.ToString()
                 )
             ));
     }
@@ -178,7 +178,7 @@ public class AddAccountScreen : IReceivableScreen
         }
         else
         {
-            _logger.Log($"Warning: No Accounts found for user {UserId}");
+            Console.WriteLine("None");
         }
     }
     private (AccountType, double) EnterAccountInfo()

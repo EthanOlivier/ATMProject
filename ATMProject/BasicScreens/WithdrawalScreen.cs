@@ -30,8 +30,8 @@ public class WithdrawalScreen : IScreen
     (
         string Id,
         string Type,
-        double Balance,
-        DateTime CreationDate
+        string Balance,
+        string CreationDate
     );
 
 
@@ -62,8 +62,8 @@ public class WithdrawalScreen : IScreen
         return accountData.Select(accountData => new ViewModel(
             Id: accountData.AccountId,
             Type: accountData.Type.ToString(),
-            Balance: accountData.Balance,
-            CreationDate: accountData.CreationDate
+            Balance: accountData.Balance.ToString("N2"),
+            CreationDate: accountData.CreationDate.ToString()
         ));
     }
     private string ChooseAccount(IEnumerable<ViewModel> viewModel)
@@ -85,12 +85,16 @@ public class WithdrawalScreen : IScreen
                 }
                 break;
             default:
-                Console.WriteLine("Choose account: \n");
+                Console.WriteLine("Choose account or type 'X' to leave the screen\n");
                 foreach (var account in viewModel)
                 {
-                    Console.Write($"Type {account.Id} for Account with Type: {account.Type}, Balance: ${account.Balance.ToString("N2")}\n");
+                    Console.Write($"Type {account.Id} for Account with Type: {account.Type}, Balance: ${account.Balance}\n");
                 }
                 accountEntered = Console.ReadLine() ?? "";
+                if (accountEntered.ToUpper() == "X")
+                {
+                    _screenManager.ShowScreen(ScreenNames.BasicOverview);
+                }
                 if (!viewModel.Any(acct => acct.Id == accountEntered))
                 {
                     Console.WriteLine("\nAccount Entered was not a valid account");
@@ -107,7 +111,7 @@ public class WithdrawalScreen : IScreen
         bool isAmountDouble = false;
         while (!isAmountDouble)
         {
-            Console.WriteLine("Enter the amount you want to deposit or type 'X' to leave the screen");
+            Console.WriteLine("Enter the amount you want to withdrawal or type 'X' to leave the screen");
             strAmount = Console.ReadLine() ?? "";
             if (strAmount.ToUpper() == "X")
             {

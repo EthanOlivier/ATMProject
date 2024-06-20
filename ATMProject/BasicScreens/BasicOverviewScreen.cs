@@ -24,8 +24,8 @@ public class BasicOverviewScreen : IScreen
         string Address,
         string PhoneNumber,
         string Email,
-        UserRole UserRole,
-        DateTime CreationDate,
+        string UserRole,
+        string CreationDate,
         IEnumerable<ViewModel.Account> Accounts
     )
     {
@@ -34,7 +34,7 @@ public class BasicOverviewScreen : IScreen
             string Id,
             string Type,
             double Balance,
-            DateTime CreationDate
+            string CreationDate
         );
     }
 
@@ -63,15 +63,15 @@ public class BasicOverviewScreen : IScreen
             Address: userInfo.Address,
             PhoneNumber: userInfo.PhoneNumber,
             Email: userInfo.Email,
-            UserRole: userInfo.UserRole,
-            CreationDate: userInfo.CreationDate,
+            UserRole: userInfo.UserRole.ToString(),
+            CreationDate: userInfo.CreationDate.ToString(),
             Accounts: accounts
                 .Where(account => account?.UserId == _userContextService.GetUserContext()?.UserId)
                 .Select(account => new ViewModel.Account(
                     Id: account.AccountId,
                     Type: account.Type.ToString(),
                     Balance: account.Balance,
-                    CreationDate: account.CreationDate
+                    CreationDate: account.CreationDate.ToString()
             )
         ));
     }

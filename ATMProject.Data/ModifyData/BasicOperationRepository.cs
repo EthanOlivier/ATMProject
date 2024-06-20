@@ -44,12 +44,8 @@ public class BasicOperationRepository : IBasicOperationRepository
         MockDatabaseAccountModel newAccount = new MockDatabaseAccountModel(account.AccountId, account.UserId, account.Type, newBalance, account.CreationDate, account.Transactions);
         MockDatabaseTransactionModel newTransaction = new MockDatabaseTransactionModel(transacitonId, request.AccountId, TransactionType.Deposit, (double)request.Amount, previousBalance, newBalance, DateTime.Now);
 
-        MockDatabaseFileRead.Accounts.Remove(account);
-        MockDatabaseFileRead.Accounts.Add(newAccount);
-        MockDatabaseFileRead.Transactions.Add(newTransaction);
-
-        _writeToFile.UpdateAccountsFile(request.AccountId, newAccount);
-        _writeToFile.UpdateTransactionsAndAuditsFile(newTransaction, null, null);
+        _writeToFile.UpdateAccountsFile(new[] { request.AccountId }, newAccount);
+        _writeToFile.UpdateTransactionsFile(newTransaction, null);
 
         return Result.Succeeded();
     }
@@ -75,12 +71,8 @@ public class BasicOperationRepository : IBasicOperationRepository
         MockDatabaseAccountModel newAccount = new MockDatabaseAccountModel(account.AccountId, account.UserId, account.Type, newBalance, account.CreationDate, account.Transactions);
         MockDatabaseTransactionModel newTransaction = new MockDatabaseTransactionModel(transacitonId, request.AccountId, TransactionType.Withdrawal, (double)request.Amount, previousBalance, newBalance, DateTime.Now);
 
-        MockDatabaseFileRead.Accounts.Remove(account);
-        MockDatabaseFileRead.Accounts.Add(newAccount);
-        MockDatabaseFileRead.Transactions.Add(newTransaction);
-
-        _writeToFile.UpdateAccountsFile(request.AccountId, newAccount);
-        _writeToFile.UpdateTransactionsAndAuditsFile(newTransaction, null, null);
+        _writeToFile.UpdateAccountsFile(new[] { request.AccountId }, newAccount);
+        _writeToFile.UpdateTransactionsFile(newTransaction, null);
 
         return Result.Succeeded();
     }
@@ -107,12 +99,8 @@ public class BasicOperationRepository : IBasicOperationRepository
         MockDatabaseAccountModel newWithdrawalAccount = new MockDatabaseAccountModel(withdrawalAccount.AccountId, withdrawalAccount.UserId, withdrawalAccount.Type, newBalance, withdrawalAccount.CreationDate, withdrawalAccount.Transactions);
         MockDatabaseTransactionModel newWithdrawalTransaction = new MockDatabaseTransactionModel(withdrawalTransactionId, request.WithdrawalAccountId, TransactionType.Transaction, request.Amount, previousBalance, newBalance, DateTime.Now);
 
-        MockDatabaseFileRead.Accounts.Remove(withdrawalAccount);
-        MockDatabaseFileRead.Accounts.Add(newWithdrawalAccount);
-        MockDatabaseFileRead.Transactions.Add(newWithdrawalTransaction);
-
-        _writeToFile.UpdateAccountsFile(request.WithdrawalAccountId, newWithdrawalAccount);
-        _writeToFile.UpdateTransactionsAndAuditsFile(newWithdrawalTransaction, null, null);
+        _writeToFile.UpdateAccountsFile(new[] { request.WithdrawalAccountId }, newWithdrawalAccount);
+        _writeToFile.UpdateTransactionsFile(newWithdrawalTransaction, null);
 
 
 
@@ -131,12 +119,8 @@ public class BasicOperationRepository : IBasicOperationRepository
         MockDatabaseAccountModel newDepositAccount = new MockDatabaseAccountModel(depositAccount.AccountId, depositAccount.UserId, depositAccount.Type, newBalance, depositAccount.CreationDate, depositAccount.Transactions);
         MockDatabaseTransactionModel newDepsitTransaction = new MockDatabaseTransactionModel(depositTransactionId, request.WithdrawalAccountId, TransactionType.Transaction, request.Amount, previousBalance, newBalance, DateTime.Now);
 
-        MockDatabaseFileRead.Accounts.Remove(depositAccount);
-        MockDatabaseFileRead.Accounts.Add(newDepositAccount);
-        MockDatabaseFileRead.Transactions.Add(newDepsitTransaction);
-
-        _writeToFile.UpdateAccountsFile(request.DepositAccountId, newDepositAccount);
-        _writeToFile.UpdateTransactionsAndAuditsFile(newDepsitTransaction, null, null);
+        _writeToFile.UpdateAccountsFile(new[] { request.DepositAccountId }, newDepositAccount);
+        _writeToFile.UpdateTransactionsFile(newDepsitTransaction, null);
 
         return Result.Succeeded();
     }
@@ -153,9 +137,6 @@ public class BasicOperationRepository : IBasicOperationRepository
         }
 
         MockDatabaseUserModel newUser = new MockDatabaseUserModel(oldUser.UserId, newHash, newSalt, oldUser.UserRole, oldUser.Name, oldUser.Address, oldUser.PhoneNumber, oldUser.Email, oldUser.CreationDate, oldUser.AccountIds);
-
-        MockDatabaseFileRead.Users.Remove(oldUser);
-        MockDatabaseFileRead.Users.Add(newUser);
 
         _writeToFile.UpdateUsersFile(request.UserContext.UserId, newUser);
 

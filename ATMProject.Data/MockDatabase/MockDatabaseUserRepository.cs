@@ -31,19 +31,14 @@ public class MockDatabaseUserRepository : IDataSource
     }
     public IEnumerable<AccountModel> GetAccountsByUserId(string userId)
     {
-        MockDatabaseUserModel user = MockDatabaseFileRead.Users.Where(acct => acct.UserId == userId).FirstOrDefault()!;
-
-        if (user is null)
-        {
-            throw new Exception("Error: Could not find information with provided User Id");
-        }
-
-        var dbAccounts = MockDatabaseFileRead.Accounts.Where(acct => user.AccountIds.Contains(acct.AccountId)).ToArray();
+        var dbAccounts = MockDatabaseFileRead.Accounts.Where(acct => acct.UserId == userId).ToArray();
 
         if (dbAccounts is null)
         {
-            throw new Exception($"Could not find any accounts for User with Id: " + user.UserId);
+            throw new Exception($"Could not find any accounts for User with Id: " + userId);
         }
+
+        var dbTransactions = MockDatabaseFileRead.Transactions.Where(tran => dbAccounts.Any(acct => acct.AccountId == tran.AccountId)).ToArray();
 
         return dbAccounts.Select(account => new AccountModel(
             AccountId: account.AccountId,
@@ -51,31 +46,18 @@ public class MockDatabaseUserRepository : IDataSource
             Type: account.Type,
             Balance: account.Balance,
             CreationDate: account.CreationDate,
-            TransactionIds: account.Transactions
+            TransactionIds: dbTransactions.Select(tran => new AccountModel.TransactionModel(
+                TransactionId: tran.TranasctionId,
+                AccountId: tran.AccountId,
+                Type: tran.Type,
+                Amount: tran.Amount,
+                PreviousBalance: tran.PreviousBalance,
+                NewBalance: tran.NewBalance,
+                DateTime: tran.DateTime
+            )).ToList()
         ));
     }
 
-    public IEnumerable<TransactionModel> GetTransactionsByAccountIds(string[] accountIds)
-    {
-        var transactions = from transaction in MockDatabaseFileRead.Transactions
-                           join accountId in accountIds on transaction.AccountId equals accountId
-                           select transaction;
-
-        if (transactions is null)
-        {
-            throw new Exception("Error: Could not find information with provided Account Ids");
-        }
-
-        return transactions.Select(transaction => new TransactionModel(
-            TransactionId: transaction.TranasctionId,
-            AccountId: transaction.AccountId,
-            Type: transaction.Type,
-            Amount: transaction.Amount,
-            PreviousBalance: transaction.PreviousBalance,
-            NewBalance: transaction.NewBalance,
-            DateTime: transaction.DateTime
-        ));
-    }
 
     public static string CreateHash(string salt, string password)
     {

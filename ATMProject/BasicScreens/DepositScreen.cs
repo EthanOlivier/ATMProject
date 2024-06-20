@@ -32,8 +32,8 @@ public class DepositScreen : IScreen
     (
         string Id,
         string Type,
-        double Balance,
-        DateTime CreationDate
+        string Balance,
+        string CreationDate
     );
 
 
@@ -61,8 +61,8 @@ public class DepositScreen : IScreen
         return accountData.Select(accountData => new ViewModel(
                 Id: accountData.AccountId,
                 Type: accountData.Type.ToString(),
-                Balance: accountData.Balance,
-                CreationDate: accountData.CreationDate
+                Balance: accountData.Balance.ToString("N2"),
+                CreationDate: accountData.CreationDate.ToString()
         ));
     }
 
@@ -78,19 +78,23 @@ public class DepositScreen : IScreen
                 _screenManager.ShowScreen(ScreenNames.BasicOverview);
                 break;
             case 1:
-                accountEntered = viewModel.FirstOrDefault().Id;
+                accountEntered = viewModel.FirstOrDefault()!.Id;
                 if (accountEntered is null)
                 {
                     throw new Exception("Error: Unable to find given account");
                 }
                 break;
             default:
-                Console.WriteLine("Choose account: \n");
+                Console.WriteLine("Choose account or type 'X' to leave the screen\n");
                 foreach (var account in viewModel)
                 {
-                    Console.Write($"Type {account.Id} for Account with Type: {account.Type}, Balance: ${account.Balance.ToString("N2")}\n");
+                    Console.Write($"Type {account.Id} for Account with Type: {account.Type}, Balance: ${account.Balance}\n");
                 }
                 accountEntered = Console.ReadLine() ?? "";
+                if (accountEntered.ToUpper() == "X")
+                {
+                    _screenManager.ShowScreen(ScreenNames.BasicOverview);
+                }
                 if (!viewModel.Any(acct => acct.Id == accountEntered))
                 {
                     Console.WriteLine("\nAccount Entered was not a valid account");

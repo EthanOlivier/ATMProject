@@ -9,120 +9,158 @@ public class MockDatabaseFileWrite : IWriteToFile
     public void UpdateUsersFile(string givenUserId, MockDatabaseUserModel newUser)
     {
         string FILE_DIRECTORY = "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\Users.txt";
-        string[] usersFileContents = File.ReadAllLines(FILE_DIRECTORY);
 
-        if (givenUserId is not null)
+        if (givenUserId is null && newUser is not null)
         {
-            var updatedFileContent = usersFileContents.Select(line =>
-            {
-                string fileUserId = line.Substring(0, line.IndexOf("|"));
-                if (fileUserId == givenUserId)
-                {
-                    if (newUser is null)
-                    {
-                        line = null;
-                    }
-                    else
-                    {
-                        string newIds = "";
-                        if (newUser.AccountIds is not null && newUser.AccountIds.Count() != 0)
-                        {
-                            newIds = String.Join(";", newUser.AccountIds);
-                        }
-                        return (newUser.UserId + "|" + newUser.Hash + "|" + newUser.Salt + "|" + newUser.UserRole + "|" + newUser.Name + "|" + newUser.Address + "|" + newUser.PhoneNumber + "|" + newUser.Email + "|" + newUser.CreationDate + "|" + newIds).ToString();
-                    }
-                }
-                return line;
-            }).Where(line => line != null);
+            MockDatabaseFileRead.Users.Add(newUser);
 
-            File.WriteAllLines(FILE_DIRECTORY, updatedFileContent);
+            File.AppendAllLines(FILE_DIRECTORY, new[] { newUser.UserId + "|" + newUser.Hash + "|" + newUser.Salt + "|" + newUser.UserRole + "|" + newUser.Name + "|" + newUser.Address + "|" + newUser.PhoneNumber + "|" + newUser.Email + "|" + newUser.CreationDate + "|" });
         }
-        else
+        else if (givenUserId is not null || newUser is not null)
         {
-            string newIds = "";
-            if (newUser.AccountIds is not null && newUser.AccountIds.Count() != 0)
+            List<string> updatedFileContents = new List<string> { };
+            MockDatabaseUserModel userToRemove = null, userToAdd = null;
+
+            foreach (MockDatabaseUserModel user in MockDatabaseFileRead.Users)
             {
-                newIds = String.Join(";", newUser.AccountIds);
+                if (user.UserId != givenUserId || newUser is not null)
+                {
+                    MockDatabaseUserModel fileUser = user;
+
+                    if (user.UserId == givenUserId)
+                    {
+                        userToRemove = user;
+                        fileUser = newUser;
+                        userToAdd = fileUser;
+                    }
+
+                    string newIds = "";
+                    if (fileUser.AccountIds is not null && fileUser.AccountIds.Count() != 0)
+                    {
+                        if (fileUser.AccountIds[0] == "")
+                        {
+                            fileUser.AccountIds.RemoveAt(0);
+                        }
+                        newIds = String.Join(";", fileUser.AccountIds);
+                    }
+                    updatedFileContents.Add(fileUser.UserId + "|" + fileUser.Hash + "|" + fileUser.Salt + "|" + fileUser.UserRole + "|" + fileUser.Name + "|" + fileUser.Address + "|" + fileUser.PhoneNumber + "|" + fileUser.Email + "|" + fileUser.CreationDate + "|" + newIds);
+                }
+                else
+                {
+                    userToRemove = user;
+                }
             }
-            string userToAdd = (newUser.UserId + "|" + newUser.Hash + "|" + newUser.Salt + "|" + newUser.UserRole + "|" + newUser.Name + "|" + newUser.Address + "|" + newUser.PhoneNumber + "|" + newUser.Email + "|" + newUser.CreationDate + "|" + newIds).ToString();
-            File.WriteAllLines(FILE_DIRECTORY, usersFileContents);
-            File.AppendAllLines(FILE_DIRECTORY, new[] { userToAdd });
+
+            if (userToRemove is not null)
+            {
+                MockDatabaseFileRead.Users.Remove(userToRemove);
+            }
+            if (userToAdd is not null)
+            {
+                MockDatabaseFileRead.Users.Add(userToAdd);
+            }
+
+            File.WriteAllLines(FILE_DIRECTORY, updatedFileContents);
         }
     }
-    public void UpdateAccountsFile(string givenAccountId, MockDatabaseAccountModel newAccount)
+    public void UpdateAccountsFile(string[] givenAccountIds, MockDatabaseAccountModel newAccount)
     {
         string FILE_DIRECTORY = "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\Accounts.txt";
-        string[] accountsFileContents = File.ReadAllLines(FILE_DIRECTORY);
 
-        if (givenAccountId is not null)
+        if (givenAccountIds is null && newAccount is not null)
         {
-            var updatedFileContent = accountsFileContents.Select(line =>
-            {
-                string fileAccountId = line.Substring(0, line.IndexOf("|"));
-                if (fileAccountId == givenAccountId)
-                {
-                    if (newAccount is null)
-                    {
-                        line = null;
-                    }
-                    else
-                    {
-                        string newTransactions = "";
-                        if (newAccount.Transactions is not null && newAccount.Transactions.Count() != 0)
-                        {
-                            newTransactions = String.Join(";", newAccount.Transactions);
-                        }
-                        return (newAccount.AccountId + "|" + newAccount.UserId + "|" + newAccount.Type + "|" + newAccount.Balance + "|" + newAccount.CreationDate + "|" + newTransactions);
-                    }
-                }
-                return line;
-            }).Where(line => line != null);
+            MockDatabaseFileRead.Accounts.Add(newAccount);
 
-            File.WriteAllLines(FILE_DIRECTORY, updatedFileContent);
+            File.AppendAllLines(FILE_DIRECTORY, new[] { newAccount.AccountId + "|" + newAccount.UserId + "|" + newAccount.Type + "|" + newAccount.Balance + "|" + newAccount.CreationDate + "|" });
         }
-        else
+        else if (givenAccountIds is not null || newAccount is not null)
         {
-            string newTransactions = "";
-            if (newAccount.Transactions is not null && newAccount.Transactions.Count() != 0)
+            List<string> updatedFileContents = new List<string> { };
+            MockDatabaseAccountModel accountToRemove = null, accountToAdd = null;
+
+            foreach (MockDatabaseAccountModel account in MockDatabaseFileRead.Accounts)
             {
-                newTransactions = String.Join(" ", newAccount.Transactions);
+                if (!givenAccountIds.Contains(account.AccountId) || newAccount is not null)
+                {
+                    MockDatabaseAccountModel fileAccount = account;
+
+                    if (givenAccountIds.Contains(account.AccountId))
+                    {
+                        accountToRemove = account;
+                        fileAccount = newAccount;
+                        accountToAdd = fileAccount;
+                    }
+
+                    string newTransactions = "";
+                    if (fileAccount.Transactions is not null && fileAccount.Transactions.Count() != 0)
+                    {
+                        if (fileAccount.Transactions[0] == "")
+                        {
+                            fileAccount.Transactions.RemoveAt(0);
+                        }
+                        newTransactions = String.Join(";", fileAccount.Transactions);
+                    }
+                    updatedFileContents.Add(fileAccount.AccountId + "|" + fileAccount.UserId + "|" + fileAccount.Type + "|" + fileAccount.Balance + "|" + fileAccount.CreationDate + "|" + newTransactions);
+                }
+                else
+                {
+                    accountToRemove = account;
+                }
             }
-            string accountToAdd = (newAccount.AccountId + "|" + newAccount.UserId + "|" + newAccount.Type + "|" + newAccount.Balance + "|" + newAccount.CreationDate + "|" + newTransactions);
-            File.WriteAllLines(FILE_DIRECTORY, accountsFileContents);
-            File.AppendAllLines(FILE_DIRECTORY, new[] { accountToAdd });
+
+            if (accountToRemove is not null)
+            {
+                MockDatabaseFileRead.Accounts.Remove(accountToRemove);
+            }
+            if (accountToAdd is not null)
+            {
+                MockDatabaseFileRead.Accounts.Add(accountToAdd);
+            }
+
+            File.WriteAllLines(FILE_DIRECTORY, updatedFileContents);
         }
     }
-    public void UpdateTransactionsAndAuditsFile(MockDatabaseTransactionModel newTransaction, MockDatabaseAuditModel newAudit, string[] accountIds)
+    public void UpdateTransactionsFile(MockDatabaseTransactionModel newTransaction, string[] accountIds)
     {
-        string FILE_DIRECTORY = "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\TransactionsAndAudits.txt";
-        string[] transactionsAndAuditsFileContents = File.ReadAllLines(FILE_DIRECTORY);
-
-        string recordToAdd = "";
+        string FILE_DIRECTORY = "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\Transactions.txt";
 
         if (newTransaction is not null)
         {
-            recordToAdd = newTransaction.TranasctionId + "|" + newTransaction.AccountId + "|" + newTransaction.Type + "|" + newTransaction.Amount + "|" + newTransaction.PreviousBalance + "|" + newTransaction.NewBalance + "|" + newTransaction.DateTime;
-            File.WriteAllLines(FILE_DIRECTORY, transactionsAndAuditsFileContents);
-            File.AppendAllLines(FILE_DIRECTORY, new[] { recordToAdd });
-        }
-        else if (newAudit is not null)
-        {
-            recordToAdd = newAudit.AuditId + "|" + newAudit.AdminId + "|" + newAudit.BasicId + "|" + newAudit.InteractionType + "|" + newAudit.DateTime;
-            File.WriteAllLines(FILE_DIRECTORY, transactionsAndAuditsFileContents);
-            File.AppendAllLines(FILE_DIRECTORY, new[] { recordToAdd });
+            MockDatabaseFileRead.Transactions.Add(newTransaction);
+            File.AppendAllLines(FILE_DIRECTORY, new[] { newTransaction.TranasctionId + "|" + newTransaction.AccountId + "|" + newTransaction.Type + "|" + newTransaction.Amount + "|" + newTransaction.PreviousBalance + "|" + newTransaction.NewBalance + "|" + newTransaction.DateTime });
         }
         else
         {
-            var updatedFileContent = transactionsAndAuditsFileContents.Select(line =>
+            List<string> updatedFileContents = new List<string> { };
+            MockDatabaseTransactionModel transactionToRemove = null;
+
+            foreach (MockDatabaseTransactionModel transaction in MockDatabaseFileRead.Transactions)
             {
-                string fileAccountId = line.Substring(0, line.IndexOf("|"));
-                if (accountIds.Contains(fileAccountId))
+                if (!accountIds.Contains(transaction.AccountId))
                 {
-                    line = null;
+                    updatedFileContents.Add(transaction.TranasctionId + "|" + transaction.AccountId + "|" + transaction.Type + "|" + transaction.Amount + "|" + transaction.PreviousBalance + "|" + transaction.NewBalance + "|" + transaction.DateTime);
                 }
-                return line;
-            }).Where(line => line != null).ToArray();
-            File.WriteAllLines(FILE_DIRECTORY, updatedFileContent);
+                else
+                {
+                    transactionToRemove = transaction;
+                }
+            }
+
+            if (transactionToRemove is not null)
+            {
+                MockDatabaseFileRead.Transactions.Remove(transactionToRemove);
+            }
+
+            File.WriteAllLines(FILE_DIRECTORY, updatedFileContents);
         }
+    }
+    public void UpdateAuditsFile(MockDatabaseAuditModel newAudit)
+    {
+        string FILE_DIRECTORY = "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\Audits.txt";
+        string[] transactionsAndAuditsFileContents = File.ReadAllLines(FILE_DIRECTORY);
+
+        string recordToAdd = newAudit.AuditId + "|" + newAudit.AdminId + "|" + newAudit.BasicId + "|" + newAudit.InteractionType + "|" + newAudit.DateTime;
+        File.WriteAllLines(FILE_DIRECTORY, transactionsAndAuditsFileContents);
+        File.AppendAllLines(FILE_DIRECTORY, new[] { recordToAdd });
     }
 }

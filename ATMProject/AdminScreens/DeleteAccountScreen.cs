@@ -37,7 +37,7 @@ public class DeleteAccountScreen : IScreen
         string PhoneNumber,
         string Email,
         string UserRole,
-        DateTime CreationDate,
+        string CreationDate,
         IEnumerable<ViewModel.Account> Accounts
     )
     {
@@ -46,7 +46,7 @@ public class DeleteAccountScreen : IScreen
             string Id,
             string Type,
             string Balance,
-            DateTime CreationDate
+            string CreationDate
         );
     }
 
@@ -106,14 +106,14 @@ public class DeleteAccountScreen : IScreen
             PhoneNumber: userInfo.PhoneNumber,
             Email: userInfo.Email,
             UserRole: userInfo.UserRole.ToString(),
-            CreationDate: userInfo.CreationDate,
+            CreationDate: userInfo.CreationDate.ToString(),
             Accounts: accountData
                 .Where(account => account?.UserId == userId)
                 .Select(account => new ViewModel.Account(
                     Id: account.AccountId,
                     Type: account.Type.ToString(),
                     Balance: account.Balance.ToString(),
-                    CreationDate: account.CreationDate
+                    CreationDate: account.CreationDate.ToString()
                 ))
             );
     }

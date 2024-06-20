@@ -96,7 +96,7 @@ public class AddUserScreen : IReceivableScreen
         {
             Console.WriteLine("Enter a password for this new user or type 'X' to leave the screen");
             password = Console.ReadLine()!;
-            if (password != "")
+            if (password != "X")
             {
                 password = password == String.Empty ? "password" : password;
                 Console.WriteLine($"Do you want to confirm your password to be [{password}]?\nType Y for yes, Type N for No");
@@ -140,11 +140,11 @@ public class AddUserScreen : IReceivableScreen
         }
 
         Console.WriteLine("\nThe new users information will be: ");
-        Console.Write("Name: " + name);
-        Console.Write("\nAddress: " + address);
-        Console.Write("\nPhone Number: " + phoneNumber);
-        Console.Write("\nEmail: " + email);
-        Console.Write("\nCreation Date: " + DateTime.Now);
+        Console.WriteLine("Name: " + name);
+        Console.WriteLine("Address: " + address);
+        Console.WriteLine("Phone Number: " + phoneNumber);
+        Console.WriteLine("Email: " + email);
+        Console.WriteLine("Creation Date: " + DateTime.Now);
         Console.WriteLine("\nAccounts:");
         if (accountData is not null)
         {
@@ -158,7 +158,7 @@ public class AddUserScreen : IReceivableScreen
         }
         else
         {
-            _logger.Log($"Warning: No Accounts found for user {UserId}");
+            Console.WriteLine("None");
         }
     }
     private void ConfirmEditCancel()

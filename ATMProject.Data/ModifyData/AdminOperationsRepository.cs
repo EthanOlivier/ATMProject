@@ -70,7 +70,7 @@ public class AdminOperationsRepository : IAdminOperationsRepository
 
         MockDatabaseFileRead.Audits.Add(newAudit);
 
-        _writeToFile.UpdateTransactionsAndAuditsFile(null, newAudit, null);
+        _writeToFile.UpdateAuditsFile(newAudit);
     }
 
     public List<string> GetAudits(string userId)
@@ -157,9 +157,6 @@ public class AdminOperationsRepository : IAdminOperationsRepository
 
         MockDatabaseUserModel newUser = new MockDatabaseUserModel(oldUser.UserId, newHash, newSalt, oldUser.UserRole, oldUser.Name, oldUser.Address, oldUser.PhoneNumber, oldUser.Email, oldUser.CreationDate, oldUser.AccountIds);
 
-        MockDatabaseFileRead.Users.Remove(oldUser);
-        MockDatabaseFileRead.Users.Add(newUser);
-
         _writeToFile.UpdateUsersFile(request.UserId, newUser);
 
         AddAudit(request.AdminId, AdminInteraction.ResetUserPassword, request.UserId, DateTime.Now);
@@ -169,8 +166,6 @@ public class AdminOperationsRepository : IAdminOperationsRepository
     public IResult Execute(IAddUser.Request request)
     {
         MockDatabaseUserModel newUser = new MockDatabaseUserModel(request.UserId, request.Hash, request.Salt, UserRole.Basic, request.Name, request.Address, request.PhoneNumber, request.Email, DateTime.Now, new List<string> { });
-
-        MockDatabaseFileRead.Users.Add(newUser);
 
         _writeToFile.UpdateUsersFile(null, newUser);
 
@@ -188,8 +183,6 @@ public class AdminOperationsRepository : IAdminOperationsRepository
         } while (MockDatabaseFileRead.Accounts.Where(acct => acct.AccountId == accountId).FirstOrDefault() != null);
 
         MockDatabaseAccountModel newAccount = new MockDatabaseAccountModel(accountId, request.UserId, request.AccountType, request.Balance, DateTime.Now, null);
-
-        MockDatabaseFileRead.Accounts.Add(newAccount);
 
         _writeToFile.UpdateAccountsFile(null, newAccount);
 
@@ -212,11 +205,9 @@ public class AdminOperationsRepository : IAdminOperationsRepository
             return Result.Failed($"Unable to find user with Id: {request.UserId}");
         }
 
-        MockDatabaseFileRead.Users.Remove(user);
-        MockDatabaseFileRead.Transactions.RemoveWhere(tran => user.AccountIds.Contains(tran.AccountId));
-
         _writeToFile.UpdateUsersFile(request.UserId, null);
-        _writeToFile.UpdateTransactionsAndAuditsFile(null, null, user.AccountIds.ToArray());
+        _writeToFile.UpdateAccountsFile(user.AccountIds.ToArray(), null);
+        _writeToFile.UpdateTransactionsFile(null, user.AccountIds.ToArray());
 
         AddAudit(request.AdminId, AdminInteraction.DeleteUser, request.UserId, DateTime.Now);
 
@@ -224,18 +215,13 @@ public class AdminOperationsRepository : IAdminOperationsRepository
     }
     public IResult Execute(IDeleteAccount.Request request)
     {
-        MockDatabaseAccountModel accountToDelete = MockDatabaseFileRead.Accounts.Where(acct => acct.AccountId == request.AccountId).FirstOrDefault()!;
+        MockDatabaseUserModel user = MockDatabaseFileRead.Users.Where(user => user.AccountIds.Contains(request.AccountId)).FirstOrDefault()!;
 
-        if (accountToDelete is null)
-        {
-            return Result.Failed($"Unable to find account with Id: {accountToDelete}");
-        }
+        user.AccountIds.Remove(request.AccountId);
 
-        MockDatabaseFileRead.Accounts.Remove(accountToDelete);
-        MockDatabaseFileRead.Transactions.RemoveWhere(tran => tran.AccountId == accountToDelete.AccountId);
-
-        _writeToFile.UpdateAccountsFile(request.AccountId, null);
-        _writeToFile.UpdateTransactionsAndAuditsFile(null, null, new[] { accountToDelete.AccountId });
+        _writeToFile.UpdateUsersFile(user.UserId, user);
+        _writeToFile.UpdateAccountsFile(new[] { request.AccountId }, null);
+        _writeToFile.UpdateTransactionsFile(null, new[] { request.AccountId });
 
         AddAudit(request.AdminId, AdminInteraction.DeleteAccount, request.AccountId, DateTime.Now);
 

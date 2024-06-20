@@ -14,7 +14,6 @@ public class MockDatabaseFileRead : IReadFile
 
     public void ReadAllFilesContents()
     {
-
         string FOLDER_DIRECTORY = "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\";
 
         // ReadAllLines is fine now, things like StreamReader could be better for larger thngs
@@ -36,6 +35,8 @@ public class MockDatabaseFileRead : IReadFile
             }
         }
 
+
+
         string[] accountsFileContents = File.ReadAllLines(Path.Combine(FOLDER_DIRECTORY, "Accounts.txt"));
 
         foreach (string account in accountsFileContents)
@@ -55,33 +56,38 @@ public class MockDatabaseFileRead : IReadFile
             }
         }
 
-        string[] transactionsAndAuditsFileContents = File.ReadAllLines(Path.Combine(FOLDER_DIRECTORY, "TransactionsAndAudits.txt"));
 
-        foreach (string transaction in transactionsAndAuditsFileContents)
+
+        string[] transactionsFileContents = File.ReadAllLines(Path.Combine(FOLDER_DIRECTORY, "Transactions.txt"));
+
+        foreach (string transaction in transactionsFileContents)
         {
             string[] transactionProperties = transaction.Split('|');
-            if (transactionProperties.Length == 7)
+            if (transactionProperties.Length == 7 && int.TryParse(transactionProperties[0], out _))
             {
-                if (int.TryParse(transactionProperties[0], out _))
-                {
-                    TransactionType type = (TransactionType)Enum.Parse(typeof(TransactionType), transactionProperties[2]);
-                    double amount = Convert.ToDouble(transactionProperties[3]);
-                    double previousBalance = Convert.ToDouble(transactionProperties[4]);
-                    double newBalance = Convert.ToDouble(transactionProperties[5]);
-                    DateTime transactionDate = DateTime.Parse(transactionProperties[6]);
+                TransactionType type = (TransactionType)Enum.Parse(typeof(TransactionType), transactionProperties[2]);
+                double amount = Convert.ToDouble(transactionProperties[3]);
+                double previousBalance = Convert.ToDouble(transactionProperties[4]);
+                double newBalance = Convert.ToDouble(transactionProperties[5]);
+                DateTime transactionDate = DateTime.Parse(transactionProperties[6]);
 
-                    Transactions.Add(new MockDatabaseTransactionModel(transactionProperties[0], transactionProperties[1], type, amount, previousBalance, newBalance, transactionDate));
-                }
+                Transactions.Add(new MockDatabaseTransactionModel(transactionProperties[0], transactionProperties[1], type, amount, previousBalance, newBalance, transactionDate));
             }
-            else if (transactionProperties.Length == 5)
-            {
-                if (int.TryParse(transactionProperties[0], out _))
-                {
-                    AdminInteraction interaction = (AdminInteraction)Enum.Parse(typeof(AdminInteraction), transactionProperties[3]);
-                    DateTime auditDate = DateTime.Parse(transactionProperties[4]);
+        }
 
-                    Audits.Add(new MockDatabaseAuditModel(transactionProperties[0], transactionProperties[1], transactionProperties[2], interaction, auditDate));
-                }
+
+
+        string[] AuditsFileContents = File.ReadAllLines(Path.Combine(FOLDER_DIRECTORY, "Audits.txt"));
+
+        foreach (string audits in AuditsFileContents)
+        {
+            string[] auditsProperties = audits.Split('|');
+            if (auditsProperties.Length == 5 && int.TryParse(auditsProperties[0], out _))
+            {
+                AdminInteraction interaction = (AdminInteraction)Enum.Parse(typeof(AdminInteraction), auditsProperties[3]);
+                DateTime auditDate = DateTime.Parse(auditsProperties[4]);
+
+                Audits.Add(new MockDatabaseAuditModel(auditsProperties[0], auditsProperties[1], auditsProperties[2], interaction, auditDate));
             }
         }
     }

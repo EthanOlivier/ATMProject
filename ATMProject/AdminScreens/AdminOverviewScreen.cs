@@ -67,7 +67,7 @@ public class AdminOverviewScreen : IScreen
         }
 
         Console.WriteLine("\nType 'F' to Find User Id");
-        Console.WriteLine("Type 'R' to Reset User Password");
+        Console.WriteLine("Type 'R' to Reset a User's Password");
         Console.WriteLine("Type 'AU' to Add another User");
         Console.WriteLine("Type 'DU' to Delete a current User");
         Console.WriteLine("Type 'AA' to Add another Account to a User");

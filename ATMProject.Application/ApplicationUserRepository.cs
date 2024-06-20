@@ -10,10 +10,6 @@ public class ApplicationUserRepository : IUserRepository
     {
         _dataSource = dataSource;
     }
-    public IEnumerable<TransactionModel> GetAccountTransactionsByAccountIds(string[] accountIds)
-    {
-        return _dataSource.GetTransactionsByAccountIds(accountIds);
-    }
 
     public IEnumerable<AccountModel> GetUserAccountsByUserId(string userId)
     {
