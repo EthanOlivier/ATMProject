@@ -42,14 +42,6 @@ public class HistoryScreen : IScreen
 
     public void ShowScreen()
     {
-        if (!_userContextService.IsLoggedIn ||
-            _userContextService.GetUserContext().UserRole == UserRole.Admin
-        )
-        {
-            _userContextService.Logout();
-            _screenManager.ShowScreen(ScreenNames.Login);
-        }
-
         ShowHistory(GetData());
         _screenManager.ShowScreen(ScreenNames.BasicOverview);
     }

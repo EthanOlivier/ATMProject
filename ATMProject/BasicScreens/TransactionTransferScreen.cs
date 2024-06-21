@@ -41,13 +41,6 @@ public class TransactionTransferScreen : IScreen
     {
         string depositAccount, withdrawalAccount;
         double amount, withdrawalAccountBalance;
-        if (!_userContextService.IsLoggedIn ||
-            _userContextService.GetUserContext().UserRole == UserRole.Admin
-        )
-        {
-            _userContextService.Logout();
-            _screenManager.ShowScreen(ScreenNames.Login);
-        }
 
         (withdrawalAccount, depositAccount, withdrawalAccountBalance) = ChooseAccounts(GetData());
         amount = GetAmount(withdrawalAccountBalance);

@@ -39,14 +39,6 @@ public class DepositScreen : IScreen
 
     public void ShowScreen()
     {
-        if (!_userContextService.IsLoggedIn ||
-            _userContextService.GetUserContext().UserRole == UserRole.Admin
-        )
-        {
-            _userContextService.Logout();
-            _screenManager.ShowScreen(ScreenNames.Login);
-        }
-
         string accountId = ChooseAccount(GetData());
         double amount = GetAmount();
 

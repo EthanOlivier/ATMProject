@@ -50,14 +50,6 @@ public class DeleteUserScreen : IScreen
 
     public void ShowScreen()
     {
-        if (!_userContextService.IsLoggedIn ||
-            _userContextService.GetUserContext().UserRole == UserRole.Basic
-        )
-        {
-            _userContextService.Logout();
-            _screenManager.ShowScreen(ScreenNames.Login);
-        }
-
         string userId = SelectUser();
         ViewModel viewModel = BuildViewModel(userId);
         DisplayUser(viewModel);

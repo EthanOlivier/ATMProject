@@ -131,32 +131,46 @@ public class BasicOverviewScreen : IScreen
                 break;
 
             case "D":
-                _screenManager.ShowScreen(ScreenNames.Deposit);
+                ShowScreen(ScreenNames.Deposit);
                 break;
 
             case "W":
                 if (viewModel.Accounts.Where(acct => acct.Balance > 0).Count() >= 1)
                 {
-                    _screenManager.ShowScreen(ScreenNames.Withdrawal);
+                    ShowScreen(ScreenNames.Withdrawal);
                 }
                 break;
 
             case "T":
                 if (viewModel.Accounts.Count() >= 2 && viewModel.Accounts.Where(acct => acct.Balance > 0).Count() >= 1)
                 {
-                    _screenManager.ShowScreen(ScreenNames.Transfer);
+                    ShowScreen(ScreenNames.Transfer);
                 }
                 break;
 
             case "H":
-                _screenManager.ShowScreen(ScreenNames.History);
+                ShowScreen(ScreenNames.History);
                 break;
 
             case "C":
-                _screenManager.ShowScreen(ScreenNames.ChangePassword);
+                ShowScreen(ScreenNames.ChangePassword);
                 break;
         }
         Console.WriteLine("Incorrect Screen Entered. Please Try Again");
         ReadInput(viewModel);
+    }
+    private void ShowScreen(ScreenNames screen)
+    {
+        if (!_userContextService.IsLoggedIn ||
+            _userContextService.GetUserContext().UserRole == UserRole.Admin
+        )
+        {
+            _userContextService.Logout();
+            _screenManager.ShowScreen(ScreenNames.Login);
+        }
+        else
+        {
+            _screenManager.ShowScreen(screen);
+        }
     }
 }

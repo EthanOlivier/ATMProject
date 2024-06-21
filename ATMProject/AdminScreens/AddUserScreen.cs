@@ -49,14 +49,6 @@ public class AddUserScreen : IReceivableScreen
     }
     public void ShowScreen()
     {
-        if (!_userContextService.IsLoggedIn ||
-            _userContextService.GetUserContext().UserRole == UserRole.Basic
-        )
-        {
-            _userContextService.Logout();
-            _screenManager.ShowScreen(ScreenNames.Login);
-        }
-
         (string, string, string, string, string, string) userInfo;
         string userId = "";
         if (UserId is null)

@@ -41,17 +41,6 @@ public class ChangePasswordScreen : IReceivableScreen
     }
     public void ShowScreen()
     {
-        if (!_userContextService.IsLoggedIn)
-        {
-            if (UserRole == UserRole.Basic)
-            {
-                _screenManager.ShowScreen(ScreenNames.BasicOverview);
-            }
-            else if (UserRole == UserRole.Admin)
-            {
-                _screenManager.ShowScreen(ScreenNames.AdminOverview);
-            }
-        }
         string newPassword = EnterNewPasswordScreen();
 
         _changePasswordOperation.Execute(new IChangeUserPasswordOperation.Request(_userContextService.GetUserContext(), newPassword));

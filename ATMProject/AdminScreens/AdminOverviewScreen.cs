@@ -92,32 +92,32 @@ public class AdminOverviewScreen : IScreen
         switch (input.ToUpper())
         {
             case "F":
-                _screenManager.ShowScreen(ScreenNames.LookupUser);
+                ShowScreen(ScreenNames.LookupUser);
                 break;
             case "R":
-                _screenManager.ShowScreen(ScreenNames.ChangeUserPassword);
+                ShowScreen(ScreenNames.ChangeUserPassword);
                 break;
             case "AU":
-                _screenManager.ShowScreen(ScreenNames.AddUser, "");
+                ShowScreen(ScreenNames.AddUser, "");
                 break;
             case "DU":
-                _screenManager.ShowScreen(ScreenNames.DeleteUser);
+                ShowScreen(ScreenNames.DeleteUser);
                 break;
             case "AA":
-                _screenManager.ShowScreen(ScreenNames.AddAccount, "");
+                ShowScreen(ScreenNames.AddAccount, "");
                 break;
             case "DA":
-                _screenManager.ShowScreen(ScreenNames.DeleteAccount);
+                ShowScreen(ScreenNames.DeleteAccount);
                 break;
             case "C":
                 if (_userContextService.IsLoggedIn)
                 {
-                    _screenManager.ShowScreen(ScreenNames.ChangePassword, "Admin");
+                    ShowScreen(ScreenNames.ChangePassword, "Admin");
                 }
                 else
                 {
                     Console.WriteLine("Incorrect Screen Entered. Please Try Again.");
-                    ShowScreen();
+                    ReadInput();
                 }
                 break;
             case "L":
@@ -128,6 +128,34 @@ public class AdminOverviewScreen : IScreen
                 Console.WriteLine("Incorrect Screen Entered. Please Try Again.");
                 ReadInput();
                 break;
+        }
+    }
+    private void ShowScreen(ScreenNames screen)
+    {
+        if (!_userContextService.IsLoggedIn ||
+            _userContextService.GetUserContext().UserRole == UserRole.Basic
+        )
+        {
+            _userContextService.Logout();
+            _screenManager.ShowScreen(ScreenNames.Login);
+        }
+        else
+        {
+            _screenManager.ShowScreen(screen);
+        }
+    }
+    private void ShowScreen(ScreenNames screen, string data)
+    {
+        if (!_userContextService.IsLoggedIn ||
+            _userContextService.GetUserContext().UserRole == UserRole.Basic
+        )
+        {
+            _userContextService.Logout();
+            _screenManager.ShowScreen(ScreenNames.Login);
+        }
+        else
+        {
+            _screenManager.ShowScreen(screen, data);
         }
     }
 }
