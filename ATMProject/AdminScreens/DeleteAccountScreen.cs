@@ -66,26 +66,27 @@ public class DeleteAccountScreen : IScreen
 
     private string SelectUser()
     {
-        Console.WriteLine("Enter the User Id for the user whose account you want to delete or type 'X' to leave the screen");
-        string userId = Console.ReadLine() ?? "";
-        while (userId == "")
+        while (true)
         {
-            Console.WriteLine("Please Enter a User Id");
-            userId = Console.ReadLine() ?? "";
-        }
+            Console.WriteLine("Enter the User Id for the user whose account you want to delete or type 'X' to leave the screen");
+            string userId = Console.ReadLine() ?? "";
 
-        if (userId.ToUpper() == "X")
-        {
-            _screenManager.ShowScreen(ScreenNames.AdminOverview);
+            if (!_findUser.DoesUserExist(userId))
+            {
+                if (userId.ToUpper() == "X")
+                {
+                    _screenManager.ShowScreen(ScreenNames.AdminOverview);
+                }
+                else
+                {
+                    Console.WriteLine("Id not found. Please try again.");
+                }
+            }
+            else
+            {
+                return userId;
+            }
         }
-
-        if (!_findUser.DoesUserExist(userId))
-        {
-            Console.WriteLine("Id not found. Please try again.");
-            SelectUser();
-        }
-
-        return userId;
     }
     private ViewModel BuildViewModel(string userId)
     {
@@ -138,7 +139,7 @@ public class DeleteAccountScreen : IScreen
     {
         bool doesAccountWithZeroBalanceExist = false;
         string accountId = "";
-        Console.WriteLine();
+        Console.WriteLine("\nEnter an account to delete or type 'X' to leave the screen");
         foreach (var account in viewModel.Accounts)
         {
             if (account.Balance == "0")
@@ -154,20 +155,27 @@ public class DeleteAccountScreen : IScreen
             _screenManager.ShowScreen(ScreenNames.AdminOverview);
         }
 
-        accountId = Console.ReadLine() ?? "";
-
-        if (!viewModel.Accounts.Any(acct => acct.Id == accountId))
+        while (true)
         {
-            Console.WriteLine("Account Entered was not a valid account");
-            ShowScreen();
-        }
-        else if (!viewModel.Accounts.Any(acct => acct.Id == accountId && acct.Balance == "0"))
-        {
-            Console.WriteLine("Account Entered did not have a balance of zero.");
-            ShowScreen();
-        }
+            accountId = Console.ReadLine() ?? "";
 
-        return accountId;
+            if (accountId.ToUpper() == "X")
+            {
+                _screenManager.ShowScreen(ScreenNames.AdminOverview);
+            }
+            else if (!viewModel.Accounts.Any(acct => acct.Id == accountId))
+            {
+                Console.WriteLine("Account Entered was not a valid account. Please try again.");
+            }
+            else if (!viewModel.Accounts.Any(acct => acct.Id == accountId && acct.Balance == "0"))
+            {
+                Console.WriteLine("Account Entered did not have a balance of zero. Please try again.");
+            }
+            else
+            {
+                return accountId;
+            }
+        }
     }
     private void ConfirmDeleteAccount(string userId, string accountId)
     {

@@ -62,28 +62,27 @@ public class ChangeUserPasswordScreen : IScreen
     }
     private string SelectUser()
     {
-        Console.WriteLine("Enter the User Id for the user whose password you want to change or type 'X' to leave the screen");
-        string? userId = Console.ReadLine();
-        while (userId is null)
+        while (true)
         {
-            Console.WriteLine("Please enter an Identity Field");
-            userId = Console.ReadLine();
-        }
+            Console.WriteLine("Enter the User Id for the user whose password you want to change or type 'X' to leave the screen");
+            string userId = Console.ReadLine() ?? "";
 
-        if (!_findUser.DoesUserExist(userId))
-        {
-            if (userId.ToUpper() != "X")
+            if (!_findUser.DoesUserExist(userId))
             {
-                Console.WriteLine("Id not found. Please try again");
-                SelectUser();
+                if (userId.ToUpper() == "X")
+                {
+                    _screenManager.ShowScreen(ScreenNames.AdminOverview);
+                }
+                else
+                {
+                    Console.WriteLine("Id not found. Please try again");
+                }
             }
             else
             {
-                _screenManager.ShowScreen(ScreenNames.AdminOverview);
+                return userId;
             }
         }
-
-        return userId;
     }
     private ViewModel BuildViewModel(string userId)
     {
@@ -137,7 +136,7 @@ public class ChangeUserPasswordScreen : IScreen
     private string ChangePassword(string userId)
     {
         Console.WriteLine("\nEnter their new password");
-        string password = Console.ReadLine()!;
+        string password = Console.ReadLine() ?? String.Empty;
         password = password == String.Empty ? "password" : password;
 
         Console.WriteLine($"Do you want to confirm change the user's password to [{password}]?\nType Y for yes, Type N for No");

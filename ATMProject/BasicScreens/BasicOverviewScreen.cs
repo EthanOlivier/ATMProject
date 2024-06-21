@@ -118,46 +118,42 @@ public class BasicOverviewScreen : IScreen
     private void ReadInput(ViewModel viewModel)
     {
         string input = Console.ReadLine() ?? "";
-        while (input == "")
+        while (true)
         {
             Console.WriteLine("Please Enter a Screen");
             input = Console.ReadLine() ?? "";
+            switch (input.ToUpper())
+            {
+                case "L":
+                    _userContextService.Logout();
+                    _screenManager.ShowScreen(ScreenNames.Login);
+                    break;
+                case "D":
+                    ShowScreen(ScreenNames.Deposit);
+                    break;
+                case "W":
+                    if (viewModel.Accounts.Where(acct => acct.Balance > 0).Count() >= 1)
+                    {
+                        ShowScreen(ScreenNames.Withdrawal);
+                    }
+                    break;
+                case "T":
+                    if (viewModel.Accounts.Count() >= 2 && viewModel.Accounts.Where(acct => acct.Balance > 0).Count() >= 1)
+                    {
+                        ShowScreen(ScreenNames.Transfer);
+                    }
+                    break;
+                case "H":
+                    ShowScreen(ScreenNames.History);
+                    break;
+                case "C":
+                    ShowScreen(ScreenNames.ChangePassword);
+                    break;
+                default:
+                    Console.WriteLine("Incorrect Screen Entered. Please Try Again");
+                    break;
+            }
         }
-        switch (input.ToUpper())
-        {
-            case "L":
-                _userContextService.Logout();
-                _screenManager.ShowScreen(ScreenNames.Login);
-                break;
-
-            case "D":
-                ShowScreen(ScreenNames.Deposit);
-                break;
-
-            case "W":
-                if (viewModel.Accounts.Where(acct => acct.Balance > 0).Count() >= 1)
-                {
-                    ShowScreen(ScreenNames.Withdrawal);
-                }
-                break;
-
-            case "T":
-                if (viewModel.Accounts.Count() >= 2 && viewModel.Accounts.Where(acct => acct.Balance > 0).Count() >= 1)
-                {
-                    ShowScreen(ScreenNames.Transfer);
-                }
-                break;
-
-            case "H":
-                ShowScreen(ScreenNames.History);
-                break;
-
-            case "C":
-                ShowScreen(ScreenNames.ChangePassword);
-                break;
-        }
-        Console.WriteLine("Incorrect Screen Entered. Please Try Again");
-        ReadInput(viewModel);
     }
     private void ShowScreen(ScreenNames screen)
     {

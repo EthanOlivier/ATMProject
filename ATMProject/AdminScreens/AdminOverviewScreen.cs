@@ -84,50 +84,48 @@ public class AdminOverviewScreen : IScreen
     private void ReadInput()
     {
         string input = Console.ReadLine() ?? "";
-        while (input == "")
+        while (true)
         {
             Console.WriteLine("Please Enter a Screen");
             input = Console.ReadLine() ?? "";
-        }
-        switch (input.ToUpper())
-        {
-            case "F":
-                ShowScreen(ScreenNames.LookupUser);
-                break;
-            case "R":
-                ShowScreen(ScreenNames.ChangeUserPassword);
-                break;
-            case "AU":
-                ShowScreen(ScreenNames.AddUser, "");
-                break;
-            case "DU":
-                ShowScreen(ScreenNames.DeleteUser);
-                break;
-            case "AA":
-                ShowScreen(ScreenNames.AddAccount, "");
-                break;
-            case "DA":
-                ShowScreen(ScreenNames.DeleteAccount);
-                break;
-            case "C":
-                if (_userContextService.IsLoggedIn)
-                {
-                    ShowScreen(ScreenNames.ChangePassword, "Admin");
-                }
-                else
-                {
+            switch (input.ToUpper())
+            {
+                case "F":
+                    ShowScreen(ScreenNames.LookupUser);
+                    break;
+                case "R":
+                    ShowScreen(ScreenNames.ChangeUserPassword);
+                    break;
+                case "AU":
+                    ShowScreen(ScreenNames.AddUser, "");
+                    break;
+                case "DU":
+                    ShowScreen(ScreenNames.DeleteUser);
+                    break;
+                case "AA":
+                    ShowScreen(ScreenNames.AddAccount, "");
+                    break;
+                case "DA":
+                    ShowScreen(ScreenNames.DeleteAccount);
+                    break;
+                case "C":
+                    if (_userContextService.IsLoggedIn)
+                    {
+                        ShowScreen(ScreenNames.ChangePassword, "Admin");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Incorrect Screen Entered. Please Try Again.");
+                    }
+                    break;
+                case "L":
+                    _userContextService.Logout();
+                    _screenManager.ShowScreen(ScreenNames.Login);
+                    break;
+                default:
                     Console.WriteLine("Incorrect Screen Entered. Please Try Again.");
-                    ReadInput();
-                }
-                break;
-            case "L":
-                _userContextService.Logout();
-                _screenManager.ShowScreen(ScreenNames.Login);
-                break;
-            default:
-                Console.WriteLine("Incorrect Screen Entered. Please Try Again.");
-                ReadInput();
-                break;
+                    break;
+            }
         }
     }
     private void ShowScreen(ScreenNames screen)

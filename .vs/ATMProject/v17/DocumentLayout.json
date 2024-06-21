@@ -3,36 +3,8 @@
   "WorkspaceRootPath": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{5B74B98A-D279-4568-8CF0-63261B5FF57C}|ATMProject.Data\\ATMProject.Data.csproj|c:\\users\\ethan\\source\\repos\\atmproject\\atmproject.data\\modifydata\\basicoperationrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5B74B98A-D279-4568-8CF0-63261B5FF57C}|ATMProject.Data\\ATMProject.Data.csproj|solutionrelative:atmproject.data\\modifydata\\basicoperationrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{95D9BB52-7A76-486B-9817-73F38803620D}|ATMProject\\ATMProject.WindowsConsoleApplication.csproj|c:\\users\\ethan\\source\\repos\\atmproject\\atmproject\\adminscreens\\addaccountscreen.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{95D9BB52-7A76-486B-9817-73F38803620D}|ATMProject\\ATMProject.WindowsConsoleApplication.csproj|solutionrelative:atmproject\\adminscreens\\addaccountscreen.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{95D9BB52-7A76-486B-9817-73F38803620D}|ATMProject\\ATMProject.WindowsConsoleApplication.csproj|c:\\users\\ethan\\source\\repos\\atmproject\\atmproject\\resources\\users.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{95D9BB52-7A76-486B-9817-73F38803620D}|ATMProject\\ATMProject.WindowsConsoleApplication.csproj|solutionrelative:atmproject\\resources\\users.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{95D9BB52-7A76-486B-9817-73F38803620D}|ATMProject\\ATMProject.WindowsConsoleApplication.csproj|c:\\users\\ethan\\source\\repos\\atmproject\\atmproject\\resources\\accounts.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{95D9BB52-7A76-486B-9817-73F38803620D}|ATMProject\\ATMProject.WindowsConsoleApplication.csproj|solutionrelative:atmproject\\resources\\accounts.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{95D9BB52-7A76-486B-9817-73F38803620D}|ATMProject\\ATMProject.WindowsConsoleApplication.csproj|c:\\users\\ethan\\source\\repos\\atmproject\\atmproject\\resources\\audits.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{95D9BB52-7A76-486B-9817-73F38803620D}|ATMProject\\ATMProject.WindowsConsoleApplication.csproj|solutionrelative:atmproject\\resources\\audits.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{95D9BB52-7A76-486B-9817-73F38803620D}|ATMProject\\ATMProject.WindowsConsoleApplication.csproj|c:\\users\\ethan\\source\\repos\\atmproject\\atmproject\\resources\\transactions.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{95D9BB52-7A76-486B-9817-73F38803620D}|ATMProject\\ATMProject.WindowsConsoleApplication.csproj|solutionrelative:atmproject\\resources\\transactions.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{95D9BB52-7A76-486B-9817-73F38803620D}|ATMProject\\ATMProject.WindowsConsoleApplication.csproj|c:\\users\\ethan\\source\\repos\\atmproject\\atmproject\\basicscreens\\depositscreen.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{95D9BB52-7A76-486B-9817-73F38803620D}|ATMProject\\ATMProject.WindowsConsoleApplication.csproj|solutionrelative:atmproject\\basicscreens\\depositscreen.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5B74B98A-D279-4568-8CF0-63261B5FF57C}|ATMProject.Data\\ATMProject.Data.csproj|c:\\users\\ethan\\source\\repos\\atmproject\\atmproject.data\\modifydata\\mockdatabasefilewrite.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{5B74B98A-D279-4568-8CF0-63261B5FF57C}|ATMProject.Data\\ATMProject.Data.csproj|solutionrelative:atmproject.data\\modifydata\\mockdatabasefilewrite.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -57,100 +29,15 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "BasicOperationRepository.cs",
-              "DocumentMoniker": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject.Data\\ModifyData\\BasicOperationRepository.cs",
-              "RelativeDocumentMoniker": "ATMProject.Data\\ModifyData\\BasicOperationRepository.cs",
-              "ToolTip": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject.Data\\ModifyData\\BasicOperationRepository.cs",
-              "RelativeToolTip": "ATMProject.Data\\ModifyData\\BasicOperationRepository.cs",
-              "ViewState": "AQIAAA8AAAAAAAAAAAA5wAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-21T15:30:07.878Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
               "Title": "AddAccountScreen.cs",
               "DocumentMoniker": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\AdminScreens\\AddAccountScreen.cs",
               "RelativeDocumentMoniker": "ATMProject\\AdminScreens\\AddAccountScreen.cs",
-              "ToolTip": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\AdminScreens\\AddAccountScreen.cs",
-              "RelativeToolTip": "ATMProject\\AdminScreens\\AddAccountScreen.cs",
-              "ViewState": "AQIAAJgAAAAAAAAAAAAuwLQAAAAeAAAA",
+              "ToolTip": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\AdminScreens\\AddAccountScreen.cs*",
+              "RelativeToolTip": "ATMProject\\AdminScreens\\AddAccountScreen.cs*",
+              "ViewState": "AQIAAFUAAAAAAAAAAAAcwGIAAAALAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-20T22:34:03.168Z",
+              "WhenOpened": "2024-06-21T19:13:53.488Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "DepositScreen.cs",
-              "DocumentMoniker": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\BasicScreens\\DepositScreen.cs",
-              "RelativeDocumentMoniker": "ATMProject\\BasicScreens\\DepositScreen.cs",
-              "ToolTip": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\BasicScreens\\DepositScreen.cs",
-              "RelativeToolTip": "ATMProject\\BasicScreens\\DepositScreen.cs",
-              "ViewState": "AQIAAEQAAAAAAAAAAAAIwGAAAAARAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-20T22:29:44.702Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "MockDatabaseFileWrite.cs",
-              "DocumentMoniker": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject.Data\\ModifyData\\MockDatabaseFileWrite.cs",
-              "RelativeDocumentMoniker": "ATMProject.Data\\ModifyData\\MockDatabaseFileWrite.cs",
-              "ToolTip": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject.Data\\ModifyData\\MockDatabaseFileWrite.cs",
-              "RelativeToolTip": "ATMProject.Data\\ModifyData\\MockDatabaseFileWrite.cs",
-              "ViewState": "AQIAAIYAAAAAAAAAAAAwwCEAAAAtAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-20T15:58:39.185Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Users.txt",
-              "DocumentMoniker": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\Users.txt",
-              "RelativeDocumentMoniker": "ATMProject\\Resources\\Users.txt",
-              "ToolTip": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\Users.txt",
-              "RelativeToolTip": "ATMProject\\Resources\\Users.txt",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
-              "WhenOpened": "2024-06-20T17:23:06.402Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Accounts.txt",
-              "DocumentMoniker": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\Accounts.txt",
-              "RelativeDocumentMoniker": "ATMProject\\Resources\\Accounts.txt",
-              "ToolTip": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\Accounts.txt",
-              "RelativeToolTip": "ATMProject\\Resources\\Accounts.txt",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAYAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
-              "WhenOpened": "2024-06-20T16:19:26.558Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Transactions.txt",
-              "DocumentMoniker": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\Transactions.txt",
-              "RelativeDocumentMoniker": "ATMProject\\Resources\\Transactions.txt",
-              "ToolTip": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\Transactions.txt",
-              "RelativeToolTip": "ATMProject\\Resources\\Transactions.txt",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
-              "WhenOpened": "2024-06-20T20:32:56.799Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Audits.txt",
-              "DocumentMoniker": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\Audits.txt",
-              "RelativeDocumentMoniker": "ATMProject\\Resources\\Audits.txt",
-              "ToolTip": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\Audits.txt",
-              "RelativeToolTip": "ATMProject\\Resources\\Audits.txt",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
-              "WhenOpened": "2024-06-20T15:59:37.11Z"
             }
           ]
         }

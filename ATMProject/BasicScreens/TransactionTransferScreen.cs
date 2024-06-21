@@ -5,6 +5,7 @@ using ATMProject.Application.Screens;
 using ATMProject.Application.Users;
 using ATMProject.System;
 using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
+using System.ComponentModel.Design;
 
 namespace ATMProject.WindowsConsoleApplication.BasicScreens;
 public class TransactionTransferScreen : IScreen
@@ -67,8 +68,6 @@ public class TransactionTransferScreen : IScreen
 
         var withdrawalableAccounts = viewModel.Where(acct => Convert.ToDouble(acct.Balance) > 0);
 
-        Console.WriteLine("Enter an Account or type 'X' to leave the screen\n");
-
         switch (withdrawalableAccounts.Count())
         {
             case 0:
@@ -85,28 +84,38 @@ public class TransactionTransferScreen : IScreen
                 }
                 break;
             default:
+                bool isAccountSelected = false;
+
+                Console.WriteLine("Enter an Account or type 'X' to leave the screen\n");
+
                 foreach (var account in withdrawalableAccounts)
                 {
                     Console.WriteLine($"Type {account.Id} to transfer from Account with Type: {account.Type}, Balance: ${account.Balance}");
                 }
-                withdrawalAccount = Console.ReadLine() ?? "";
 
-                if (withdrawalAccount.ToUpper() == "X")
+                while (!isAccountSelected)
                 {
-                    _screenManager.ShowScreen(ScreenNames.BasicOverview);
-                }
+                    withdrawalAccount = Console.ReadLine() ?? "";
 
-                if (!viewModel.Any(acct => acct.Id == withdrawalAccount))
-                {
-                    Console.WriteLine("\nAccount Entered was not a valid account");
-                    ShowScreen();
-                }
-                else
-                {
-                    withdrawalAccountBalance = Convert.ToDouble(withdrawalableAccounts.Where(acct => acct.Id == withdrawalAccount).FirstOrDefault()!.Balance);
-                    if (withdrawalAccountBalance == 0.0)
+                    if (!viewModel.Any(acct => acct.Id == withdrawalAccount))
                     {
-                        throw new Exception("Error: Unable to find given account");
+                        if (withdrawalAccount.ToUpper() == "X")
+                        {
+                            _screenManager.ShowScreen(ScreenNames.BasicOverview);
+                        }
+                        else
+                        {
+                            Console.WriteLine("\nAccount Entered was not a valid account");
+                        }
+                    }
+                    else
+                    {
+                        if (!double.TryParse(withdrawalableAccounts.Where(acct => acct.Id == withdrawalAccount).FirstOrDefault()!.Balance, out withdrawalAccountBalance))
+                        {
+                            throw new Exception("Error: Unable to find given account");
+                        }
+
+                        isAccountSelected = true;
                     }
                 }
                 break;
@@ -129,6 +138,10 @@ public class TransactionTransferScreen : IScreen
                 }
                 break;
             default:
+                bool isAccountSelected = false;
+
+                Console.WriteLine("Enter an Account or type 'X' to leave the screen\n");
+
                 foreach (var account in viewModel)
                 {
                     if (account.Id != withdrawalAccount)
@@ -136,17 +149,26 @@ public class TransactionTransferScreen : IScreen
                         Console.WriteLine($"Type {account.Id} to transfer into Account with Type: {account.Type}, Balance: ${account.Balance}");
                     }
                 }
-                depositAccount = Console.ReadLine() ?? "";
 
-                if (depositAccount.ToUpper() == "X")
+                while (!isAccountSelected)
                 {
-                    _screenManager.ShowScreen(ScreenNames.BasicOverview);
-                }
+                    depositAccount = Console.ReadLine() ?? "";
 
-                if (!viewModel.Any(acct => acct.Id == depositAccount) || depositAccount == withdrawalAccount)
-                {
-                    Console.WriteLine("\nAccount Entered was not a valid account");
-                    ShowScreen();
+                    if (!viewModel.Any(acct => acct.Id == depositAccount) || depositAccount == withdrawalAccount)
+                    {
+                        if (depositAccount.ToUpper() == "X")
+                        {
+                            _screenManager.ShowScreen(ScreenNames.BasicOverview);
+                        }
+                        else
+                        {
+                            Console.WriteLine("\nAccount Entered was not a valid account");
+                        }
+                    }
+                    else
+                    {
+                        isAccountSelected = true;
+                    }
                 }
                 break;
         }
@@ -160,9 +182,13 @@ public class TransactionTransferScreen : IScreen
         bool isAmountDouble = false;
         while (!isAmountDouble)
         {
-            Console.WriteLine($"Enter the amount you want to transfer up to ${withdrawalAccountBalance.ToString("N2")}");
+            Console.WriteLine($"Enter the amount you want to transfer up to ${withdrawalAccountBalance.ToString("N2")} or type 'X' to leave the screen");
             strAmount = Console.ReadLine() ?? "";
-            if (Double.TryParse(strAmount, out dblAmount))
+            if (strAmount.ToUpper() == "X")
+            {
+                _screenManager.ShowScreen(ScreenNames.BasicOverview);
+            }
+            else if (Double.TryParse(strAmount, out dblAmount))
             {
                 if (dblAmount > 0)
                 {

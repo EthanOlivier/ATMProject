@@ -76,20 +76,33 @@ public class WithdrawalScreen : IScreen
                 }
                 break;
             default:
+                bool isAccountSelected = false;
+
                 Console.WriteLine("Choose account or type 'X' to leave the screen\n");
+
                 foreach (var account in viewModel)
                 {
                     Console.Write($"Type {account.Id} for Account with Type: {account.Type}, Balance: ${account.Balance}\n");
                 }
-                accountEntered = Console.ReadLine() ?? "";
-                if (accountEntered.ToUpper() == "X")
+
+                while (!isAccountSelected)
                 {
-                    _screenManager.ShowScreen(ScreenNames.BasicOverview);
-                }
-                if (!viewModel.Any(acct => acct.Id == accountEntered))
-                {
-                    Console.WriteLine("\nAccount Entered was not a valid account");
-                    ShowScreen();
+                    accountEntered = Console.ReadLine() ?? "";
+                    if (!viewModel.Any(acct => acct.Id == accountEntered))
+                    {
+                        if (accountEntered.ToUpper() == "X")
+                        {
+                            _screenManager.ShowScreen(ScreenNames.BasicOverview);
+                        }
+                        else
+                        {
+                            Console.WriteLine("\nAccount Entered was not a valid account");
+                        }
+                    }
+                    else
+                    {
+                        isAccountSelected = true;
+                    }
                 }
                 break;
         }

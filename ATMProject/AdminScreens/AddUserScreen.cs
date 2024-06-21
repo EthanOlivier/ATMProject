@@ -87,7 +87,7 @@ public class AddUserScreen : IReceivableScreen
         do
         {
             Console.WriteLine("Enter a password for this new user or type 'X' to leave the screen");
-            password = Console.ReadLine()!;
+            password = Console.ReadLine() ?? String.Empty;
             if (password != "X")
             {
                 password = password == String.Empty ? "password" : password;
@@ -155,33 +155,40 @@ public class AddUserScreen : IReceivableScreen
     }
     private void ConfirmEditCancel()
     {
-        string confirm;
-        Console.WriteLine("\nType 'C' to Confirm this information");
-        Console.WriteLine("Type 'E' to Edit this information");
-        Console.WriteLine("Type 'X' to Cancel and Close out of this screen");
-
-        confirm = Console.ReadLine() ?? "";
-
-        switch (confirm.ToUpper())
+        while (true)
         {
-            case "C":
-                break;
-            case "E":
-                _screenManager.ShowScreen(ScreenNames.AddUser);
-                break;
-            default:
-                UserId = null;
-                _screenManager.ShowScreen(ScreenNames.AdminOverview);
-                break;
+            string confirm;
+            Console.WriteLine("\nType 'C' to Confirm this information");
+            Console.WriteLine("Type 'E' to Edit this information");
+            Console.WriteLine("Type 'X' to Cancel and Close out of this screen");
+
+            confirm = Console.ReadLine() ?? "";
+
+            switch (confirm.ToUpper())
+            {
+                case "C":
+                    break;
+                case "E":
+                    _screenManager.ShowScreen(ScreenNames.AddUser);
+                    break;
+                default:
+                    UserId = null;
+                    _screenManager.ShowScreen(ScreenNames.AdminOverview);
+                    break;
+            }
         }
     }
     private void AddAccountsToUser(string userId)
     {
-        ; Console.WriteLine("\nWould you like to add more accounts to this user?\nType Y for yes, Type N for No");
+        Console.WriteLine("\nWould you like to add more accounts to this user?\nType Y for yes, Type N for No");
         string confirm = Console.ReadLine() ?? "";
         if (confirm.ToUpper() == "Y")
         {
             _screenManager.ShowScreen(ScreenNames.AddAccount, UserId);
+        }
+        else
+        {
+            _screenManager.ShowScreen(ScreenNames.AdminOverview);
         }
     }
 }

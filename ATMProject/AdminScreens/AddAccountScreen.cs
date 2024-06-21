@@ -5,6 +5,7 @@ using ATMProject.Application.Screens;
 using ATMProject.Application.Users;
 using ATMProject.Banking;
 using ATMProject.System;
+using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace ATMProject.WindowsConsoleApplication.AdminScreens;
 public class AddAccountScreen : IReceivableScreen
@@ -97,24 +98,26 @@ public class AddAccountScreen : IReceivableScreen
     }
     private void EnterUserId()
     {
-        Console.WriteLine("Enter the User Id for the user whom you would like to add accounts to or type 'X' to leave the screen");
-        string userId = Console.ReadLine() ?? "";
-
-        if (!_findUser.DoesUserExist(userId))
+        while (UserId is null)
         {
-            if (userId.ToUpper() != "X")
+            Console.WriteLine("Enter the User Id for the user whom you would like to add accounts to or type 'X' to leave the screen");
+            string userId = Console.ReadLine() ?? "";
+
+            if (!_findUser.DoesUserExist(userId))
             {
-                Console.WriteLine("Id not found. Please try again");
-                _screenManager.ShowScreen(ScreenNames.AddAccount);
+                if (userId.ToUpper() == "X")
+                {
+                    _screenManager.ShowScreen(ScreenNames.AdminOverview);
+                }
+                else
+                {
+                    Console.WriteLine("Id not found. Please try again");
+                }
             }
             else
             {
-                _screenManager.ShowScreen(ScreenNames.AdminOverview);
+                UserId = userId;
             }
-        }
-        else
-        {
-            UserId = userId;
         }
     }
     private ViewModel BuildViewModel()
@@ -176,17 +179,25 @@ public class AddAccountScreen : IReceivableScreen
     private (AccountType, double) EnterAccountInfo()
     {
         AccountType accountType;
-        double balance;
+        string strBalance = "";
+        double dblBalance = 0.0;
         string type = "";
-        while (type.ToUpper() != "C" && type.ToUpper() != "S" && type.ToUpper() != "MMA" && type.ToUpper() != "CD")
+
+        while (type.ToUpper() != "C" && type.ToUpper() != "S" && type.ToUpper() != "MMA" && type.ToUpper() != "CD" && type.ToUpper() != "X")
         {
             if (type != "")
             {
                 Console.WriteLine("Please enter a correct accout type");
             }
-            Console.WriteLine("\nWhat type of account would you like to make this? Type 'C' for Checking, Type 'S' for Savings, Type 'MMA' for MMA, Type 'CD' for CD");
+            Console.WriteLine("\nWhat type of account would you like to make this? Type 'C' for Checking, Type 'S' for Savings, Type 'MMA' for MMA, Type 'CD' for CD or type 'X' to leave the screen");
             type = Console.ReadLine() ?? "";
         }
+
+        if (type.ToUpper() == "X")
+        {
+            _screenManager.ShowScreen(ScreenNames.AdminOverview);
+        }
+
         switch (type.ToUpper())
         {
             case "C":
@@ -205,9 +216,33 @@ public class AddAccountScreen : IReceivableScreen
                 throw new Exception("Error: Account Type Entered could not be recognized as an Account Type");
         }
 
-        Console.WriteLine("What will the balance of this new account be?");
-        balance = Convert.ToDouble(Console.ReadLine() ?? "0");
+        bool isBalanceDouble = false;
+        while (!isBalanceDouble)
+        {
+            Console.WriteLine("Enter the balance of this new account or type 'X' to leave the screen");
+            strBalance = Console.ReadLine() ?? "0";
 
-        return (accountType, balance);
+            if (strBalance.ToUpper() == "X")
+            {
+                _screenManager.ShowScreen(ScreenNames.AdminOverview);
+            }
+            else if (Double.TryParse(strBalance, out dblBalance))
+            {
+                if (dblBalance < 0)
+                {
+                    Console.WriteLine("Balance must be a number greater than 0. Please Try Again");
+                }
+                else
+                {
+                    isBalanceDouble = true;
+                }
+            }
+            else
+            {
+                Console.WriteLine("Balance must be a number. Please Try Again");
+            }
+        }
+
+        return (accountType, dblBalance);
     }
 }

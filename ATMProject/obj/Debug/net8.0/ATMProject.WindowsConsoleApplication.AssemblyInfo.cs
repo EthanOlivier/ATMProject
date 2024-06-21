@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ATMProject.WindowsConsoleApplication")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+79bc886bd3a81e8a30874fa81a929e22406fce4b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+27c3564e36fa1d654ba5827615b497efb255613e")]
 [assembly: System.Reflection.AssemblyProductAttribute("ATMProject.WindowsConsoleApplication")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ATMProject.WindowsConsoleApplication")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

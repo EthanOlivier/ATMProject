@@ -1,6 +1,7 @@
 ﻿using ATMProject.Application;
 using ATMProject.Application.Screens;
 using ATMProject.Application.Users;
+using System.Security.Principal;
 
 namespace ATMProject.WindowsConsoleApplication.BasicScreens;
 public class HistoryScreen : IScreen
@@ -23,7 +24,7 @@ public class HistoryScreen : IScreen
     (
         string Id,
         string Type,
-        double Balance,
+        string Balance,
         string CreationDate,
         IEnumerable<ViewModel.TransactionsViewModel> Transactions
     )
@@ -42,7 +43,7 @@ public class HistoryScreen : IScreen
 
     public void ShowScreen()
     {
-        ShowHistory(GetData());
+        ShowHistory(GetAccount(GetData()));
         _screenManager.ShowScreen(ScreenNames.BasicOverview);
     }
     private IEnumerable<ViewModel> GetData()
@@ -52,7 +53,7 @@ public class HistoryScreen : IScreen
         return accountData.Select(accountData => new ViewModel(
             Id: accountData.AccountId,
             Type: accountData.Type.ToString(),
-            Balance: accountData.Balance,
+            Balance: accountData.Balance.ToString("N2"),
             CreationDate: accountData.CreationDate.ToString(),
             Transactions: accountData.TransactionIds?
                 .Where(tran => tran.AccountId == accountData.AccountId)
@@ -66,7 +67,7 @@ public class HistoryScreen : IScreen
                 ))
         ));
     }
-    private void ShowHistory(IEnumerable<ViewModel> viewModel)
+    private ViewModel GetAccount(IEnumerable<ViewModel> viewModel)
     {
         ViewModel account = null;
 
@@ -85,23 +86,34 @@ public class HistoryScreen : IScreen
                 }
                 break;
             default:
-                string accountEntered;
-                Console.WriteLine("Enter an Account or type 'X' to leave the screen\n");
+                bool isAccountSelected = false;
+
+                string accountEntered = "";
+                Console.WriteLine("Choose Account or type 'X' to leave the screen\n");
                 foreach (var accnt in viewModel)
                 {
-                    Console.WriteLine($"Type {accnt.Id} to show Transaction History from Account with Type: {accnt.Type}, Balance: ${accnt.Balance.ToString("N2")}");
-                }
-                accountEntered = Console.ReadLine() ?? "";
-
-                if (accountEntered.ToUpper() == "X")
-                {
-                    _screenManager.ShowScreen(ScreenNames.BasicOverview);
+                    Console.WriteLine($"Type {accnt.Id} to show Transaction History from Account with Type: {accnt.Type}, Balance: ${accnt.Balance}");
                 }
 
-                if (!viewModel.Any(acct => acct.Id == accountEntered))
+                while (!isAccountSelected)
                 {
-                    Console.WriteLine("Account Entered was not a valid account");
-                    ShowScreen();
+                    accountEntered = Console.ReadLine() ?? "";
+
+                    if (!viewModel.Any(acct => acct.Id == accountEntered))
+                    {
+                        if (accountEntered.ToUpper() == "X")
+                        {
+                            _screenManager.ShowScreen(ScreenNames.BasicOverview);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Account Entered was not a valid account");
+                        }
+                    }
+                    else
+                    {
+                        isAccountSelected = true;
+                    }
                 }
 
                 account = viewModel.FirstOrDefault(acct => acct.Id == accountEntered)!;
@@ -111,8 +123,10 @@ public class HistoryScreen : IScreen
                 }
                 break;
         }
-
-
+        return account!;
+    }
+    private void ShowHistory(ViewModel account)
+    {
         if (account!.Transactions.Any())
         {
             foreach (var transaction in account.Transactions)

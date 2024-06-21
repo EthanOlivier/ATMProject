@@ -61,25 +61,27 @@ public class DeleteUserScreen : IScreen
     }
     private string SelectUser()
     {
-        Console.WriteLine("Enter the User Id for the user you want to delete or type 'X' to leave the screen");
-        string userId = Console.ReadLine() ?? "";
-        while (userId == "")
+        while (true)
         {
-            Console.WriteLine("Please Enter a User Id");
-            userId = Console.ReadLine() ?? "";
-        }
+            Console.WriteLine("Enter the User Id for the user you want to delete or type 'X' to leave the screen");
+            string userId = Console.ReadLine() ?? "";
 
-        if (userId.ToUpper() == "X")
-        {
-            _screenManager.ShowScreen(ScreenNames.AdminOverview);
+            if (!_findUser.DoesUserExist(userId))
+            {
+                if (userId.ToUpper() == "X")
+                {
+                    _screenManager.ShowScreen(ScreenNames.AdminOverview);
+                }
+                else
+                {
+                    Console.WriteLine("Id not found. Please try again.");
+                }
+            }
+            else
+            {
+                return userId;
+            }
         }
-
-        if (!_findUser.DoesUserExist(userId))
-        {
-            Console.WriteLine("Id not found. Please try again.");
-            ShowScreen();
-        }
-        return userId;
     }
     private ViewModel BuildViewModel(string userId)
     {

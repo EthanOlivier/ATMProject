@@ -42,12 +42,7 @@ public class LookupUserScreen : IScreen
             Console.WriteLine("Type 'P' to use the User's Phone Number");
             Console.WriteLine("Type 'E' to use the User's Email");
 
-            string? input = Console.ReadLine();
-            while (input is null)
-            {
-                Console.WriteLine("Please enter an Identity Field");
-                input = Console.ReadLine();
-            }
+            string input = Console.ReadLine() ?? "";
             switch (input.ToUpper())
             {
                 case "N":
@@ -70,12 +65,16 @@ public class LookupUserScreen : IScreen
     }
     private string[] FindUserInfo(IdentityFields field)
     {
-        Console.WriteLine($"Enter the {field} of the User whose User Id you would like to find.");
+        Console.WriteLine($"Enter the {field} of the User whose User Id you would like to find or type 'X' to leave the screen");
         string input = Console.ReadLine() ?? "";
         while (input == "")
         {
             Console.WriteLine($"Please Enter a {field}");
             input = Console.ReadLine() ?? "";
+        }
+        if (input.ToUpper() == "X")
+        {
+            _screenManager.ShowScreen(ScreenNames.AdminOverview);
         }
 
         return _lookupUser.LookupUserInfo(field, input, _userContextService.GetUserContext().UserId);
