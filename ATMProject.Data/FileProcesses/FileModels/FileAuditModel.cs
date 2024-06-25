@@ -1,7 +1,7 @@
 ﻿using ATMProject.Application.Users;
 
-namespace ATMProject.Data.MockDatabase;
-public record MockDatabaseAuditModel
+namespace ATMProject.Data.FileProcesses.FileModels;
+public record FileAuditModel
 (
     string AuditId,
     string AdminId,

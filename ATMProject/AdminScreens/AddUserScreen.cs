@@ -97,7 +97,7 @@ public class AddUserScreen : IReceivableScreen
                 {
                     Console.WriteLine("Password Added");
                     salt = Guid.NewGuid().ToString();
-                    hash = MockDatabaseUserRepository.CreateHash(salt, password);
+                    hash = FileUserRepository.CreateHash(salt, password);
                 }
             }
             else

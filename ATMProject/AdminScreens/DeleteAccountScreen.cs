@@ -1,10 +1,7 @@
 ﻿using ATMProject.Application;
 using ATMProject.Application.Operations;
 using ATMProject.Application.Screens;
-using ATMProject.Application.Users;
 using ATMProject.System;
-using System.Security.AccessControl;
-using System.Security.Principal;
 
 namespace ATMProject.WindowsConsoleApplication.AdminScreens;
 public class DeleteAccountScreen : IScreen

@@ -1,8 +1,6 @@
 ﻿using ATMProject.Application;
 using ATMProject.Application.Screens;
 using ATMProject.System;
-using ATMProject.WindowsConsoleApplication.BasicScreens;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ATMProject.WindowsConsoleApplication;
 public class LoginScreen : IScreen

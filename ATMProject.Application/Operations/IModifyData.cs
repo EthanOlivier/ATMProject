@@ -25,7 +25,34 @@ public interface IChangeUserPasswordOperation : IOperation<IChangeUserPasswordOp
 
 
 
-public interface IAdminOperationsRepository : IFindUser, IGetUserIdentifyInfo, IGetAudits, IGetUsersTotals, ICreateUserId, ILookupUser, IChangeBasicUserPassword, IAddUser, IAddAccount, IDeleteUser, IDeleteAccount;
+public interface IAdminOperationsRepository : IChangeBasicUserPassword, IAddUser, IAddAccount, IDeleteUser, IDeleteAccount, IFindUser, IGetUserIdentifyInfo, IGetAudits, IGetUsersTotals, ICreateUserId, ILookupUser;
+
+[RequiresAdmin]
+public interface IChangeBasicUserPassword : IOperation<IChangeBasicUserPassword.Request, IResult>
+{
+    public record Request(string UserId, string Password, string AdminId);
+}
+[RequiresAdmin]
+public interface IAddUser : IOperation<IAddUser.Request, IResult>
+{
+    public record Request(string Name, string Address, string PhoneNumber, string Email, string Salt, string Hash, string UserId, string AdminId);
+}
+[RequiresAdmin]
+public interface IAddAccount : IOperation<IAddAccount.Request, IResult>
+{
+    public record Request(string UserId, AccountType AccountType, double Balance, string AdminId);
+}
+[RequiresAdmin]
+public interface IDeleteUser : IOperation<IDeleteUser.Request, IResult>
+{
+    public record Request(string UserId, string AdminId);
+}
+[RequiresAdmin]
+public interface IDeleteAccount : IOperation<IDeleteAccount.Request, IResult>
+{
+    public record Request(string AccountId, string AdminId);
+}
+
 
 public interface IFindUser
 {
@@ -52,29 +79,4 @@ public interface ICreateUserId
 public interface ILookupUser
 {
     string[] LookupUserInfo(IdentityFields field, string input, string userId);
-}
-[RequiresAdmin]
-public interface IChangeBasicUserPassword : IOperation<IChangeBasicUserPassword.Request, IResult>
-{
-    public record Request(string UserId, string Password, string AdminId);
-}
-[RequiresAdmin]
-public interface IAddUser : IOperation<IAddUser.Request, IResult>
-{
-    public record Request(string Name, string Address, string PhoneNumber, string Email, string Salt, string Hash, string UserId, string AdminId);
-}
-[RequiresAdmin]
-public interface IAddAccount : IOperation<IAddAccount.Request, IResult>
-{
-    public record Request(string UserId, AccountType AccountType, double Balance, string AdminId);
-}
-[RequiresAdmin]
-public interface IDeleteUser : IOperation<IDeleteUser.Request, IResult>
-{
-    public record Request(string UserId, string AdminId);
-}
-[RequiresAdmin]
-public interface IDeleteAccount : IOperation<IDeleteAccount.Request, IResult>
-{
-    public record Request(string AccountId, string AdminId);
 }

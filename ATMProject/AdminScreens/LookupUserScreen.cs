@@ -2,8 +2,6 @@
 using ATMProject.Application.Operations;
 using ATMProject.Application.Screens;
 using ATMProject.Application.Users;
-using ATMProject.Data.MockDatabase;
-using ATMProject.Data.MockDatabase.MockDatabase;
 
 namespace ATMProject.WindowsConsoleApplication.AdminScreens;
 public class LookupUserScreen : IScreen

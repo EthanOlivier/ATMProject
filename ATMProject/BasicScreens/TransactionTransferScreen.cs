@@ -2,10 +2,7 @@
 using ATMProject.Application.Operations;
 using ATMProject.Application.Operations.Authorization;
 using ATMProject.Application.Screens;
-using ATMProject.Application.Users;
 using ATMProject.System;
-using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
-using System.ComponentModel.Design;
 
 namespace ATMProject.WindowsConsoleApplication.BasicScreens;
 public class TransactionTransferScreen : IScreen

@@ -1,31 +1,29 @@
-﻿using ATMProject.Data.MockDatabase;
-using ATMProject.Data.MockDatabase.MockDatabase;
-using System.Reflection;
-using System.Security.Principal;
+﻿using ATMProject.Data.FileProcesses.FileModels;
+using ATMProject.Data.MockDatabase;
 
-namespace ATMProject.Data.ModifyData;
-public class MockDatabaseFileWrite : IWriteToFile
+namespace ATMProject.Data.FileProcesses;
+public class FileWrite : IWriteFile
 {
-    public void UpdateUsersFile(string givenUserId, MockDatabaseUserModel newUser)
+    public void UpdateUsersFile(string givenUserId, FileUserModel newUser)
     {
         string FILE_DIRECTORY = "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\Users.txt";
 
         if (givenUserId is null && newUser is not null)
         {
-            MockDatabaseFileRead.Users.Add(newUser);
+            FileRead.Users.Add(newUser);
 
             File.AppendAllLines(FILE_DIRECTORY, new[] { newUser.UserId + "|" + newUser.Hash + "|" + newUser.Salt + "|" + newUser.UserRole + "|" + newUser.Name + "|" + newUser.Address + "|" + newUser.PhoneNumber + "|" + newUser.Email + "|" + newUser.CreationDate + "|" });
         }
         else if (givenUserId is not null || newUser is not null)
         {
             List<string> updatedFileContents = new List<string> { };
-            MockDatabaseUserModel userToRemove = null, userToAdd = null;
+            FileUserModel userToRemove = null, userToAdd = null;
 
-            foreach (MockDatabaseUserModel user in MockDatabaseFileRead.Users)
+            foreach (FileUserModel user in FileRead.Users)
             {
                 if (user.UserId != givenUserId || newUser is not null)
                 {
-                    MockDatabaseUserModel fileUser = user;
+                    FileUserModel fileUser = user;
 
                     if (user.UserId == givenUserId)
                     {
@@ -41,7 +39,7 @@ public class MockDatabaseFileWrite : IWriteToFile
                         {
                             fileUser.AccountIds.RemoveAt(0);
                         }
-                        newIds = String.Join(";", fileUser.AccountIds);
+                        newIds = string.Join(";", fileUser.AccountIds);
                     }
                     updatedFileContents.Add(fileUser.UserId + "|" + fileUser.Hash + "|" + fileUser.Salt + "|" + fileUser.UserRole + "|" + fileUser.Name + "|" + fileUser.Address + "|" + fileUser.PhoneNumber + "|" + fileUser.Email + "|" + fileUser.CreationDate + "|" + newIds);
                 }
@@ -53,36 +51,36 @@ public class MockDatabaseFileWrite : IWriteToFile
 
             if (userToRemove is not null)
             {
-                MockDatabaseFileRead.Users.Remove(userToRemove);
+                FileRead.Users.Remove(userToRemove);
             }
             if (userToAdd is not null)
             {
-                MockDatabaseFileRead.Users.Add(userToAdd);
+                FileRead.Users.Add(userToAdd);
             }
 
             File.WriteAllLines(FILE_DIRECTORY, updatedFileContents);
         }
     }
-    public void UpdateAccountsFile(string[] givenAccountIds, MockDatabaseAccountModel newAccount)
+    public void UpdateAccountsFile(string[] givenAccountIds, FileAccountModel newAccount)
     {
         string FILE_DIRECTORY = "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\Accounts.txt";
 
         if (givenAccountIds is null && newAccount is not null)
         {
-            MockDatabaseFileRead.Accounts.Add(newAccount);
+            FileRead.Accounts.Add(newAccount);
 
             File.AppendAllLines(FILE_DIRECTORY, new[] { newAccount.AccountId + "|" + newAccount.UserId + "|" + newAccount.Type + "|" + newAccount.Balance + "|" + newAccount.CreationDate + "|" });
         }
         else if (givenAccountIds is not null || newAccount is not null)
         {
             List<string> updatedFileContents = new List<string> { };
-            MockDatabaseAccountModel accountToRemove = null, accountToAdd = null;
+            FileAccountModel accountToRemove = null, accountToAdd = null;
 
-            foreach (MockDatabaseAccountModel account in MockDatabaseFileRead.Accounts)
+            foreach (FileAccountModel account in FileRead.Accounts)
             {
                 if (!givenAccountIds.Contains(account.AccountId) || newAccount is not null)
                 {
-                    MockDatabaseAccountModel fileAccount = account;
+                    FileAccountModel fileAccount = account;
 
                     if (givenAccountIds.Contains(account.AccountId))
                     {
@@ -98,7 +96,7 @@ public class MockDatabaseFileWrite : IWriteToFile
                         {
                             fileAccount.Transactions.RemoveAt(0);
                         }
-                        newTransactions = String.Join(";", fileAccount.Transactions);
+                        newTransactions = string.Join(";", fileAccount.Transactions);
                     }
                     updatedFileContents.Add(fileAccount.AccountId + "|" + fileAccount.UserId + "|" + fileAccount.Type + "|" + fileAccount.Balance + "|" + fileAccount.CreationDate + "|" + newTransactions);
                 }
@@ -110,31 +108,31 @@ public class MockDatabaseFileWrite : IWriteToFile
 
             if (accountToRemove is not null)
             {
-                MockDatabaseFileRead.Accounts.Remove(accountToRemove);
+                FileRead.Accounts.Remove(accountToRemove);
             }
             if (accountToAdd is not null)
             {
-                MockDatabaseFileRead.Accounts.Add(accountToAdd);
+                FileRead.Accounts.Add(accountToAdd);
             }
 
             File.WriteAllLines(FILE_DIRECTORY, updatedFileContents);
         }
     }
-    public void UpdateTransactionsFile(MockDatabaseTransactionModel newTransaction, string[] accountIds)
+    public void UpdateTransactionsFile(FileTransactionModel newTransaction, string[] accountIds)
     {
         string FILE_DIRECTORY = "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\Transactions.txt";
 
         if (newTransaction is not null)
         {
-            MockDatabaseFileRead.Transactions.Add(newTransaction);
+            FileRead.Transactions.Add(newTransaction);
             File.AppendAllLines(FILE_DIRECTORY, new[] { newTransaction.TranasctionId + "|" + newTransaction.AccountId + "|" + newTransaction.Type + "|" + newTransaction.Amount + "|" + newTransaction.PreviousBalance + "|" + newTransaction.NewBalance + "|" + newTransaction.DateTime });
         }
         else
         {
             List<string> updatedFileContents = new List<string> { };
-            MockDatabaseTransactionModel transactionToRemove = null;
+            FileTransactionModel transactionToRemove = null;
 
-            foreach (MockDatabaseTransactionModel transaction in MockDatabaseFileRead.Transactions)
+            foreach (FileTransactionModel transaction in FileRead.Transactions)
             {
                 if (!accountIds.Contains(transaction.AccountId))
                 {
@@ -148,13 +146,13 @@ public class MockDatabaseFileWrite : IWriteToFile
 
             if (transactionToRemove is not null)
             {
-                MockDatabaseFileRead.Transactions.Remove(transactionToRemove);
+                FileRead.Transactions.Remove(transactionToRemove);
             }
 
             File.WriteAllLines(FILE_DIRECTORY, updatedFileContents);
         }
     }
-    public void UpdateAuditsFile(MockDatabaseAuditModel newAudit)
+    public void UpdateAuditsFile(FileAuditModel newAudit)
     {
         string FILE_DIRECTORY = "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\Audits.txt";
         string[] transactionsAndAuditsFileContents = File.ReadAllLines(FILE_DIRECTORY);

@@ -1,6 +1,4 @@
-﻿using ATMProject.Banking;
-
-namespace ATMProject.Application;
+﻿namespace ATMProject.Application;
 
 public interface IUserContextService
 {

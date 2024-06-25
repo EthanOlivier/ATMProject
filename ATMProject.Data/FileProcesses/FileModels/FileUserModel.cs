@@ -1,8 +1,8 @@
 ﻿using ATMProject.Application.Users;
 
-namespace ATMProject.Data.MockDatabase.MockDatabase;
+namespace ATMProject.Data.FileProcesses.FileModels;
 
-public record MockDatabaseUserModel
+public record FileUserModel
 (
     string UserId,
     string Hash,

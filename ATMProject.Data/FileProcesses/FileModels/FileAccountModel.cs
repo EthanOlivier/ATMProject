@@ -1,8 +1,8 @@
 ﻿using ATMProject.Banking;
 
-namespace ATMProject.Data.MockDatabase;
+namespace ATMProject.Data.FileProcesses.FileModels;
 
-public record MockDatabaseAccountModel
+public record FileAccountModel
 (
     string AccountId,
     string UserId,

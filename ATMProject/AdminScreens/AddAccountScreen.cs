@@ -5,7 +5,6 @@ using ATMProject.Application.Screens;
 using ATMProject.Application.Users;
 using ATMProject.Banking;
 using ATMProject.System;
-using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace ATMProject.WindowsConsoleApplication.AdminScreens;
 public class AddAccountScreen : IReceivableScreen

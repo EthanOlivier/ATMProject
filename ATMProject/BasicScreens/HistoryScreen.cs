@@ -1,7 +1,5 @@
 ﻿using ATMProject.Application;
 using ATMProject.Application.Screens;
-using ATMProject.Application.Users;
-using System.Security.Principal;
 
 namespace ATMProject.WindowsConsoleApplication.BasicScreens;
 public class HistoryScreen : IScreen

@@ -2,7 +2,6 @@
 using ATMProject.Application.Operations;
 using ATMProject.Application.Operations.Authorization;
 using ATMProject.Application.Screens;
-using ATMProject.Application.Users;
 using ATMProject.System;
 
 namespace ATMProject.WindowsConsoleApplication.BasicScreens;

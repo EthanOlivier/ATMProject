@@ -1,6 +1,7 @@
 ﻿using ATMProject.Application.Operations;
 using ATMProject.Application.Users;
-using ATMProject.Banking;
+using ATMProject.Data.FileProcesses;
+using ATMProject.Data.FileProcesses.FileModels;
 using ATMProject.Data.MockDatabase;
 using ATMProject.Data.MockDatabase.MockDatabase;
 using ATMProject.System;
@@ -8,75 +9,100 @@ using ATMProject.System;
 namespace ATMProject.Data.ModifyData;
 public class AdminOperationsRepository : IAdminOperationsRepository
 {
-    private readonly IWriteToFile _writeToFile;
-    public AdminOperationsRepository(IWriteToFile writeToFile)
+    private readonly IWriteFile _writeToFile;
+    public AdminOperationsRepository(IWriteFile writeToFile)
     {
         _writeToFile = writeToFile;
     }
-    private string CreateAuditId()
+    public IResult Execute(IChangeBasicUserPassword.Request request)
     {
-        string auditId;
+        FileUserModel oldUser = FileRead.Users.Where(user => user.UserId == request.UserId).FirstOrDefault()!;
+
+        if (oldUser is null)
+        {
+            return Result.Failed($"Unable to find user with Id: {request.UserId}");
+        }
+
+
+        string newSalt = Guid.NewGuid().ToString();
+        string newHash = FileUserRepository.CreateHash(newSalt, request.Password);
+
+        FileUserModel newUser = new FileUserModel(oldUser.UserId, newHash, newSalt, oldUser.UserRole, oldUser.Name, oldUser.Address, oldUser.PhoneNumber, oldUser.Email, oldUser.CreationDate, oldUser.AccountIds);
+
+        _writeToFile.UpdateUsersFile(request.UserId, newUser);
+
+        AddAudit(request.AdminId, AdminInteraction.ResetUserPassword, request.UserId, DateTime.Now);
+
+        return Result.Succeeded();
+    }
+    public IResult Execute(IAddUser.Request request)
+    {
+        FileUserModel newUser = new FileUserModel(request.UserId, request.Hash, request.Salt, UserRole.Basic, request.Name, request.Address, request.PhoneNumber, request.Email, DateTime.Now, new List<string> { });
+
+        _writeToFile.UpdateUsersFile(null, newUser);
+
+        AddAudit(request.AdminId, AdminInteraction.AddUser, request.UserId, DateTime.Now);
+
+        return Result.Succeeded();
+    }
+    public IResult Execute(IAddAccount.Request request)
+    {
+        string accountId = "";
         do
         {
             Random random = new Random();
-            auditId = random.Next(10000, 100000).ToString();
-        } while (MockDatabaseFileRead.Audits.Where(audit => audit.AuditId == auditId).FirstOrDefault() != null);
-        return auditId;
+            accountId = random.Next(10000, 100000).ToString();
+        } while (FileRead.Accounts.Where(acct => acct.AccountId == accountId).FirstOrDefault() != null);
+
+        FileAccountModel newAccount = new FileAccountModel(accountId, request.UserId, request.AccountType, request.Balance, DateTime.Now, null);
+
+        _writeToFile.UpdateAccountsFile(null, newAccount);
+
+        FileUserModel user = FileRead.Users.Where(user => user.UserId == request.UserId).FirstOrDefault()!;
+
+        user.AccountIds.Add(accountId);
+
+        _writeToFile.UpdateUsersFile(request.UserId, user);
+
+        AddAudit(request.AdminId, AdminInteraction.AddAccount, request.UserId, DateTime.Now);
+
+        return Result.Succeeded();
     }
-    public bool DoesUserExist(string userId)
+    public IResult Execute(IDeleteUser.Request request)
     {
-        MockDatabaseUserModel user = MockDatabaseFileRead.Users.Where(user => user.UserId == userId).FirstOrDefault()!;
+        FileUserModel user = FileRead.Users.Where(user => user.UserId == request.UserId).FirstOrDefault()!;
 
         if (user is null)
         {
-            return false;
-        }
-        else
-        {
-            return true;
-        }
-    }
-    public (string, string, string, string, string, string) GetUserIdentifyInfo(string userId)
-    {
-        MockDatabaseUserModel user = MockDatabaseFileRead.Users.Where(user => user.UserId == userId).FirstOrDefault()!;
-
-        if (user is null)
-        {
-            throw new Exception($"User with with UserId {userId} could not be found");
+            return Result.Failed($"Unable to find user with Id: {request.UserId}");
         }
 
-        return (user.Name, user.Address, user.PhoneNumber, user.Email, user.Salt, user.Hash);
-    }
-    public int GetTotalUsers()
-    {
-        return MockDatabaseFileRead.Users.Count();
-    }
-    public int GetTotalAccounts()
-    {
-        return MockDatabaseFileRead.Accounts.Count();
-    }
-    public double GetTotalBalance()
-    {
-        return MockDatabaseFileRead.Accounts.Select(acct => acct.Balance).Sum();
-    }
-    public string CreateUserId()
-    {
-        return (MockDatabaseFileRead.Users.Count() + 1).ToString();
-    }
+        _writeToFile.UpdateUsersFile(request.UserId, null);
+        _writeToFile.UpdateAccountsFile(user.AccountIds.ToArray(), null);
+        _writeToFile.UpdateTransactionsFile(null, user.AccountIds.ToArray());
 
-    private void AddAudit(string adminId, AdminInteraction interaction, string userId, DateTime dateTime)
-    {
-        MockDatabaseAuditModel newAudit = new MockDatabaseAuditModel(CreateAuditId(), adminId, userId, interaction, dateTime);
+        AddAudit(request.AdminId, AdminInteraction.DeleteUser, request.UserId, DateTime.Now);
 
-        MockDatabaseFileRead.Audits.Add(newAudit);
-
-        _writeToFile.UpdateAuditsFile(newAudit);
+        return Result.Succeeded();
     }
+    public IResult Execute(IDeleteAccount.Request request)
+    {
+        FileUserModel user = FileRead.Users.Where(user => user.AccountIds.Contains(request.AccountId)).FirstOrDefault()!;
 
+        user.AccountIds.Remove(request.AccountId);
+
+        _writeToFile.UpdateUsersFile(user.UserId, user);
+        _writeToFile.UpdateAccountsFile(new[] { request.AccountId }, null);
+        _writeToFile.UpdateTransactionsFile(null, new[] { request.AccountId });
+
+        AddAudit(request.AdminId, AdminInteraction.DeleteAccount, request.AccountId, DateTime.Now);
+
+        return Result.Succeeded();
+    }
     public List<string> GetAudits(string userId)
     {
         List<string> audits = new List<string>();
-        IEnumerable<MockDatabaseAuditModel> dbAudits = MockDatabaseFileRead.Audits.Where(audit => audit.AdminId == userId);
+        IEnumerable<FileAuditModel> dbAudits = FileRead.Audits.Where(audit => audit.AdminId == userId);
         foreach (var audit in dbAudits)
         {
             switch (audit.InteractionType)
@@ -105,11 +131,10 @@ public class AdminOperationsRepository : IAdminOperationsRepository
         }
         return audits;
     }
-
     public string[] LookupUserInfo(IdentityFields field, string input, string userId)
     {
-        var allUsers = MockDatabaseFileRead.Users;
-        IEnumerable<MockDatabaseUserModel> foundUsers;
+        var allUsers = FileRead.Users;
+        IEnumerable<FileUserModel> foundUsers;
         List<string> users = new List<string>();
 
         switch (field)
@@ -130,7 +155,7 @@ public class AdminOperationsRepository : IAdminOperationsRepository
                 throw new Exception("Incorrect Identity Field entered");
         }
 
-        foreach (MockDatabaseUserModel user in foundUsers)
+        foreach (FileUserModel user in foundUsers)
         {
             users.Add(user.UserId);
         }
@@ -142,89 +167,63 @@ public class AdminOperationsRepository : IAdminOperationsRepository
 
         return users.ToArray();
     }
-    public IResult Execute(IChangeBasicUserPassword.Request request)
+    private string CreateAuditId()
     {
-        MockDatabaseUserModel oldUser = MockDatabaseFileRead.Users.Where(user => user.UserId == request.UserId).FirstOrDefault()!;
-
-        if (oldUser is null)
-        {
-            return Result.Failed($"Unable to find user with Id: {request.UserId}");
-        }
-
-
-        string newSalt = Guid.NewGuid().ToString();
-        string newHash = MockDatabaseUserRepository.CreateHash(newSalt, request.Password);
-
-        MockDatabaseUserModel newUser = new MockDatabaseUserModel(oldUser.UserId, newHash, newSalt, oldUser.UserRole, oldUser.Name, oldUser.Address, oldUser.PhoneNumber, oldUser.Email, oldUser.CreationDate, oldUser.AccountIds);
-
-        _writeToFile.UpdateUsersFile(request.UserId, newUser);
-
-        AddAudit(request.AdminId, AdminInteraction.ResetUserPassword, request.UserId, DateTime.Now);
-
-        return Result.Succeeded();
-    }
-    public IResult Execute(IAddUser.Request request)
-    {
-        MockDatabaseUserModel newUser = new MockDatabaseUserModel(request.UserId, request.Hash, request.Salt, UserRole.Basic, request.Name, request.Address, request.PhoneNumber, request.Email, DateTime.Now, new List<string> { });
-
-        _writeToFile.UpdateUsersFile(null, newUser);
-
-        AddAudit(request.AdminId, AdminInteraction.AddUser, request.UserId, DateTime.Now);
-
-        return Result.Succeeded();
-    }
-    public IResult Execute(IAddAccount.Request request)
-    {
-        string accountId = "";
+        string auditId;
         do
         {
             Random random = new Random();
-            accountId = random.Next(10000, 100000).ToString();
-        } while (MockDatabaseFileRead.Accounts.Where(acct => acct.AccountId == accountId).FirstOrDefault() != null);
-
-        MockDatabaseAccountModel newAccount = new MockDatabaseAccountModel(accountId, request.UserId, request.AccountType, request.Balance, DateTime.Now, null);
-
-        _writeToFile.UpdateAccountsFile(null, newAccount);
-
-        MockDatabaseUserModel user = MockDatabaseFileRead.Users.Where(user => user.UserId == request.UserId).FirstOrDefault()!;
-
-        user.AccountIds.Add(accountId);
-
-        _writeToFile.UpdateUsersFile(request.UserId, user);
-
-        AddAudit(request.AdminId, AdminInteraction.AddAccount, request.UserId, DateTime.Now);
-
-        return Result.Succeeded();
+            auditId = random.Next(10000, 100000).ToString();
+        } while (FileRead.Audits.Where(audit => audit.AuditId == auditId).FirstOrDefault() != null);
+        return auditId;
     }
-    public IResult Execute(IDeleteUser.Request request)
+    public bool DoesUserExist(string userId)
     {
-        MockDatabaseUserModel user = MockDatabaseFileRead.Users.Where(user => user.UserId == request.UserId).FirstOrDefault()!;
+        FileUserModel user = FileRead.Users.Where(user => user.UserId == userId).FirstOrDefault()!;
 
         if (user is null)
         {
-            return Result.Failed($"Unable to find user with Id: {request.UserId}");
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+    public (string, string, string, string, string, string) GetUserIdentifyInfo(string userId)
+    {
+        FileUserModel user = FileRead.Users.Where(user => user.UserId == userId).FirstOrDefault()!;
+
+        if (user is null)
+        {
+            throw new Exception($"User with with UserId {userId} could not be found");
         }
 
-        _writeToFile.UpdateUsersFile(request.UserId, null);
-        _writeToFile.UpdateAccountsFile(user.AccountIds.ToArray(), null);
-        _writeToFile.UpdateTransactionsFile(null, user.AccountIds.ToArray());
-
-        AddAudit(request.AdminId, AdminInteraction.DeleteUser, request.UserId, DateTime.Now);
-
-        return Result.Succeeded();
+        return (user.Name, user.Address, user.PhoneNumber, user.Email, user.Salt, user.Hash);
     }
-    public IResult Execute(IDeleteAccount.Request request)
+    public int GetTotalUsers()
     {
-        MockDatabaseUserModel user = MockDatabaseFileRead.Users.Where(user => user.AccountIds.Contains(request.AccountId)).FirstOrDefault()!;
+        return FileRead.Users.Count();
+    }
+    public int GetTotalAccounts()
+    {
+        return FileRead.Accounts.Count();
+    }
+    public double GetTotalBalance()
+    {
+        return FileRead.Accounts.Select(acct => acct.Balance).Sum();
+    }
+    public string CreateUserId()
+    {
+        return (FileRead.Users.Count() + 1).ToString();
+    }
 
-        user.AccountIds.Remove(request.AccountId);
+    private void AddAudit(string adminId, AdminInteraction interaction, string userId, DateTime dateTime)
+    {
+        FileAuditModel newAudit = new FileAuditModel(CreateAuditId(), adminId, userId, interaction, dateTime);
 
-        _writeToFile.UpdateUsersFile(user.UserId, user);
-        _writeToFile.UpdateAccountsFile(new[] { request.AccountId }, null);
-        _writeToFile.UpdateTransactionsFile(null, new[] { request.AccountId });
+        FileRead.Audits.Add(newAudit);
 
-        AddAudit(request.AdminId, AdminInteraction.DeleteAccount, request.AccountId, DateTime.Now);
-
-        return Result.Succeeded();
+        _writeToFile.UpdateAuditsFile(newAudit);
     }
 }

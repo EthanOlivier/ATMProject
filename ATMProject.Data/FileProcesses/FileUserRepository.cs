@@ -1,17 +1,17 @@
 ﻿using ATMProject.Application;
 using ATMProject.Application.Users;
+using ATMProject.Data.FileProcesses.FileModels;
 using System.Data;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace ATMProject.Data.MockDatabase.MockDatabase;
 
-public class MockDatabaseUserRepository : IDataSource
+public class FileUserRepository : IDataSource
 {
     public UserModel GetUserInfoByUserId(string userId)
     {
-        MockDatabaseUserModel bUser = MockDatabaseFileRead.Users.Where(user => user.UserId == userId).FirstOrDefault()!;
+        FileUserModel bUser = FileRead.Users.Where(user => user.UserId == userId).FirstOrDefault()!;
 
         if (bUser is null)
         {
@@ -31,14 +31,14 @@ public class MockDatabaseUserRepository : IDataSource
     }
     public IEnumerable<AccountModel> GetAccountsByUserId(string userId)
     {
-        var dbAccounts = MockDatabaseFileRead.Accounts.Where(acct => acct.UserId == userId).ToArray();
+        var dbAccounts = FileRead.Accounts.Where(acct => acct.UserId == userId).ToArray();
 
         if (dbAccounts is null)
         {
             throw new Exception($"Could not find any accounts for User with Id: " + userId);
         }
 
-        var dbTransactions = MockDatabaseFileRead.Transactions.Where(tran => dbAccounts.Any(acct => acct.AccountId == tran.AccountId)).ToArray();
+        var dbTransactions = FileRead.Transactions.Where(tran => dbAccounts.Any(acct => acct.AccountId == tran.AccountId)).ToArray();
 
         return dbAccounts.Select(account => new AccountModel(
             AccountId: account.AccountId,
@@ -71,7 +71,7 @@ public class MockDatabaseUserRepository : IDataSource
 
     public bool AreUserCredentialsCorrect(string userId, string password)
     {
-        MockDatabaseUserModel user = MockDatabaseFileRead.Users.Where(user => user.UserId == userId).FirstOrDefault()!;
+        FileUserModel user = FileRead.Users.Where(user => user.UserId == userId).FirstOrDefault()!;
 
         if (user != null)
         {

@@ -6,6 +6,7 @@ using ATMProject.System;
 using ATMProject.Data.MockDatabase;
 using ATMProject.Application;
 using ATMProject.Application.Operations.Authorization;
+using ATMProject.Data.FileProcesses;
 
 namespace ATMProject.Testing;
 [TestClass]
@@ -19,8 +20,8 @@ public class AORTesting
     [TestInitialize]
     public void Setup()
     {
-        _depositToAccountOp = new BasicOperationRepository(new MockDatabaseFileWrite());
-        _readFile = new MockDatabaseFileRead();
+        _depositToAccountOp = new BasicOperationRepository(new FileWrite());
+        _readFile = new FileRead();
         _readFile.ReadAllFilesContents();
 
         _innerOperation = _depositToAccountOp;

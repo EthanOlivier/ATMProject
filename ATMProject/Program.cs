@@ -1,16 +1,14 @@
 ﻿using ATMProject.Application;
 using ATMProject.Application.Operations;
-using ATMProject.Application.Operations.Authorization;
 using ATMProject.Application.Screens;
 using ATMProject.Composition;
+using ATMProject.Data.FileProcesses;
 using ATMProject.Data.MockDatabase;
 using ATMProject.Data.MockDatabase.MockDatabase;
 using ATMProject.Data.ModifyData;
-using ATMProject.System;
 using ATMProject.WindowsConsoleApplication.AdminScreens;
 using ATMProject.WindowsConsoleApplication.BasicScreens;
 using Microsoft.Extensions.DependencyInjection;
-using System.Security.AccessControl;
 
 namespace ATMProject.WindowsConsoleApplication;
 
@@ -29,9 +27,9 @@ public static class Program
 
     private static void AddServices(ServiceCollection services)
     {
-        services.AddSingleton<IReadFile, MockDatabaseFileRead>();
-        services.AddSingleton<IWriteToFile, MockDatabaseFileWrite>();
-        services.AddSingleton<IDataSource, MockDatabaseUserRepository>();
+        services.AddSingleton<IReadFile, FileRead>();
+        services.AddSingleton<IWriteFile, FileWrite>();
+        services.AddSingleton<IDataSource, FileUserRepository>();
         services.AddSingleton<IUserRepository, ApplicationUserRepository>();
         services.AddSingleton<IUserContextService, UserContextService>();
         services.AddSingleton<IBasicOperationRepository, BasicOperationRepository>();
@@ -49,17 +47,16 @@ public static class Program
                 services.AddSingleton(screenType);
             });
 
-        var borInterfaces = typeof(IBasicOperationRepository).GetInterfaces();
-        borInterfaces
-            .Where(t => !borInterfaces.Any(anyBorFace => anyBorFace.GetInterfaces().Contains(t)))
+        typeof(IBasicOperationRepository).GetInterfaces()
+            .Where(t => !typeof(IBasicOperationRepository).GetInterfaces().Any(anyBorFace => anyBorFace.GetInterfaces().Contains(t)))
             .ToList()
             .ForEach(screenType =>
             {
                 services.AddSingleton(screenType, typeof(BasicOperationRepository));
             });
-        var aorInterfaces = typeof(IAdminOperationsRepository).GetInterfaces();
-        aorInterfaces
-            .Where(t => !aorInterfaces.Any(anyAorFace => anyAorFace.GetInterfaces().Contains(t)))
+
+        typeof(IAdminOperationsRepository).GetInterfaces()
+            .Where(t => !typeof(IAdminOperationsRepository).GetInterfaces().Any(anyAorFace => anyAorFace.GetInterfaces().Contains(t)))
             .ToList()
             .ForEach(screenType =>
             {
