@@ -39,6 +39,8 @@ public static class Program
         services.AddSingleton<IScreenManager, ApplicationScreenManager>();
         services.AddSingleton<ApplicationRunner>();
 
+
+
         typeof(LoginScreen).Assembly.GetTypes()
             .Where((t) => t.GetInterfaces().Any(ti => ti == typeof(IScreen)))
             .ToList()
@@ -46,6 +48,8 @@ public static class Program
             {
                 services.AddSingleton(screenType);
             });
+
+
 
         typeof(IBasicOperationRepository).GetInterfaces()
             .Where(t => !typeof(IBasicOperationRepository).GetInterfaces().Any(anyBorFace => anyBorFace.GetInterfaces().Contains(t)))

@@ -55,14 +55,12 @@ public class AdminOperationsRepository : IAdminOperationsRepository
         } while (FileRead.Accounts.Where(acct => acct.AccountId == accountId).FirstOrDefault() != null);
 
         FileAccountModel newAccount = new FileAccountModel(accountId, request.UserId, request.AccountType, request.Balance, DateTime.Now, null);
-
-        _writeToFile.UpdateAccountsFile(null, newAccount);
-
         FileUserModel user = FileRead.Users.Where(user => user.UserId == request.UserId).FirstOrDefault()!;
 
         user.AccountIds.Add(accountId);
 
         _writeToFile.UpdateUsersFile(request.UserId, user);
+        _writeToFile.UpdateAccountsFile(null, newAccount);
 
         AddAudit(request.AdminId, AdminInteraction.AddAccount, request.UserId, DateTime.Now);
 
@@ -102,8 +100,8 @@ public class AdminOperationsRepository : IAdminOperationsRepository
     public List<string> GetAudits(string userId)
     {
         List<string> audits = new List<string>();
-        IEnumerable<FileAuditModel> dbAudits = FileRead.Audits.Where(audit => audit.AdminId == userId);
-        foreach (var audit in dbAudits)
+        IEnumerable<FileAuditModel> fileAudits = FileRead.Audits.Where(audit => audit.AdminId == userId);
+        foreach (var audit in fileAudits)
         {
             switch (audit.InteractionType)
             {
@@ -133,23 +131,22 @@ public class AdminOperationsRepository : IAdminOperationsRepository
     }
     public string[] LookupUserInfo(IdentityFields field, string input, string userId)
     {
-        var allUsers = FileRead.Users;
         IEnumerable<FileUserModel> foundUsers;
         List<string> users = new List<string>();
 
         switch (field)
         {
             case IdentityFields.Name:
-                foundUsers = allUsers.Where(user => user.Name == input);
+                foundUsers = FileRead.Users.Where(user => user.Name == input);
                 break;
             case IdentityFields.Address:
-                foundUsers = allUsers.Where(user => user.Address == input);
+                foundUsers = FileRead.Users.Where(user => user.Address == input);
                 break;
             case IdentityFields.PhoneNumber:
-                foundUsers = allUsers.Where(user => user.PhoneNumber == input);
+                foundUsers = FileRead.Users.Where(user => user.PhoneNumber == input);
                 break;
             case IdentityFields.Email:
-                foundUsers = allUsers.Where(user => user.Email == input);
+                foundUsers = FileRead.Users.Where(user => user.Email == input);
                 break;
             default:
                 throw new Exception("Incorrect Identity Field entered");

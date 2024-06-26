@@ -1,5 +1,4 @@
-﻿
-using ATMProject.Application.Operations;
+﻿using ATMProject.Application.Operations;
 using ATMProject.Banking;
 using ATMProject.Data.FileProcesses;
 using ATMProject.Data.FileProcesses.FileModels;
@@ -73,9 +72,7 @@ public class BasicOperationRepository : IBasicOperationRepository
         double previousBalance;
         double newBalance;
 
-        HashSet<FileAccountModel> accounts = FileRead.Accounts;
-
-        FileAccountModel withdrawalAccount = accounts.Where(acct => acct.AccountId == request.WithdrawalAccountId).FirstOrDefault()!;
+        FileAccountModel withdrawalAccount = FileRead.Accounts.Where(acct => acct.AccountId == request.WithdrawalAccountId).FirstOrDefault()!;
 
         if (withdrawalAccount is null)
         {
@@ -96,7 +93,8 @@ public class BasicOperationRepository : IBasicOperationRepository
 
 
 
-        FileAccountModel depositAccount = accounts.Where(acct => acct.AccountId == request.DepositAccountId).FirstOrDefault()!;
+        FileAccountModel depositAccount = FileRead.Accounts.Where(acct => acct.AccountId == request.DepositAccountId).FirstOrDefault()!;
+
         if (depositAccount is null)
         {
             throw new Exception($"Could not find any Account with Id: " + request.DepositAccountId);
