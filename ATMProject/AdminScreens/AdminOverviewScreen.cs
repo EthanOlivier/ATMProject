@@ -86,8 +86,6 @@ public class AdminOverviewScreen : IScreen
         string input = Console.ReadLine() ?? "";
         while (true)
         {
-            Console.WriteLine("Please Enter a Screen");
-            input = Console.ReadLine() ?? "";
             switch (input.ToUpper())
             {
                 case "F":
@@ -126,6 +124,9 @@ public class AdminOverviewScreen : IScreen
                     Console.WriteLine("Incorrect Screen Entered. Please Try Again.");
                     break;
             }
+
+            Console.WriteLine("Please Enter a Screen");
+            input = Console.ReadLine() ?? "";
         }
     }
     private void ShowScreen(ScreenNames screen)

@@ -2,7 +2,6 @@
 using ATMProject.Application.Users;
 using ATMProject.Data.FileProcesses;
 using ATMProject.Data.FileProcesses.FileModels;
-using ATMProject.Data.MockDatabase;
 using ATMProject.Data.MockDatabase.MockDatabase;
 using ATMProject.System;
 
@@ -10,13 +9,19 @@ namespace ATMProject.Data.ModifyData;
 public class AdminOperationsRepository : IAdminOperationsRepository
 {
     private readonly IWriteFile _writeToFile;
-    public AdminOperationsRepository(IWriteFile writeToFile)
+    private readonly HashSet<FileUserModel> _users;
+    private readonly HashSet<FileAccountModel> _accounts;
+    private readonly HashSet<FileAuditModel> _audits;
+    public AdminOperationsRepository(IWriteFile writeToFile, IDataStoreService<FileUserModel> users, IDataStoreService<FileAccountModel> accounts, IDataStoreService<FileAuditModel> audits)
     {
         _writeToFile = writeToFile;
+        _users = users.GetModels();
+        _accounts = accounts.GetModels();
+        _audits = audits.GetModels();
     }
     public IResult Execute(IChangeBasicUserPassword.Request request)
     {
-        FileUserModel oldUser = FileRead.Users.Where(user => user.UserId == request.UserId).FirstOrDefault()!;
+        FileUserModel oldUser = _users.Where(user => user.UserId == request.UserId).FirstOrDefault()!;
 
         if (oldUser is null)
         {
@@ -52,10 +57,10 @@ public class AdminOperationsRepository : IAdminOperationsRepository
         {
             Random random = new Random();
             accountId = random.Next(10000, 100000).ToString();
-        } while (FileRead.Accounts.Where(acct => acct.AccountId == accountId).FirstOrDefault() != null);
+        } while (_accounts.Where(acct => acct.AccountId == accountId).FirstOrDefault() != null);
 
         FileAccountModel newAccount = new FileAccountModel(accountId, request.UserId, request.AccountType, request.Balance, DateTime.Now, null);
-        FileUserModel user = FileRead.Users.Where(user => user.UserId == request.UserId).FirstOrDefault()!;
+        FileUserModel user = _users.Where(user => user.UserId == request.UserId).FirstOrDefault()!;
 
         user.AccountIds.Add(accountId);
 
@@ -68,7 +73,7 @@ public class AdminOperationsRepository : IAdminOperationsRepository
     }
     public IResult Execute(IDeleteUser.Request request)
     {
-        FileUserModel user = FileRead.Users.Where(user => user.UserId == request.UserId).FirstOrDefault()!;
+        FileUserModel user = _users.Where(user => user.UserId == request.UserId).FirstOrDefault()!;
 
         if (user is null)
         {
@@ -85,7 +90,7 @@ public class AdminOperationsRepository : IAdminOperationsRepository
     }
     public IResult Execute(IDeleteAccount.Request request)
     {
-        FileUserModel user = FileRead.Users.Where(user => user.AccountIds.Contains(request.AccountId)).FirstOrDefault()!;
+        FileUserModel user = _users.Where(user => user.AccountIds.Contains(request.AccountId)).FirstOrDefault()!;
 
         user.AccountIds.Remove(request.AccountId);
 
@@ -100,7 +105,7 @@ public class AdminOperationsRepository : IAdminOperationsRepository
     public List<string> GetAudits(string userId)
     {
         List<string> audits = new List<string>();
-        IEnumerable<FileAuditModel> fileAudits = FileRead.Audits.Where(audit => audit.AdminId == userId);
+        IEnumerable<FileAuditModel> fileAudits = _audits.Where(audit => audit.AdminId == userId);
         foreach (var audit in fileAudits)
         {
             switch (audit.InteractionType)
@@ -137,16 +142,16 @@ public class AdminOperationsRepository : IAdminOperationsRepository
         switch (field)
         {
             case IdentityFields.Name:
-                foundUsers = FileRead.Users.Where(user => user.Name == input);
+                foundUsers = _users.Where(user => user.Name == input);
                 break;
             case IdentityFields.Address:
-                foundUsers = FileRead.Users.Where(user => user.Address == input);
+                foundUsers = _users.Where(user => user.Address == input);
                 break;
             case IdentityFields.PhoneNumber:
-                foundUsers = FileRead.Users.Where(user => user.PhoneNumber == input);
+                foundUsers = _users.Where(user => user.PhoneNumber == input);
                 break;
             case IdentityFields.Email:
-                foundUsers = FileRead.Users.Where(user => user.Email == input);
+                foundUsers = _users.Where(user => user.Email == input);
                 break;
             default:
                 throw new Exception("Incorrect Identity Field entered");
@@ -171,12 +176,12 @@ public class AdminOperationsRepository : IAdminOperationsRepository
         {
             Random random = new Random();
             auditId = random.Next(10000, 100000).ToString();
-        } while (FileRead.Audits.Where(audit => audit.AuditId == auditId).FirstOrDefault() != null);
+        } while (_audits.Where(audit => audit.AuditId == auditId).FirstOrDefault() != null);
         return auditId;
     }
     public bool DoesUserExist(string userId)
     {
-        FileUserModel user = FileRead.Users.Where(user => user.UserId == userId).FirstOrDefault()!;
+        FileUserModel user = _users.Where(user => user.UserId == userId).FirstOrDefault()!;
 
         if (user is null)
         {
@@ -189,7 +194,7 @@ public class AdminOperationsRepository : IAdminOperationsRepository
     }
     public (string, string, string, string, string, string) GetUserIdentifyInfo(string userId)
     {
-        FileUserModel user = FileRead.Users.Where(user => user.UserId == userId).FirstOrDefault()!;
+        FileUserModel user = _users.Where(user => user.UserId == userId).FirstOrDefault()!;
 
         if (user is null)
         {
@@ -200,26 +205,26 @@ public class AdminOperationsRepository : IAdminOperationsRepository
     }
     public int GetTotalUsers()
     {
-        return FileRead.Users.Count();
+        return _users.Count();
     }
     public int GetTotalAccounts()
     {
-        return FileRead.Accounts.Count();
+        return _accounts.Count();
     }
     public double GetTotalBalance()
     {
-        return FileRead.Accounts.Select(acct => acct.Balance).Sum();
+        return _accounts.Select(acct => acct.Balance).Sum();
     }
     public string CreateUserId()
     {
-        return (FileRead.Users.Count() + 1).ToString();
+        return (_users.Count() + 1).ToString();
     }
 
     private void AddAudit(string adminId, AdminInteraction interaction, string userId, DateTime dateTime)
     {
         FileAuditModel newAudit = new FileAuditModel(CreateAuditId(), adminId, userId, interaction, dateTime);
 
-        FileRead.Audits.Add(newAudit);
+        _audits.Add(newAudit);
 
         _writeToFile.UpdateAuditsFile(newAudit);
     }

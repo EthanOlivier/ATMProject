@@ -4,13 +4,24 @@ using ATMProject.Data.MockDatabase;
 namespace ATMProject.Data.FileProcesses;
 public class FileWrite : IWriteFile
 {
+    private readonly IDataStoreService<FileUserModel> _users;
+    private readonly IDataStoreService<FileAccountModel> _accounts;
+    private readonly IDataStoreService<FileTransactionModel> _transactions;
+    private readonly IDataStoreService<FileAuditModel> _audits;
+    public FileWrite(IDataStoreService<FileUserModel> users, IDataStoreService<FileAccountModel> accounts, IDataStoreService<FileTransactionModel> transactions, IDataStoreService<FileAuditModel> audits)
+    {
+        _users = users;
+        _accounts = accounts;
+        _transactions = transactions;
+        _audits = audits;
+    }
     public void UpdateUsersFile(string givenUserId, FileUserModel newUser)
     {
         string FILE_DIRECTORY = "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\Users.txt";
 
         if (givenUserId is null && newUser is not null)
         {
-            FileRead.Users.Add(newUser);
+            _users.AddItem(newUser);
 
             File.AppendAllLines(FILE_DIRECTORY, new[] { newUser.UserId + "|" + newUser.Hash + "|" + newUser.Salt + "|" + newUser.UserRole + "|" + newUser.Name + "|" + newUser.Address + "|" + newUser.PhoneNumber + "|" + newUser.Email + "|" + newUser.CreationDate + "|" });
         }
@@ -19,7 +30,7 @@ public class FileWrite : IWriteFile
             List<string> updatedFileContents = new List<string> { };
             FileUserModel userToRemove = null, userToAdd = null;
 
-            foreach (FileUserModel user in FileRead.Users)
+            foreach (FileUserModel user in _users.GetModels())
             {
                 if (user.UserId != givenUserId || newUser is not null)
                 {
@@ -51,11 +62,11 @@ public class FileWrite : IWriteFile
 
             if (userToRemove is not null)
             {
-                FileRead.Users.Remove(userToRemove);
+                _users.RemoveItem(userToRemove);
             }
             if (userToAdd is not null)
             {
-                FileRead.Users.Add(userToAdd);
+                _users.AddItem(userToAdd);
             }
 
             File.WriteAllLines(FILE_DIRECTORY, updatedFileContents);
@@ -67,7 +78,7 @@ public class FileWrite : IWriteFile
 
         if (givenAccountIds is null && newAccount is not null)
         {
-            FileRead.Accounts.Add(newAccount);
+            _accounts.AddItem(newAccount);
 
             File.AppendAllLines(FILE_DIRECTORY, new[] { newAccount.AccountId + "|" + newAccount.UserId + "|" + newAccount.Type + "|" + newAccount.Balance + "|" + newAccount.CreationDate + "|" });
         }
@@ -76,7 +87,7 @@ public class FileWrite : IWriteFile
             List<string> updatedFileContents = new List<string> { };
             FileAccountModel accountToRemove = null, accountToAdd = null;
 
-            foreach (FileAccountModel account in FileRead.Accounts)
+            foreach (FileAccountModel account in _accounts.GetModels())
             {
                 if (!givenAccountIds.Contains(account.AccountId) || newAccount is not null)
                 {
@@ -108,11 +119,11 @@ public class FileWrite : IWriteFile
 
             if (accountToRemove is not null)
             {
-                FileRead.Accounts.Remove(accountToRemove);
+                _accounts.RemoveItem(accountToRemove);
             }
             if (accountToAdd is not null)
             {
-                FileRead.Accounts.Add(accountToAdd);
+                _accounts.AddItem(accountToAdd);
             }
 
             File.WriteAllLines(FILE_DIRECTORY, updatedFileContents);
@@ -124,7 +135,7 @@ public class FileWrite : IWriteFile
 
         if (newTransaction is not null)
         {
-            FileRead.Transactions.Add(newTransaction);
+            _transactions.AddItem(newTransaction);
             File.AppendAllLines(FILE_DIRECTORY, new[] { newTransaction.TranasctionId + "|" + newTransaction.AccountId + "|" + newTransaction.Type + "|" + newTransaction.Amount + "|" + newTransaction.PreviousBalance + "|" + newTransaction.NewBalance + "|" + newTransaction.DateTime });
         }
         else
@@ -132,7 +143,7 @@ public class FileWrite : IWriteFile
             List<string> updatedFileContents = new List<string> { };
             FileTransactionModel transactionToRemove = null;
 
-            foreach (FileTransactionModel transaction in FileRead.Transactions)
+            foreach (FileTransactionModel transaction in _transactions.GetModels())
             {
                 if (!accountIds.Contains(transaction.AccountId))
                 {
@@ -146,7 +157,7 @@ public class FileWrite : IWriteFile
 
             if (transactionToRemove is not null)
             {
-                FileRead.Transactions.Remove(transactionToRemove);
+                _transactions.RemoveItem(transactionToRemove);
             }
 
             File.WriteAllLines(FILE_DIRECTORY, updatedFileContents);

@@ -1,5 +1,6 @@
 ﻿using ATMProject.Application;
 using ATMProject.Application.Users;
+using ATMProject.Data.FileProcesses;
 using ATMProject.Data.FileProcesses.FileModels;
 using System.Data;
 using System.Security.Cryptography;
@@ -9,9 +10,18 @@ namespace ATMProject.Data.MockDatabase.MockDatabase;
 
 public class FileUserRepository : IDataSource
 {
+    private readonly HashSet<FileUserModel> _users;
+    private readonly HashSet<FileAccountModel> _accounts;
+    private readonly HashSet<FileTransactionModel> _transactions;
+    public FileUserRepository(IDataStoreService<FileUserModel> users, IDataStoreService<FileAccountModel> accounts, IDataStoreService<FileTransactionModel> transactions)
+    {
+        _users = users.GetModels();
+        _accounts = accounts.GetModels();
+        _transactions = transactions.GetModels();
+    }
     public UserModel GetUserInfoByUserId(string userId)
     {
-        FileUserModel bUser = FileRead.Users.Where(user => user.UserId == userId).FirstOrDefault()!;
+        FileUserModel bUser = _users.Where(user => user.UserId == userId).FirstOrDefault()!;
 
         if (bUser is null)
         {
@@ -31,14 +41,14 @@ public class FileUserRepository : IDataSource
     }
     public IEnumerable<AccountModel> GetAccountsByUserId(string userId)
     {
-        var dbAccounts = FileRead.Accounts.Where(acct => acct.UserId == userId).ToArray();
+        var dbAccounts = _accounts.Where(acct => acct.UserId == userId).ToArray();
 
         if (dbAccounts is null)
         {
             throw new Exception($"Could not find any accounts for User with Id: " + userId);
         }
 
-        var dbTransactions = FileRead.Transactions.Where(tran => dbAccounts.Any(acct => acct.AccountId == tran.AccountId)).ToArray();
+        var dbTransactions = _transactions.Where(tran => dbAccounts.Any(acct => acct.AccountId == tran.AccountId)).ToArray();
 
         return dbAccounts.Select(account => new AccountModel(
             AccountId: account.AccountId,
@@ -71,7 +81,7 @@ public class FileUserRepository : IDataSource
 
     public bool AreUserCredentialsCorrect(string userId, string password)
     {
-        FileUserModel user = FileRead.Users.Where(user => user.UserId == userId).FirstOrDefault()!;
+        FileUserModel user = _users.Where(user => user.UserId == userId).FirstOrDefault()!;
 
         if (user != null)
         {

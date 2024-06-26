@@ -3,6 +3,7 @@ using ATMProject.Application.Operations;
 using ATMProject.Application.Screens;
 using ATMProject.Composition;
 using ATMProject.Data.FileProcesses;
+using ATMProject.Data.FileProcesses.FileModels;
 using ATMProject.Data.MockDatabase;
 using ATMProject.Data.MockDatabase.MockDatabase;
 using ATMProject.Data.ModifyData;
@@ -66,6 +67,17 @@ public static class Program
             {
                 services.AddSingleton(screenType, typeof(AdminOperationsRepository));
             });
+
+
+        services.AddSingleton<IDataStoreService<FileUserModel>, DataStoreService<FileUserModel>>();
+        services.AddSingleton<IDataStoreService<FileAccountModel>, DataStoreService<FileAccountModel>>();
+        services.AddSingleton<IDataStoreService<FileTransactionModel>, DataStoreService<FileTransactionModel>>();
+        services.AddSingleton<IDataStoreService<FileAuditModel>, DataStoreService<FileAuditModel>>();
+
+        services.AddSingleton(new HashSet<FileUserModel>());
+        services.AddSingleton(new HashSet<FileAccountModel>());
+        services.AddSingleton(new HashSet<FileTransactionModel>());
+        services.AddSingleton(new HashSet<FileAuditModel>());
     }
 
     private static void AddServiceConfigurations(ServiceCollection services)

@@ -120,8 +120,6 @@ public class BasicOverviewScreen : IScreen
         string input = Console.ReadLine() ?? "";
         while (true)
         {
-            Console.WriteLine("Please Enter a Screen");
-            input = Console.ReadLine() ?? "";
             switch (input.ToUpper())
             {
                 case "L":
@@ -153,6 +151,9 @@ public class BasicOverviewScreen : IScreen
                     Console.WriteLine("Incorrect Screen Entered. Please Try Again");
                     break;
             }
+
+            Console.WriteLine("Please Enter a Screen");
+            input = Console.ReadLine() ?? "";
         }
     }
     private void ShowScreen(ScreenNames screen)

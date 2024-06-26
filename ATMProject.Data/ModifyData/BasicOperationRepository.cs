@@ -2,7 +2,6 @@
 using ATMProject.Banking;
 using ATMProject.Data.FileProcesses;
 using ATMProject.Data.FileProcesses.FileModels;
-using ATMProject.Data.MockDatabase;
 using ATMProject.Data.MockDatabase.MockDatabase;
 using ATMProject.System;
 
@@ -10,16 +9,22 @@ namespace ATMProject.Data.ModifyData;
 public class BasicOperationRepository : IBasicOperationRepository
 {
     private readonly IWriteFile _writeToFile;
-    public BasicOperationRepository(IWriteFile writeToFile)
+    private readonly HashSet<FileUserModel> _users;
+    private readonly HashSet<FileAccountModel> _accounts;
+    private readonly HashSet<FileTransactionModel> _transactions;
+    public BasicOperationRepository(IWriteFile writeToFile, IDataStoreService<FileUserModel> users, IDataStoreService<FileAccountModel> accounts, IDataStoreService<FileTransactionModel> transactions)
     {
         _writeToFile = writeToFile;
+        _users = users.GetModels();
+        _accounts = accounts.GetModels();
+        _transactions = transactions.GetModels();
     }
     public IResult Execute(IDepositToAccountOperation.Request request)
     {
         double previousBalance;
         double newBalance;
 
-        FileAccountModel account = FileRead.Accounts.Where(acct => acct.AccountId == request.AccountId).FirstOrDefault()!;
+        FileAccountModel account = _accounts.Where(acct => acct.AccountId == request.AccountId).FirstOrDefault()!;
 
         if (account is null)
         {
@@ -46,7 +51,7 @@ public class BasicOperationRepository : IBasicOperationRepository
         double previousBalance;
         double newBalance;
 
-        FileAccountModel account = FileRead.Accounts.Where(acct => acct.AccountId == request.AccountId).FirstOrDefault()!;
+        FileAccountModel account = _accounts.Where(acct => acct.AccountId == request.AccountId).FirstOrDefault()!;
 
         if (account is null)
         {
@@ -72,7 +77,7 @@ public class BasicOperationRepository : IBasicOperationRepository
         double previousBalance;
         double newBalance;
 
-        FileAccountModel withdrawalAccount = FileRead.Accounts.Where(acct => acct.AccountId == request.WithdrawalAccountId).FirstOrDefault()!;
+        FileAccountModel withdrawalAccount = _accounts.Where(acct => acct.AccountId == request.WithdrawalAccountId).FirstOrDefault()!;
 
         if (withdrawalAccount is null)
         {
@@ -93,7 +98,7 @@ public class BasicOperationRepository : IBasicOperationRepository
 
 
 
-        FileAccountModel depositAccount = FileRead.Accounts.Where(acct => acct.AccountId == request.DepositAccountId).FirstOrDefault()!;
+        FileAccountModel depositAccount = _accounts.Where(acct => acct.AccountId == request.DepositAccountId).FirstOrDefault()!;
 
         if (depositAccount is null)
         {
@@ -119,7 +124,7 @@ public class BasicOperationRepository : IBasicOperationRepository
         string newSalt = Guid.NewGuid().ToString();
         string newHash = FileUserRepository.CreateHash(newSalt, request.NewPassword);
 
-        FileUserModel oldUser = FileRead.Users.Where(user => user.UserId == request.UserContext.UserId).FirstOrDefault()!;
+        FileUserModel oldUser = _users.Where(user => user.UserId == request.UserContext.UserId).FirstOrDefault()!;
 
         if (oldUser is null)
         {
@@ -139,7 +144,7 @@ public class BasicOperationRepository : IBasicOperationRepository
         {
             Random random = new Random();
             transactionId = random.Next(10000, 100000).ToString();
-        } while (FileRead.Transactions.Where(trnsct => trnsct.TranasctionId == transactionId).FirstOrDefault() != null);
+        } while (_transactions.Where(trnsct => trnsct.TranasctionId == transactionId).FirstOrDefault() != null);
         return transactionId;
     }
 }

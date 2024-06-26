@@ -6,11 +6,17 @@ using ATMProject.Data.FileProcesses.FileModels;
 namespace ATMProject.Data.MockDatabase;
 public class FileRead : IReadFile
 {
-    public static HashSet<FileUserModel> Users = new HashSet<FileUserModel>();
-    public static HashSet<FileAccountModel> Accounts = new HashSet<FileAccountModel>();
-    public static HashSet<FileTransactionModel> Transactions = new HashSet<FileTransactionModel>();
-    public static HashSet<FileAuditModel> Audits = new HashSet<FileAuditModel>();
-
+    private readonly IDataStoreService<FileUserModel> _users;
+    private readonly IDataStoreService<FileAccountModel> _accounts;
+    private readonly IDataStoreService<FileTransactionModel> _transactions;
+    private readonly IDataStoreService<FileAuditModel> _audits;
+    public FileRead(IDataStoreService<FileUserModel> users, IDataStoreService<FileAccountModel> accounts, IDataStoreService<FileTransactionModel> transactions, IDataStoreService<FileAuditModel> audits)
+    {
+        _users = users;
+        _accounts = accounts;
+        _transactions = transactions;
+        _audits = audits;
+    }
     public void ReadAllFilesContents()
     {
         string FOLDER_DIRECTORY = "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\";
@@ -28,7 +34,7 @@ public class FileRead : IReadFile
                     DateTime creationDate = DateTime.Parse(userProperties[8]);
                     List<string> accountIds = new List<string>(userProperties[9].Split(';'));
 
-                    Users.Add(new FileUserModel(userProperties[0], userProperties[1], userProperties[2], userRole, userProperties[4], userProperties[5], userProperties[6], userProperties[7], creationDate, accountIds));
+                    _users.AddItem(new FileUserModel(userProperties[0], userProperties[1], userProperties[2], userRole, userProperties[4], userProperties[5], userProperties[6], userProperties[7], creationDate, accountIds));
                 }
             }
         }
@@ -49,7 +55,7 @@ public class FileRead : IReadFile
                     DateTime creationDate = DateTime.Parse(accountProperties[4]);
                     List<string> transactionsAndAuditsIds = new List<string>(accountProperties[5].Split(';'));
 
-                    Accounts.Add(new FileAccountModel(accountProperties[0], accountProperties[1], type, balance, creationDate, transactionsAndAuditsIds));
+                    _accounts.AddItem(new FileAccountModel(accountProperties[0], accountProperties[1], type, balance, creationDate, transactionsAndAuditsIds));
                 }
             }
         }
@@ -69,7 +75,7 @@ public class FileRead : IReadFile
                 double newBalance = Convert.ToDouble(transactionProperties[5]);
                 DateTime transactionDate = DateTime.Parse(transactionProperties[6]);
 
-                Transactions.Add(new FileTransactionModel(transactionProperties[0], transactionProperties[1], type, amount, previousBalance, newBalance, transactionDate));
+                _transactions.AddItem(new FileTransactionModel(transactionProperties[0], transactionProperties[1], type, amount, previousBalance, newBalance, transactionDate));
             }
         }
 
@@ -85,7 +91,7 @@ public class FileRead : IReadFile
                 AdminInteraction interaction = (AdminInteraction)Enum.Parse(typeof(AdminInteraction), auditsProperties[3]);
                 DateTime auditDate = DateTime.Parse(auditsProperties[4]);
 
-                Audits.Add(new FileAuditModel(auditsProperties[0], auditsProperties[1], auditsProperties[2], interaction, auditDate));
+                _audits.AddItem(new FileAuditModel(auditsProperties[0], auditsProperties[1], auditsProperties[2], interaction, auditDate));
             }
         }
     }
