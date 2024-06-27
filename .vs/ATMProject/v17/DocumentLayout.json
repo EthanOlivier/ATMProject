@@ -3,8 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{5B74B98A-D279-4568-8CF0-63261B5FF57C}|ATMProject.Data\\ATMProject.Data.csproj|c:\\users\\ethan\\source\\repos\\atmproject\\atmproject.data\\fileprocesses\\fileread.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5B74B98A-D279-4568-8CF0-63261B5FF57C}|ATMProject.Data\\ATMProject.Data.csproj|solutionrelative:atmproject.data\\fileprocesses\\fileread.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{95D9BB52-7A76-486B-9817-73F38803620D}|ATMProject\\ATMProject.WindowsConsoleApplication.csproj|c:\\users\\ethan\\source\\repos\\atmproject\\atmproject\\adminscreens\\deleteaccountscreen.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{95D9BB52-7A76-486B-9817-73F38803620D}|ATMProject\\ATMProject.WindowsConsoleApplication.csproj|solutionrelative:atmproject\\adminscreens\\deleteaccountscreen.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{95D9BB52-7A76-486B-9817-73F38803620D}|ATMProject\\ATMProject.WindowsConsoleApplication.csproj|c:\\users\\ethan\\source\\repos\\atmproject\\atmproject\\adminscreens\\adduserscreen.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{95D9BB52-7A76-486B-9817-73F38803620D}|ATMProject\\ATMProject.WindowsConsoleApplication.csproj|solutionrelative:atmproject\\adminscreens\\adduserscreen.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{95D9BB52-7A76-486B-9817-73F38803620D}|ATMProject\\ATMProject.WindowsConsoleApplication.csproj|c:\\users\\ethan\\source\\repos\\atmproject\\atmproject\\resources\\audits.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
@@ -21,10 +29,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{95D9BB52-7A76-486B-9817-73F38803620D}|ATMProject\\ATMProject.WindowsConsoleApplication.csproj|c:\\users\\ethan\\source\\repos\\atmproject\\atmproject\\resources\\users.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{95D9BB52-7A76-486B-9817-73F38803620D}|ATMProject\\ATMProject.WindowsConsoleApplication.csproj|solutionrelative:atmproject\\resources\\users.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{95D9BB52-7A76-486B-9817-73F38803620D}|ATMProject\\ATMProject.WindowsConsoleApplication.csproj|c:\\users\\ethan\\source\\repos\\atmproject\\atmproject\\adminscreens\\adduserscreen.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{95D9BB52-7A76-486B-9817-73F38803620D}|ATMProject\\ATMProject.WindowsConsoleApplication.csproj|solutionrelative:atmproject\\adminscreens\\adduserscreen.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -43,32 +47,45 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "FileRead.cs",
+              "DocumentMoniker": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject.Data\\FileProcesses\\FileRead.cs",
+              "RelativeDocumentMoniker": "ATMProject.Data\\FileProcesses\\FileRead.cs",
+              "ToolTip": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject.Data\\FileProcesses\\FileRead.cs*",
+              "RelativeToolTip": "ATMProject.Data\\FileProcesses\\FileRead.cs*",
+              "ViewState": "AQIAABYAAAAAAAAAAAAgwBwAAABBAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-27T18:19:25.936Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "DeleteAccountScreen.cs",
               "DocumentMoniker": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\AdminScreens\\DeleteAccountScreen.cs",
               "RelativeDocumentMoniker": "ATMProject\\AdminScreens\\DeleteAccountScreen.cs",
               "ToolTip": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\AdminScreens\\DeleteAccountScreen.cs",
               "RelativeToolTip": "ATMProject\\AdminScreens\\DeleteAccountScreen.cs",
-              "ViewState": "AQIAAJ4AAAAAAAAAAAAiwKQAAAAAAAAA",
+              "ViewState": "AQIAACcAAAAAAAAAAAAowFsAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-27T17:43:12.766Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 2,
               "Title": "AddUserScreen.cs",
               "DocumentMoniker": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\AdminScreens\\AddUserScreen.cs",
               "RelativeDocumentMoniker": "ATMProject\\AdminScreens\\AddUserScreen.cs",
               "ToolTip": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\AdminScreens\\AddUserScreen.cs",
               "RelativeToolTip": "ATMProject\\AdminScreens\\AddUserScreen.cs",
-              "ViewState": "AQIAADgAAAAAAAAAAAAwwFIAAAAYAAAA",
+              "ViewState": "AQIAAC0AAAAAAAAAAAAowFIAAAAYAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-27T17:42:30.458Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
               "Title": "Users.txt",
               "DocumentMoniker": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\Users.txt",
               "RelativeDocumentMoniker": "ATMProject\\Resources\\Users.txt",
@@ -81,7 +98,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
               "Title": "Accounts.txt",
               "DocumentMoniker": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\Accounts.txt",
               "RelativeDocumentMoniker": "ATMProject\\Resources\\Accounts.txt",
@@ -94,7 +111,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "Transactions.txt",
               "DocumentMoniker": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\Transactions.txt",
               "RelativeDocumentMoniker": "ATMProject\\Resources\\Transactions.txt",
@@ -107,7 +124,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "Audits.txt",
               "DocumentMoniker": "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\Audits.txt",
               "RelativeDocumentMoniker": "ATMProject\\Resources\\Audits.txt",
