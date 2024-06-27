@@ -122,15 +122,7 @@ public class AddAccountScreen : IReceivableScreen
     private ViewModel BuildViewModel()
     {
         var userInfo = _userRepository.GetUserInfoByUserId(UserId);
-        IEnumerable<AccountModel> accountData;
-        if (userInfo.AccountIds.Count() > 0)
-        {
-            accountData = _userRepository.GetUserAccountsByUserId(UserId);
-        }
-        else
-        {
-            accountData = null;
-        }
+        var accountData = _userRepository.GetUserAccountsByUserId(UserId);
 
         return new ViewModel(
             Name: userInfo.Name,

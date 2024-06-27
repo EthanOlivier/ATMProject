@@ -26,16 +26,12 @@ public class FileRead : IReadFile
         foreach (string user in usersFileContents)
         {
             string[] userProperties = user.Split('|');
-            if (userProperties.Length == 10)
+            if (userProperties.Length == 9 && int.TryParse(userProperties[0], out _))
             {
-                if (int.TryParse(userProperties[0], out _))
-                {
-                    UserRole userRole = (UserRole)Enum.Parse(typeof(UserRole), userProperties[3]);
-                    DateTime creationDate = DateTime.Parse(userProperties[8]);
-                    List<string> accountIds = new List<string>(userProperties[9].Split(';'));
+                UserRole userRole = (UserRole)Enum.Parse(typeof(UserRole), userProperties[3]);
+                DateTime creationDate = DateTime.Parse(userProperties[8]);
 
-                    _users.AddItem(new FileUserModel(userProperties[0], userProperties[1], userProperties[2], userRole, userProperties[4], userProperties[5], userProperties[6], userProperties[7], creationDate, accountIds));
-                }
+                _users.AddItem(new FileUserModel(userProperties[0], userProperties[1], userProperties[2], userRole, userProperties[4], userProperties[5], userProperties[6], userProperties[7], creationDate));
             }
         }
 
@@ -46,17 +42,13 @@ public class FileRead : IReadFile
         foreach (string account in accountsFileContents)
         {
             string[] accountProperties = account.Split('|');
-            if (accountProperties.Length == 6)
+            if (accountProperties.Length == 5 && int.TryParse(accountProperties[0], out _))
             {
-                if (int.TryParse(accountProperties[0], out _))
-                {
-                    AccountType type = (AccountType)Enum.Parse(typeof(AccountType), accountProperties[2]);
-                    double balance = Convert.ToDouble(accountProperties[3]);
-                    DateTime creationDate = DateTime.Parse(accountProperties[4]);
-                    List<string> transactionsAndAuditsIds = new List<string>(accountProperties[5].Split(';'));
+                AccountType type = (AccountType)Enum.Parse(typeof(AccountType), accountProperties[2]);
+                double balance = Convert.ToDouble(accountProperties[3]);
+                DateTime creationDate = DateTime.Parse(accountProperties[4]);
 
-                    _accounts.AddItem(new FileAccountModel(accountProperties[0], accountProperties[1], type, balance, creationDate, transactionsAndAuditsIds));
-                }
+                _accounts.AddItem(new FileAccountModel(accountProperties[0], accountProperties[1], type, balance, creationDate));
             }
         }
 

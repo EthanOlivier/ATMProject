@@ -1,5 +1,4 @@
 ﻿using ATMProject.Data.FileProcesses.FileModels;
-using ATMProject.Data.MockDatabase;
 
 namespace ATMProject.Data.FileProcesses;
 public class FileWrite : IWriteFile
@@ -43,16 +42,7 @@ public class FileWrite : IWriteFile
                         userToAdd = fileUser;
                     }
 
-                    string newIds = "";
-                    if (fileUser.AccountIds is not null && fileUser.AccountIds.Count() != 0)
-                    {
-                        if (fileUser.AccountIds[0] == "")
-                        {
-                            fileUser.AccountIds.RemoveAt(0);
-                        }
-                        newIds = string.Join(";", fileUser.AccountIds);
-                    }
-                    updatedFileContents.Add(fileUser.UserId + "|" + fileUser.Hash + "|" + fileUser.Salt + "|" + fileUser.UserRole + "|" + fileUser.Name + "|" + fileUser.Address + "|" + fileUser.PhoneNumber + "|" + fileUser.Email + "|" + fileUser.CreationDate + "|" + newIds);
+                    updatedFileContents.Add(fileUser.UserId + "|" + fileUser.Hash + "|" + fileUser.Salt + "|" + fileUser.UserRole + "|" + fileUser.Name + "|" + fileUser.Address + "|" + fileUser.PhoneNumber + "|" + fileUser.Email + "|" + fileUser.CreationDate);
                 }
                 else
                 {
@@ -80,7 +70,7 @@ public class FileWrite : IWriteFile
         {
             _accounts.AddItem(newAccount);
 
-            File.AppendAllLines(FILE_DIRECTORY, new[] { newAccount.AccountId + "|" + newAccount.UserId + "|" + newAccount.Type + "|" + newAccount.Balance + "|" + newAccount.CreationDate + "|" });
+            File.AppendAllLines(FILE_DIRECTORY, new[] { newAccount.AccountId + "|" + newAccount.UserId + "|" + newAccount.Type + "|" + newAccount.Balance + "|" + newAccount.CreationDate });
         }
         else if (givenAccountIds is not null || newAccount is not null)
         {
@@ -100,16 +90,7 @@ public class FileWrite : IWriteFile
                         accountToAdd = fileAccount;
                     }
 
-                    string newTransactions = "";
-                    if (fileAccount.Transactions is not null && fileAccount.Transactions.Count() != 0)
-                    {
-                        if (fileAccount.Transactions[0] == "")
-                        {
-                            fileAccount.Transactions.RemoveAt(0);
-                        }
-                        newTransactions = string.Join(";", fileAccount.Transactions);
-                    }
-                    updatedFileContents.Add(fileAccount.AccountId + "|" + fileAccount.UserId + "|" + fileAccount.Type + "|" + fileAccount.Balance + "|" + fileAccount.CreationDate + "|" + newTransactions);
+                    updatedFileContents.Add(fileAccount.AccountId + "|" + fileAccount.UserId + "|" + fileAccount.Type + "|" + fileAccount.Balance + "|" + fileAccount.CreationDate);
                 }
                 else
                 {
@@ -129,7 +110,7 @@ public class FileWrite : IWriteFile
             File.WriteAllLines(FILE_DIRECTORY, updatedFileContents);
         }
     }
-    public void UpdateTransactionsFile(FileTransactionModel newTransaction, string[] accountIds)
+    public void UpdateTransactionsFile(string[] transactionIds, FileTransactionModel newTransaction)
     {
         string FILE_DIRECTORY = "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\Transactions.txt";
 
@@ -145,7 +126,7 @@ public class FileWrite : IWriteFile
 
             foreach (FileTransactionModel transaction in _transactions.GetModels())
             {
-                if (!accountIds.Contains(transaction.AccountId))
+                if (!transactionIds.Contains(transaction.TranasctionId))
                 {
                     updatedFileContents.Add(transaction.TranasctionId + "|" + transaction.AccountId + "|" + transaction.Type + "|" + transaction.Amount + "|" + transaction.PreviousBalance + "|" + transaction.NewBalance + "|" + transaction.DateTime);
                 }

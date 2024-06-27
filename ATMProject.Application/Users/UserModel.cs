@@ -8,6 +8,5 @@ public record UserModel
     string Address,
     string PhoneNumber,
     string Email,
-    DateTime CreationDate,
-    List<string> AccountIds
+    DateTime CreationDate
 );

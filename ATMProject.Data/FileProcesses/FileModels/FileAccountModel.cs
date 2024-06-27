@@ -8,6 +8,5 @@ public record FileAccountModel
     string UserId,
     AccountType Type,
     double Balance,
-    DateTime CreationDate,
-    List<string> Transactions
+    DateTime CreationDate
 );

@@ -74,7 +74,7 @@ public class AddUserScreen : IReceivableScreen
         }
         else
         {
-            AddAccountsToUser(userId);
+            AddAccounts(userId);
         }
         _screenManager.ShowScreen(ScreenNames.AdminOverview);
     }
@@ -91,7 +91,7 @@ public class AddUserScreen : IReceivableScreen
             if (password != "X")
             {
                 password = password == String.Empty ? "password" : password;
-                Console.WriteLine($"Do you want to confirm your password to be [{password}]?\nType Y for yes, Type N for No");
+                Console.WriteLine($"Do you want to confirm this user's password to be [{password}]?\nType Y for yes, Type N for No");
                 confirm = Console.ReadLine() ?? "";
                 if (confirm.ToUpper() == "Y")
                 {
@@ -155,9 +155,9 @@ public class AddUserScreen : IReceivableScreen
     }
     private void ConfirmEditCancel()
     {
-        while (true)
+        string confirm = "";
+        while (confirm.ToUpper() != "C")
         {
-            string confirm;
             Console.WriteLine("\nType 'C' to Confirm this information");
             Console.WriteLine("Type 'E' to Edit this information");
             Console.WriteLine("Type 'X' to Cancel and Close out of this screen");
@@ -178,7 +178,7 @@ public class AddUserScreen : IReceivableScreen
             }
         }
     }
-    private void AddAccountsToUser(string userId)
+    private void AddAccounts(string userId)
     {
         Console.WriteLine("\nWould you like to add more accounts to this user?\nType Y for yes, Type N for No");
         string confirm = Console.ReadLine() ?? "";

@@ -135,23 +135,35 @@ public class DeleteAccountScreen : IScreen
     private string SelectAccount(ViewModel viewModel)
     {
         bool doesAccountWithZeroBalanceExist = false;
-        string accountId = "";
-        Console.WriteLine("\nEnter an account to delete or type 'X' to leave the screen");
+        List<string> elegableAccounts = new List<string>();
+
         foreach (var account in viewModel.Accounts)
         {
             if (account.Balance == "0")
             {
-                Console.WriteLine($"Type {account.Id} to delete account with that same Id");
+                elegableAccounts.Add(account.Id);
                 doesAccountWithZeroBalanceExist = true;
             }
         }
-        if (!doesAccountWithZeroBalanceExist)
+
+
+        if (doesAccountWithZeroBalanceExist)
+        {
+            Console.WriteLine("\nEnter an account to delete or type 'X' to leave the screen");
+            foreach (var account in elegableAccounts)
+            {
+                Console.WriteLine($"Type {account} to delete account with that same Id");
+            }
+        }
+        else
         {
             Console.WriteLine("Unable to find an account that is able to be deleted.");
             Console.WriteLine("Remember that an account must have a balance of $0 to be able to be deleted.");
             _screenManager.ShowScreen(ScreenNames.AdminOverview);
         }
 
+
+        string accountId = "";
         while (true)
         {
             accountId = Console.ReadLine() ?? "";

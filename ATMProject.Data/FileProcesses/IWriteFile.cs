@@ -5,6 +5,6 @@ public interface IWriteFile
 {
     void UpdateUsersFile(string givenUserId, FileUserModel newUser);
     void UpdateAccountsFile(string[] givenAccountIds, FileAccountModel newAccount);
-    void UpdateTransactionsFile(FileTransactionModel newTransaction, string[] accountIds);
+    void UpdateTransactionsFile(string[] transactionIds, FileTransactionModel newTransaction);
     void UpdateAuditsFile(FileAuditModel newAudit);
 }

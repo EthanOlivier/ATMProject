@@ -35,8 +35,7 @@ public class FileUserRepository : IDataSource
                 Address: bUser.Address,
                 PhoneNumber: bUser.PhoneNumber,
                 Email: bUser.Email,
-                CreationDate: bUser.CreationDate,
-                AccountIds: bUser.AccountIds
+                CreationDate: bUser.CreationDate
         );
     }
     public IEnumerable<AccountModel> GetAccountsByUserId(string userId)
@@ -45,7 +44,7 @@ public class FileUserRepository : IDataSource
 
         if (dbAccounts is null)
         {
-            throw new Exception($"Could not find any accounts for User with Id: " + userId);
+            return null;
         }
 
         var dbTransactions = _transactions.Where(tran => dbAccounts.Any(acct => acct.AccountId == tran.AccountId)).ToArray();
