@@ -13,7 +13,15 @@ public class AdminOperationsRepository : IAdminOperationsRepository
     private readonly HashSet<FileAccountModel> _accounts;
     private readonly HashSet<FileTransactionModel> _transactions;
     private readonly HashSet<FileAuditModel> _audits;
-    public AdminOperationsRepository(IWriteFile writeToFile, IDataStoreService<FileUserModel> users, IDataStoreService<FileAccountModel> accounts, IDataStoreService<FileTransactionModel> transactions, IDataStoreService<FileAuditModel> audits)
+
+    public AdminOperationsRepository
+    (
+        IWriteFile writeToFile, 
+        IDataStoreService<FileUserModel> users, 
+        IDataStoreService<FileAccountModel> accounts, 
+        IDataStoreService<FileTransactionModel> transactions, 
+        IDataStoreService<FileAuditModel> audits
+    )
     {
         _writeToFile = writeToFile;
         _users = users.GetModels();
@@ -21,6 +29,7 @@ public class AdminOperationsRepository : IAdminOperationsRepository
         _transactions = transactions.GetModels();
         _audits = audits.GetModels();
     }
+
     public IResult Execute(IChangeBasicUserPassword.Request request)
     {
         FileUserModel oldUser = _users.Where(user => user.UserId == request.UserId).FirstOrDefault()!;
@@ -34,21 +43,51 @@ public class AdminOperationsRepository : IAdminOperationsRepository
         string newSalt = Guid.NewGuid().ToString();
         string newHash = FileUserRepository.CreateHash(newSalt, request.Password);
 
-        FileUserModel newUser = new FileUserModel(oldUser.UserId, newHash, newSalt, oldUser.UserRole, oldUser.Name, oldUser.Address, oldUser.PhoneNumber, oldUser.Email, oldUser.CreationDate);
+        FileUserModel newUser = new FileUserModel(
+            oldUser.UserId, 
+            newHash, 
+            newSalt, 
+            oldUser.UserRole, 
+            oldUser.Name, 
+            oldUser.Address, 
+            oldUser.PhoneNumber, 
+            oldUser.Email, 
+            oldUser.CreationDate
+        );
 
         _writeToFile.UpdateUsersFile(request.UserId, newUser);
 
-        AddAudit(request.AdminId, AdminInteraction.ResetUserPassword, request.UserId, DateTime.Now);
+        AddAudit(
+            request.AdminId, 
+            AdminInteraction.ResetUserPassword, 
+            request.UserId, 
+            DateTime.Now
+        );
 
         return Result.Succeeded();
     }
     public IResult Execute(IAddUser.Request request)
     {
-        FileUserModel newUser = new FileUserModel(request.UserId, request.Hash, request.Salt, UserRole.Basic, request.Name, request.Address, request.PhoneNumber, request.Email, DateTime.Now);
+        FileUserModel newUser = new FileUserModel(
+            request.UserId, 
+            request.Hash, 
+            request.Salt, 
+            UserRole.Basic, 
+            request.Name, 
+            request.Address, 
+            request.PhoneNumber, 
+            request.Email, 
+            DateTime.Now
+        );
 
         _writeToFile.UpdateUsersFile(null, newUser);
 
-        AddAudit(request.AdminId, AdminInteraction.AddUser, request.UserId, DateTime.Now);
+        AddAudit(
+            request.AdminId, 
+            AdminInteraction.AddUser, 
+            request.UserId, 
+            DateTime.Now
+        );
 
         return Result.Succeeded();
     }
@@ -61,7 +100,14 @@ public class AdminOperationsRepository : IAdminOperationsRepository
             accountId = random.Next(10000, 100000).ToString();
         } while (_accounts.Where(acct => acct.AccountId == accountId).FirstOrDefault() != null);
 
-        FileAccountModel newAccount = new FileAccountModel(accountId, request.UserId, request.AccountType, request.Balance, DateTime.Now);
+        FileAccountModel newAccount = new FileAccountModel(
+            accountId, 
+            request.UserId, 
+            request.AccountType, 
+            request.Balance, 
+            DateTime.Now
+        );
+
         FileUserModel user = _users.Where(user => user.UserId == request.UserId).FirstOrDefault()!;
 
         _writeToFile.UpdateAccountsFile(null, newAccount);
@@ -82,12 +128,18 @@ public class AdminOperationsRepository : IAdminOperationsRepository
         _writeToFile.UpdateUsersFile(request.UserId, null);
 
 
-        string[] accounts = _accounts.Where(acct => acct.UserId == user.UserId).Select(acct => acct.AccountId).ToArray();
+        string[] accounts = _accounts.Where(acct => acct.UserId == user.UserId)
+            .Select(acct => acct.AccountId)
+            .ToArray();
+
         if (accounts.Any())
         {
             _writeToFile.UpdateAccountsFile(accounts, null);
 
-            string[] transactions = _transactions.Where(tran => accounts.Contains(tran.AccountId)).Select(tran => tran.TranasctionId).ToArray();
+            string[] transactions = _transactions.Where(tran => accounts.Contains(tran.AccountId))
+                .Select(tran => tran.TranasctionId)
+                .ToArray();
+
             if (transactions.Any())
             {
                 _writeToFile.UpdateTransactionsFile(transactions, null);
@@ -103,7 +155,10 @@ public class AdminOperationsRepository : IAdminOperationsRepository
     {
         _writeToFile.UpdateAccountsFile(new[] { request.AccountId }, null);
 
-        string[] transactions = _transactions.Where(tran => tran.AccountId == request.AccountId).Select(tran => tran.TranasctionId).ToArray();
+        string[] transactions = _transactions.Where(tran => tran.AccountId == request.AccountId)
+            .Select(tran => tran.TranasctionId)
+            .ToArray();
+
         if (transactions.Any())
         {
             _writeToFile.UpdateTransactionsFile(transactions, null);
@@ -231,9 +286,21 @@ public class AdminOperationsRepository : IAdminOperationsRepository
         return (_users.Count() + 1).ToString();
     }
 
-    private void AddAudit(string adminId, AdminInteraction interaction, string userId, DateTime dateTime)
+    private void AddAudit
+    (
+        string adminId, 
+        AdminInteraction interaction, 
+        string userId, 
+        DateTime dateTime
+    )
     {
-        FileAuditModel newAudit = new FileAuditModel(CreateAuditId(), adminId, userId, interaction, dateTime);
+        FileAuditModel newAudit = new FileAuditModel(
+            CreateAuditId(), 
+            adminId, 
+            userId, 
+            interaction, 
+            dateTime
+        );
 
         _audits.Add(newAudit);
 

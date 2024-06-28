@@ -13,7 +13,17 @@ public class DeleteAccountScreen : IScreen
     private readonly IFindUser _findUser;
     private readonly ILogger _logger;
     private readonly IOperation<IDeleteAccount.Request, IResult> _deleteAccountOperation;
-    public DeleteAccountScreen(IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenGetter, IUserRepository userRepository, ILogger logger, IFindUser findUser, IDeleteAccount deleteAccount)
+
+    public DeleteAccountScreen
+    (
+        IUserContextService userContextService, 
+        IScreenManager screenManager, 
+        IScreenGetter screenGetter, 
+        IUserRepository userRepository, 
+        ILogger logger, 
+        IFindUser findUser, 
+        IDeleteAccount deleteAccount
+    )
     {
         _userContextService = userContextService;
         _screenManager = screenManager;
@@ -23,8 +33,12 @@ public class DeleteAccountScreen : IScreen
         _findUser = findUser;
 
         _deleteAccountOperation = deleteAccount;
-        _deleteAccountOperation = new LoggingOperationDecorator<IDeleteAccount.Request, IResult>(_deleteAccountOperation, _userContextService, _logger);
-        _deleteAccountOperation = new LoggingOperationDecorator<IDeleteAccount.Request, IResult>(_deleteAccountOperation, _userContextService, _logger);
+        _deleteAccountOperation = new LoggingOperationDecorator
+            <IDeleteAccount.Request, IResult>
+            (_deleteAccountOperation, _userContextService, _logger);
+        _deleteAccountOperation = new LoggingOperationDecorator
+            <IDeleteAccount.Request, IResult>
+            (_deleteAccountOperation, _userContextService, _logger);
     }
 
     private record ViewModel
@@ -56,7 +70,9 @@ public class DeleteAccountScreen : IScreen
         string accountId = SelectAccount(viewModel);
         ConfirmDeleteAccount(userId, accountId);
 
-        _deleteAccountOperation.Execute(new IDeleteAccount.Request(accountId, _userContextService.GetUserContext().UserId));
+        _deleteAccountOperation.Execute(new IDeleteAccount.Request(
+            accountId, _userContextService.GetUserContext().UserId
+        ));
 
         _screenManager.ShowScreen(ScreenNames.AdminOverview);
     }

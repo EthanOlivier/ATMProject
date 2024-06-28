@@ -7,13 +7,21 @@ public class FileWrite : IWriteFile
     private readonly IDataStoreService<FileAccountModel> _accounts;
     private readonly IDataStoreService<FileTransactionModel> _transactions;
     private readonly IDataStoreService<FileAuditModel> _audits;
-    public FileWrite(IDataStoreService<FileUserModel> users, IDataStoreService<FileAccountModel> accounts, IDataStoreService<FileTransactionModel> transactions, IDataStoreService<FileAuditModel> audits)
+
+    public FileWrite
+    (
+        IDataStoreService<FileUserModel> users, 
+        IDataStoreService<FileAccountModel> accounts, 
+        IDataStoreService<FileTransactionModel> transactions, 
+        IDataStoreService<FileAuditModel> audits
+    )
     {
         _users = users;
         _accounts = accounts;
         _transactions = transactions;
         _audits = audits;
     }
+
     public void UpdateUsersFile(string givenUserId, FileUserModel newUser)
     {
         string FILE_DIRECTORY = "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\Users.txt";
@@ -22,7 +30,17 @@ public class FileWrite : IWriteFile
         {
             _users.AddItem(newUser);
 
-            File.AppendAllLines(FILE_DIRECTORY, new[] { newUser.UserId + "|" + newUser.Hash + "|" + newUser.Salt + "|" + newUser.UserRole + "|" + newUser.Name + "|" + newUser.Address + "|" + newUser.PhoneNumber + "|" + newUser.Email + "|" + newUser.CreationDate + "|" });
+            File.AppendAllLines(FILE_DIRECTORY, new[] { 
+                newUser.UserId + "|" + 
+                newUser.Hash + "|" + 
+                newUser.Salt + "|" + 
+                newUser.UserRole + "|" + 
+                newUser.Name + "|" + 
+                newUser.Address + "|" + 
+                newUser.PhoneNumber + "|" + 
+                newUser.Email + "|" + 
+                newUser.CreationDate + "|" 
+            });
         }
         else if (givenUserId is not null || newUser is not null)
         {
@@ -42,7 +60,17 @@ public class FileWrite : IWriteFile
                         userToAdd = fileUser;
                     }
 
-                    updatedFileContents.Add(fileUser.UserId + "|" + fileUser.Hash + "|" + fileUser.Salt + "|" + fileUser.UserRole + "|" + fileUser.Name + "|" + fileUser.Address + "|" + fileUser.PhoneNumber + "|" + fileUser.Email + "|" + fileUser.CreationDate);
+                    updatedFileContents.Add(
+                        fileUser.UserId + "|" + 
+                        fileUser.Hash + "|" + 
+                        fileUser.Salt + "|" + 
+                        fileUser.UserRole + "|" + 
+                        fileUser.Name + "|" + 
+                        fileUser.Address + "|" + 
+                        fileUser.PhoneNumber + "|" + 
+                        fileUser.Email + "|" + 
+                        fileUser.CreationDate
+                    );
                 }
                 else
                 {
@@ -70,7 +98,13 @@ public class FileWrite : IWriteFile
         {
             _accounts.AddItem(newAccount);
 
-            File.AppendAllLines(FILE_DIRECTORY, new[] { newAccount.AccountId + "|" + newAccount.UserId + "|" + newAccount.Type + "|" + newAccount.Balance + "|" + newAccount.CreationDate });
+            File.AppendAllLines(FILE_DIRECTORY, new[] { 
+                newAccount.AccountId + "|" + 
+                newAccount.UserId + "|" + 
+                newAccount.Type + "|" + 
+                newAccount.Balance + "|" + 
+                newAccount.CreationDate 
+            });
         }
         else if (givenAccountIds is not null || newAccount is not null)
         {
@@ -90,7 +124,13 @@ public class FileWrite : IWriteFile
                         accountToAdd = fileAccount;
                     }
 
-                    updatedFileContents.Add(fileAccount.AccountId + "|" + fileAccount.UserId + "|" + fileAccount.Type + "|" + fileAccount.Balance + "|" + fileAccount.CreationDate);
+                    updatedFileContents.Add(
+                        fileAccount.AccountId + "|" + 
+                        fileAccount.UserId + "|" + 
+                        fileAccount.Type + "|" + 
+                        fileAccount.Balance + "|" + 
+                        fileAccount.CreationDate
+                    );
                 }
                 else
                 {
@@ -117,7 +157,15 @@ public class FileWrite : IWriteFile
         if (newTransaction is not null)
         {
             _transactions.AddItem(newTransaction);
-            File.AppendAllLines(FILE_DIRECTORY, new[] { newTransaction.TranasctionId + "|" + newTransaction.AccountId + "|" + newTransaction.Type + "|" + newTransaction.Amount + "|" + newTransaction.PreviousBalance + "|" + newTransaction.NewBalance + "|" + newTransaction.DateTime });
+            File.AppendAllLines(FILE_DIRECTORY, new[] { 
+                newTransaction.TranasctionId + "|" + 
+                newTransaction.AccountId + "|" + 
+                newTransaction.Type + "|" + 
+                newTransaction.Amount + "|" + 
+                newTransaction.PreviousBalance + "|" + 
+                newTransaction.NewBalance + "|" + 
+                newTransaction.DateTime 
+            });
         }
         else
         {
@@ -128,7 +176,15 @@ public class FileWrite : IWriteFile
             {
                 if (!transactionIds.Contains(transaction.TranasctionId))
                 {
-                    updatedFileContents.Add(transaction.TranasctionId + "|" + transaction.AccountId + "|" + transaction.Type + "|" + transaction.Amount + "|" + transaction.PreviousBalance + "|" + transaction.NewBalance + "|" + transaction.DateTime);
+                    updatedFileContents.Add(
+                        transaction.TranasctionId + "|" + 
+                        transaction.AccountId + "|" + 
+                        transaction.Type + "|" + 
+                        transaction.Amount + "|" + 
+                        transaction.PreviousBalance + "|" + 
+                        transaction.NewBalance + "|" + 
+                        transaction.DateTime
+                    );
                 }
                 else
                 {
@@ -149,7 +205,12 @@ public class FileWrite : IWriteFile
         string FILE_DIRECTORY = "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\Audits.txt";
         string[] transactionsAndAuditsFileContents = File.ReadAllLines(FILE_DIRECTORY);
 
-        string recordToAdd = newAudit.AuditId + "|" + newAudit.AdminId + "|" + newAudit.BasicId + "|" + newAudit.InteractionType + "|" + newAudit.DateTime;
+        string recordToAdd = 
+            newAudit.AuditId + "|" + 
+            newAudit.AdminId + "|" + 
+            newAudit.BasicId + "|" + 
+            newAudit.InteractionType + "|" + 
+            newAudit.DateTime;
         File.WriteAllLines(FILE_DIRECTORY, transactionsAndAuditsFileContents);
         File.AppendAllLines(FILE_DIRECTORY, new[] { recordToAdd });
     }

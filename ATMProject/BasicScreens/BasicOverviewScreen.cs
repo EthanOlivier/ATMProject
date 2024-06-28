@@ -10,7 +10,13 @@ public class BasicOverviewScreen : IScreen
     private readonly IScreenManager _screenManager;
     private readonly IScreenGetter _screenGetter;
 
-    public BasicOverviewScreen(IUserRepository userRepository, IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenFactory)
+    public BasicOverviewScreen
+    (
+        IUserRepository userRepository, 
+        IUserContextService userContextService, 
+        IScreenManager screenManager, 
+        IScreenGetter screenFactory
+    )
     {
         _userRepository = userRepository;
         _userContextService = userContextService;
@@ -55,8 +61,12 @@ public class BasicOverviewScreen : IScreen
 
     private ViewModel BuildViewModel()
     {
-        var userInfo = _userRepository.GetUserInfoByUserId(_userContextService.GetUserContext().UserId);
-        var accounts = _userRepository.GetUserAccountsByUserId(_userContextService.GetUserContext().UserId);
+        var userInfo = _userRepository.GetUserInfoByUserId(
+            _userContextService.GetUserContext().UserId
+        );
+        var accounts = _userRepository.GetUserAccountsByUserId(
+            _userContextService.GetUserContext().UserId
+        );
 
         return new ViewModel(
             Name: userInfo.Name,
@@ -106,7 +116,9 @@ public class BasicOverviewScreen : IScreen
         {
             Console.WriteLine("Type 'W' to Withdraw");
         }
-        if (viewModel.Accounts.Count() >= 2 && viewModel.Accounts.Where(acct => acct.Balance > 0).Count() >= 1)
+        if (viewModel.Accounts.Count() >= 2 && 
+            viewModel.Accounts.Where(acct => acct.Balance > 0).Count() >= 1
+        )
         {
             Console.WriteLine("Type 'T' to Transfer");
         }
@@ -136,7 +148,9 @@ public class BasicOverviewScreen : IScreen
                     }
                     break;
                 case "T":
-                    if (viewModel.Accounts.Count() >= 2 && viewModel.Accounts.Where(acct => acct.Balance > 0).Count() >= 1)
+                    if (viewModel.Accounts.Count() >= 2 && 
+                        viewModel.Accounts.Where(acct => acct.Balance > 0).Count() >= 1
+                    )
                     {
                         ShowScreen(ScreenNames.Transfer);
                     }

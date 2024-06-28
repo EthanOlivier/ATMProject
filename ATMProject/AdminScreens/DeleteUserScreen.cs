@@ -14,7 +14,16 @@ public class DeleteUserScreen : IScreen
     private readonly ILogger _logger;
     private readonly IFindUser _findUser;
     private readonly IOperation<IDeleteUser.Request, IResult> _deleteUserOperation;
-    public DeleteUserScreen(IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenGetter, IUserRepository userRepository, ILogger logger, IFindUser findUser, IDeleteUser deleteUser)
+    public DeleteUserScreen
+    (
+        IUserContextService userContextService, 
+        IScreenManager screenManager, 
+        IScreenGetter screenGetter, 
+        IUserRepository userRepository, 
+        ILogger logger, 
+        IFindUser findUser, 
+        IDeleteUser deleteUser
+    )
     {
         _userContextService = userContextService;
         _screenManager = screenManager;
@@ -24,8 +33,12 @@ public class DeleteUserScreen : IScreen
         _findUser = findUser;
 
         _deleteUserOperation = deleteUser;
-        _deleteUserOperation = new LoggingOperationDecorator<IDeleteUser.Request, IResult>(_deleteUserOperation, _userContextService, _logger);
-        _deleteUserOperation = new AuthorizationOperationDecorator<IDeleteUser.Request, IResult>(_deleteUserOperation, _userContextService);
+        _deleteUserOperation = new LoggingOperationDecorator
+            <IDeleteUser.Request, IResult>
+            (_deleteUserOperation, _userContextService, _logger);
+        _deleteUserOperation = new AuthorizationOperationDecorator
+            <IDeleteUser.Request, IResult>
+        (_deleteUserOperation, _userContextService);
     }
     private record ViewModel
     (
@@ -54,7 +67,9 @@ public class DeleteUserScreen : IScreen
         DisplayUser(viewModel);
         DeleteUser(viewModel, userId);
 
-        _deleteUserOperation.Execute(new IDeleteUser.Request(userId, _userContextService.GetUserContext().UserId));
+        _deleteUserOperation.Execute(new IDeleteUser.Request(
+            userId, _userContextService.GetUserContext().UserId
+        ));
 
         _screenManager.ShowScreen(ScreenNames.AdminOverview);
     }
@@ -151,7 +166,8 @@ public class DeleteUserScreen : IScreen
         }
         else
         {
-            Console.WriteLine($"\nUnable to delete user: User's accounts still contain a cumulative balance of {totalBalance.ToString("C2")}. Must withdrawal all money from accounts before continuing");
+            Console.WriteLine($"\nUnable to delete user: User's accounts still contain a cumulative balance of {totalBalance.ToString("C2")}." +
+                $" Must withdrawal all money from accounts before continuing");
             _screenManager.ShowScreen(ScreenNames.AdminOverview);
         }
     }

@@ -53,7 +53,8 @@ public static class Program
 
 
         typeof(IBasicOperationRepository).GetInterfaces()
-            .Where(t => !typeof(IBasicOperationRepository).GetInterfaces().Any(anyBorFace => anyBorFace.GetInterfaces().Contains(t)))
+            .Where(t => !typeof(IBasicOperationRepository).GetInterfaces()
+            .Any(anyBorFace => anyBorFace.GetInterfaces().Contains(t)))
             .ToList()
             .ForEach(screenType =>
             {
@@ -61,7 +62,8 @@ public static class Program
             });
 
         typeof(IAdminOperationsRepository).GetInterfaces()
-            .Where(t => !typeof(IAdminOperationsRepository).GetInterfaces().Any(anyAorFace => anyAorFace.GetInterfaces().Contains(t)))
+            .Where(t => !typeof(IAdminOperationsRepository).GetInterfaces()
+            .Any(anyAorFace => anyAorFace.GetInterfaces().Contains(t)))
             .ToList()
             .ForEach(screenType =>
             {

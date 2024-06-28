@@ -19,7 +19,17 @@ public class AddUserScreen : IReceivableScreen
     private readonly IGetUserIdentifyInfo _identityInfo;
     private readonly ICreateUserId _createUserId;
     private readonly IOperation<IAddUser.Request, IResult> _addUserOperation;
-    public AddUserScreen(IUserContextService userContextService, IUserRepository userRepository, IScreenManager screenManager, IScreenGetter screenGetter, ILogger logger, IGetUserIdentifyInfo getUserIdentifyInfo, ICreateUserId createUserId, IAddUser addUser)
+    public AddUserScreen
+    (
+        IUserContextService userContextService, 
+        IUserRepository userRepository, 
+        IScreenManager screenManager, 
+        IScreenGetter screenGetter, 
+        ILogger logger, 
+        IGetUserIdentifyInfo getUserIdentifyInfo, 
+        ICreateUserId createUserId, 
+        IAddUser addUser
+    )
     {
         _userContextService = userContextService;
         _userRepository = userRepository;
@@ -30,8 +40,10 @@ public class AddUserScreen : IReceivableScreen
         _logger = logger;
 
         _addUserOperation = addUser;
-        _addUserOperation = new LoggingOperationDecorator<IAddUser.Request, IResult>(_addUserOperation, _userContextService, _logger);
-        _addUserOperation = new AuthorizationOperationDecorator<IAddUser.Request, IResult>(_addUserOperation, _userContextService);
+        _addUserOperation = new LoggingOperationDecorator<IAddUser.Request, 
+            IResult>(_addUserOperation, _userContextService, _logger);
+        _addUserOperation = new AuthorizationOperationDecorator<IAddUser.Request, 
+            IResult>(_addUserOperation, _userContextService);
     }
     public void ReceiveData<T>(T data) where T : class
     {
@@ -67,7 +79,10 @@ public class AddUserScreen : IReceivableScreen
 
             UserId = _createUserId.CreateUserId();
 
-            _addUserOperation.Execute(new IAddUser.Request(userInfo.Item1, userInfo.Item2, userInfo.Item3, userInfo.Item4, userInfo.Item5, userInfo.Item6, UserId, _userContextService.GetUserContext().UserId));
+            _addUserOperation.Execute(new IAddUser.Request(
+                userInfo.Item1, userInfo.Item2, userInfo.Item3, userInfo.Item4, userInfo.Item5, userInfo.Item6,
+                UserId, _userContextService.GetUserContext().UserId
+            ));
 
             _screenManager.ShowScreen(ScreenNames.AddAccount, UserId);
             UserId = null;

@@ -4,28 +4,39 @@ using ATMProject.Banking;
 using ATMProject.System;
 
 namespace ATMProject.Application.Operations;
-public interface IBasicOperationRepository : IDepositToAccountOperation, IWithdrawFromAccountOperation, ITransferBetweenAccountsOperation, IChangeUserPasswordOperation;
-public interface IDepositToAccountOperation : IOperation<IDepositToAccountOperation.Request, IResult>
+public interface IBasicOperationRepository : IDepositToAccountOperation, 
+    IWithdrawFromAccountOperation, 
+    ITransferBetweenAccountsOperation, 
+    IChangeUserPasswordOperation;
+
+public interface IDepositToAccountOperation : 
+    IOperation<IDepositToAccountOperation.Request, IResult>
 {
     public record Request(string AccountId, double Amount);
 }
-public interface IWithdrawFromAccountOperation : IOperation<IWithdrawFromAccountOperation.Request, IResult>
+public interface IWithdrawFromAccountOperation : 
+    IOperation<IWithdrawFromAccountOperation.Request, IResult>
 {
     public record Request(string AccountId, double Amount);
 }
-public interface ITransferBetweenAccountsOperation : IOperation<ITransferBetweenAccountsOperation.Request, IResult>
+public interface ITransferBetweenAccountsOperation : 
+    IOperation<ITransferBetweenAccountsOperation.Request, IResult>
 {
     public record Request(string WithdrawalAccountId, string DepositAccountId, double Amount);
 }
 
-public interface IChangeUserPasswordOperation : IOperation<IChangeUserPasswordOperation.Request, IResult>
+public interface IChangeUserPasswordOperation : 
+    IOperation<IChangeUserPasswordOperation.Request, IResult>
 {
     public record Request(UserContext UserContext, string NewPassword);
 }
 
 
 
-public interface IAdminOperationsRepository : IChangeBasicUserPassword, IAddUser, IAddAccount, IDeleteUser, IDeleteAccount, IFindUser, IGetUserIdentifyInfo, IGetAudits, IGetUsersTotals, ICreateUserId, ILookupUser;
+public interface IAdminOperationsRepository : IChangeBasicUserPassword, IAddUser,
+    IAddAccount, IDeleteUser, IDeleteAccount, IFindUser, IGetUserIdentifyInfo, 
+    IGetAudits, IGetUsersTotals, ICreateUserId, ILookupUser;
+
 
 [RequiresAdmin]
 public interface IChangeBasicUserPassword : IOperation<IChangeBasicUserPassword.Request, IResult>
@@ -35,7 +46,8 @@ public interface IChangeBasicUserPassword : IOperation<IChangeBasicUserPassword.
 [RequiresAdmin]
 public interface IAddUser : IOperation<IAddUser.Request, IResult>
 {
-    public record Request(string Name, string Address, string PhoneNumber, string Email, string Salt, string Hash, string UserId, string AdminId);
+    public record Request(string Name, string Address, string PhoneNumber, string Email,
+        string Salt, string Hash, string UserId, string AdminId);
 }
 [RequiresAdmin]
 public interface IAddAccount : IOperation<IAddAccount.Request, IResult>

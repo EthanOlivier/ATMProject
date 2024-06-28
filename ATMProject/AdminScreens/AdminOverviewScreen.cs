@@ -12,7 +12,14 @@ public class AdminOverviewScreen : IScreen
     private readonly IGetUsersTotals _usersTotals;
     private readonly IGetAudits _getAudits;
 
-    public AdminOverviewScreen(IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenGetter, IGetUsersTotals usersTotals, IGetAudits getAudits)
+    public AdminOverviewScreen
+    (
+        IUserContextService userContextService, 
+        IScreenManager screenManager, 
+        IScreenGetter screenGetter, 
+        IGetUsersTotals usersTotals, 
+        IGetAudits getAudits
+    )
     {
         _userContextService = userContextService;
         _screenManager = screenManager;
@@ -31,7 +38,9 @@ public class AdminOverviewScreen : IScreen
             _screenManager.ShowScreen(ScreenNames.Login);
         }
 
-        RenderAdminOverviewScreen(CalculateDatabaseTotals(), _getAudits.GetAudits(_userContextService.GetUserContext().UserId));
+        RenderAdminOverviewScreen(CalculateDatabaseTotals(),
+            _getAudits.GetAudits(_userContextService.GetUserContext().UserId)
+        );
     }
 
     private (int, int, double) CalculateDatabaseTotals()

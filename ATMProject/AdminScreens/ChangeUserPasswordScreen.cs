@@ -14,7 +14,16 @@ public class ChangeUserPasswordScreen : IScreen
     private readonly ILogger _logger;
     private readonly IFindUser _findUser;
     private readonly IOperation<IChangeBasicUserPassword.Request, IResult> _changeBasicUserPasswordOperation;
-    public ChangeUserPasswordScreen(IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenGetter, IUserRepository userRepository, ILogger logger, IFindUser findUser, IChangeBasicUserPassword changeBasicUserPassword)
+    public ChangeUserPasswordScreen
+    (
+        IUserContextService userContextService, 
+        IScreenManager screenManager, 
+        IScreenGetter screenGetter, 
+        IUserRepository userRepository, 
+        ILogger logger, 
+        IFindUser findUser, 
+        IChangeBasicUserPassword changeBasicUserPassword
+    )
     {
         _userContextService = userContextService;
         _screenManager = screenManager;
@@ -24,8 +33,12 @@ public class ChangeUserPasswordScreen : IScreen
         _findUser = findUser;
 
         _changeBasicUserPasswordOperation = changeBasicUserPassword;
-        _changeBasicUserPasswordOperation = new LoggingOperationDecorator<IChangeBasicUserPassword.Request, IResult>(_changeBasicUserPasswordOperation, _userContextService, _logger);
-        _changeBasicUserPasswordOperation = new AuthorizationOperationDecorator<IChangeBasicUserPassword.Request, IResult>(_changeBasicUserPasswordOperation, _userContextService);
+        _changeBasicUserPasswordOperation = new LoggingOperationDecorator
+            <IChangeBasicUserPassword.Request, IResult>
+            (_changeBasicUserPasswordOperation, _userContextService, _logger);
+        _changeBasicUserPasswordOperation = new AuthorizationOperationDecorator
+            <IChangeBasicUserPassword.Request, IResult>
+            (_changeBasicUserPasswordOperation, _userContextService);
     }
 
     private record ViewModel
@@ -55,7 +68,9 @@ public class ChangeUserPasswordScreen : IScreen
         DisplayUser(viewModel);
         string newPassword = ChangePassword(userId);
 
-        _changeBasicUserPasswordOperation.Execute(new IChangeBasicUserPassword.Request(userId, newPassword, _userContextService.GetUserContext().UserId));
+        _changeBasicUserPasswordOperation.Execute(new IChangeBasicUserPassword.Request(
+            userId, newPassword, _userContextService.GetUserContext().UserId
+        ));
 
         _screenManager.ShowScreen(ScreenNames.AdminOverview);
     }

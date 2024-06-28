@@ -11,7 +11,13 @@ public class LookupUserScreen : IScreen
     private readonly IScreenGetter _screenGetter;
     private readonly ILookupUser _lookupUser;
 
-    public LookupUserScreen(IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenGetter, ILookupUser lookupUserOperations)
+    public LookupUserScreen
+    (
+        IUserContextService userContextService, 
+        IScreenManager screenManager, 
+        IScreenGetter screenGetter, 
+        ILookupUser lookupUserOperations
+    )
     {
         _userContextService = userContextService;
         _screenManager = screenManager;

@@ -26,7 +26,9 @@ public class ApplicationUserRepository : IUserRepository
         if (_dataSource.AreUserCredentialsCorrect(userId, password))
         {
             return Result<UserContext>
-                .Succeeded(new UserContext(userId, _dataSource.GetUserInfoByUserId(userId).UserRole));
+                .Succeeded(new UserContext(
+                    userId, _dataSource.GetUserInfoByUserId(userId).UserRole)
+                );
         }
         else
         {

@@ -14,7 +14,15 @@ public class DepositScreen : IScreen
     private readonly ILogger _logger;
     private readonly IOperation<IDepositToAccountOperation.Request, IResult> _depositToAccountOperation;
 
-    public DepositScreen(IUserRepository userRepository, IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenFactory, ILogger logger, IDepositToAccountOperation modifyDepositData)
+    public DepositScreen
+    (
+        IUserRepository userRepository, 
+        IUserContextService userContextService, 
+        IScreenManager screenManager, 
+        IScreenGetter screenFactory, 
+        ILogger logger, 
+        IDepositToAccountOperation modifyDepositData
+    )
     {
         _userRepository = userRepository;
         _userContextService = userContextService;
@@ -23,8 +31,12 @@ public class DepositScreen : IScreen
         _logger = logger;
 
         _depositToAccountOperation = modifyDepositData;
-        _depositToAccountOperation = new LoggingOperationDecorator<IDepositToAccountOperation.Request, IResult>(_depositToAccountOperation, _userContextService, _logger);
-        _depositToAccountOperation = new AuthorizationOperationDecorator<IDepositToAccountOperation.Request, IResult>(_depositToAccountOperation, _userContextService);
+        _depositToAccountOperation = new LoggingOperationDecorator
+            <IDepositToAccountOperation.Request, IResult>
+            (_depositToAccountOperation, _userContextService, _logger);
+        _depositToAccountOperation = new AuthorizationOperationDecorator
+            <IDepositToAccountOperation.Request, IResult>
+            (_depositToAccountOperation, _userContextService);
     }
 
     public record ViewModel
@@ -41,13 +53,17 @@ public class DepositScreen : IScreen
         string accountId = ChooseAccount(GetData());
         double amount = GetAmount();
 
-        _depositToAccountOperation.Execute(new IDepositToAccountOperation.Request(accountId, amount));
+        _depositToAccountOperation.Execute(
+            new IDepositToAccountOperation.Request(accountId, amount)
+        );
 
         _screenManager.ShowScreen(ScreenNames.BasicOverview);
     }
     private IEnumerable<ViewModel> GetData()
     {
-        var accountData = _userRepository.GetUserAccountsByUserId(_userContextService.GetUserContext().UserId);
+        var accountData = _userRepository.GetUserAccountsByUserId(
+            _userContextService.GetUserContext().UserId
+        );
 
         return accountData.Select(accountData => new ViewModel(
                 Id: accountData.AccountId,

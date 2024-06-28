@@ -12,19 +12,29 @@ public class BasicOperationRepository : IBasicOperationRepository
     private readonly HashSet<FileUserModel> _users;
     private readonly HashSet<FileAccountModel> _accounts;
     private readonly HashSet<FileTransactionModel> _transactions;
-    public BasicOperationRepository(IWriteFile writeToFile, IDataStoreService<FileUserModel> users, IDataStoreService<FileAccountModel> accounts, IDataStoreService<FileTransactionModel> transactions)
+
+    public BasicOperationRepository
+    (
+        IWriteFile writeToFile, 
+        IDataStoreService<FileUserModel> users, 
+        IDataStoreService<FileAccountModel> accounts, 
+        IDataStoreService<FileTransactionModel> transactions
+    )
     {
         _writeToFile = writeToFile;
         _users = users.GetModels();
         _accounts = accounts.GetModels();
         _transactions = transactions.GetModels();
     }
+
     public IResult Execute(IDepositToAccountOperation.Request request)
     {
         double previousBalance;
         double newBalance;
 
-        FileAccountModel account = _accounts.Where(acct => acct.AccountId == request.AccountId).FirstOrDefault()!;
+        FileAccountModel account = _accounts.Where(
+            acct => acct.AccountId == request.AccountId
+        ).FirstOrDefault()!;
 
         if (account is null)
         {
@@ -36,8 +46,23 @@ public class BasicOperationRepository : IBasicOperationRepository
 
         string transacitonId = CreateTransactionId();
 
-        FileAccountModel newAccount = new FileAccountModel(account.AccountId, account.UserId, account.Type, newBalance, account.CreationDate);
-        FileTransactionModel newTransaction = new FileTransactionModel(transacitonId, request.AccountId, TransactionType.Deposit, (double)request.Amount, previousBalance, newBalance, DateTime.Now);
+        FileAccountModel newAccount = new FileAccountModel(
+            account.AccountId, 
+            account.UserId, 
+            account.Type, 
+            newBalance, 
+            account.CreationDate
+        );
+
+        FileTransactionModel newTransaction = new FileTransactionModel(
+            transacitonId, 
+            request.AccountId, 
+            TransactionType.Deposit, 
+            (double)request.Amount, 
+            previousBalance, 
+            newBalance, 
+            DateTime.Now
+        );
 
         _writeToFile.UpdateAccountsFile(new[] { request.AccountId }, newAccount);
         _writeToFile.UpdateTransactionsFile(null, newTransaction);
@@ -50,7 +75,9 @@ public class BasicOperationRepository : IBasicOperationRepository
         double previousBalance;
         double newBalance;
 
-        FileAccountModel account = _accounts.Where(acct => acct.AccountId == request.AccountId).FirstOrDefault()!;
+        FileAccountModel account = _accounts.Where(
+            acct => acct.AccountId == request.AccountId
+        ).FirstOrDefault()!;
 
         if (account is null)
         {
@@ -62,8 +89,23 @@ public class BasicOperationRepository : IBasicOperationRepository
 
         string transacitonId = CreateTransactionId();
 
-        FileAccountModel newAccount = new FileAccountModel(account.AccountId, account.UserId, account.Type, newBalance, account.CreationDate);
-        FileTransactionModel newTransaction = new FileTransactionModel(transacitonId, request.AccountId, TransactionType.Withdrawal, (double)request.Amount, previousBalance, newBalance, DateTime.Now);
+        FileAccountModel newAccount = new FileAccountModel(
+            account.AccountId,
+            account.UserId,
+            account.Type,
+            newBalance,
+            account.CreationDate
+        );
+
+        FileTransactionModel newTransaction = new FileTransactionModel(
+            transacitonId, 
+            request.AccountId, 
+            TransactionType.Withdrawal, 
+            (double)request.Amount, 
+            previousBalance, 
+            newBalance, 
+            DateTime.Now
+        );
 
         _writeToFile.UpdateAccountsFile(new[] { request.AccountId }, newAccount);
         _writeToFile.UpdateTransactionsFile(null, newTransaction);
@@ -75,11 +117,14 @@ public class BasicOperationRepository : IBasicOperationRepository
         double previousBalance;
         double newBalance;
 
-        FileAccountModel withdrawalAccount = _accounts.Where(acct => acct.AccountId == request.WithdrawalAccountId).FirstOrDefault()!;
+        FileAccountModel withdrawalAccount = _accounts.Where(
+            acct => acct.AccountId == request.WithdrawalAccountId
+        ).FirstOrDefault()!;
 
         if (withdrawalAccount is null)
         {
-            return Result.Failed($"Could not find any Account with Id: " + request.WithdrawalAccountId);
+            return Result.Failed($"Could not find any Account with Id: "
+                + request.WithdrawalAccountId);
         }
 
         previousBalance = withdrawalAccount.Balance;
@@ -87,15 +132,32 @@ public class BasicOperationRepository : IBasicOperationRepository
 
         string withdrawalTransactionId = CreateTransactionId();
 
-        FileAccountModel newWithdrawalAccount = new FileAccountModel(withdrawalAccount.AccountId, withdrawalAccount.UserId, withdrawalAccount.Type, newBalance, withdrawalAccount.CreationDate);
-        FileTransactionModel newWithdrawalTransaction = new FileTransactionModel(withdrawalTransactionId, request.WithdrawalAccountId, TransactionType.Transaction, request.Amount, previousBalance, newBalance, DateTime.Now);
+        FileAccountModel newWithdrawalAccount = new FileAccountModel(
+            withdrawalAccount.AccountId, 
+            withdrawalAccount.UserId, 
+            withdrawalAccount.Type, 
+            newBalance, 
+            withdrawalAccount.CreationDate
+        );
+
+        FileTransactionModel newWithdrawalTransaction = new FileTransactionModel(
+            withdrawalTransactionId, 
+            request.WithdrawalAccountId, 
+            TransactionType.Transaction, 
+            request.Amount, 
+            previousBalance, 
+            newBalance, 
+            DateTime.Now
+        );
 
         _writeToFile.UpdateAccountsFile(new[] { request.WithdrawalAccountId }, newWithdrawalAccount);
         _writeToFile.UpdateTransactionsFile(null, newWithdrawalTransaction);
 
 
 
-        FileAccountModel depositAccount = _accounts.Where(acct => acct.AccountId == request.DepositAccountId).FirstOrDefault()!;
+        FileAccountModel depositAccount = _accounts.Where(
+            acct => acct.AccountId == request.DepositAccountId
+        ).FirstOrDefault()!;
 
         if (depositAccount is null)
         {
@@ -107,8 +169,23 @@ public class BasicOperationRepository : IBasicOperationRepository
 
         string depositTransactionId = CreateTransactionId();
 
-        FileAccountModel newDepositAccount = new FileAccountModel(depositAccount.AccountId, depositAccount.UserId, depositAccount.Type, newBalance, depositAccount.CreationDate);
-        FileTransactionModel newDepsitTransaction = new FileTransactionModel(depositTransactionId, request.WithdrawalAccountId, TransactionType.Transaction, request.Amount, previousBalance, newBalance, DateTime.Now);
+        FileAccountModel newDepositAccount = new FileAccountModel(
+            depositAccount.AccountId, 
+            depositAccount.UserId, 
+            depositAccount.Type, 
+            newBalance, 
+            depositAccount.CreationDate
+        );
+
+        FileTransactionModel newDepsitTransaction = new FileTransactionModel(
+            depositTransactionId, 
+            request.WithdrawalAccountId, 
+            TransactionType.Transaction, 
+            request.Amount, 
+            previousBalance, 
+            newBalance, 
+            DateTime.Now
+        );
 
         _writeToFile.UpdateAccountsFile(new[] { request.DepositAccountId }, newDepositAccount);
         _writeToFile.UpdateTransactionsFile(null, newDepsitTransaction);
@@ -120,14 +197,27 @@ public class BasicOperationRepository : IBasicOperationRepository
         string newSalt = Guid.NewGuid().ToString();
         string newHash = FileUserRepository.CreateHash(newSalt, request.NewPassword);
 
-        FileUserModel oldUser = _users.Where(user => user.UserId == request.UserContext.UserId).FirstOrDefault()!;
+        FileUserModel oldUser = _users.Where(
+            user => user.UserId == request.UserContext.UserId
+        ).FirstOrDefault()!;
 
         if (oldUser is null)
         {
-            return Result.Failed($"Could not find any User with Id: " + request.UserContext.UserId);
+            return Result.Failed($"Could not find any User with Id: "
+                + request.UserContext.UserId);
         }
 
-        FileUserModel newUser = new FileUserModel(oldUser.UserId, newHash, newSalt, oldUser.UserRole, oldUser.Name, oldUser.Address, oldUser.PhoneNumber, oldUser.Email, oldUser.CreationDate);
+        FileUserModel newUser = new FileUserModel(
+            oldUser.UserId, 
+            newHash, 
+            newSalt, 
+            oldUser.UserRole, 
+            oldUser.Name, 
+            oldUser.Address, 
+            oldUser.PhoneNumber, 
+            oldUser.Email, 
+            oldUser.CreationDate
+        );
 
         _writeToFile.UpdateUsersFile(request.UserContext.UserId, newUser);
 
@@ -140,7 +230,10 @@ public class BasicOperationRepository : IBasicOperationRepository
         {
             Random random = new Random();
             transactionId = random.Next(10000, 100000).ToString();
-        } while (_transactions.Where(trnsct => trnsct.TranasctionId == transactionId).FirstOrDefault() != null);
+        } while (_transactions.Where(
+            trnsct => trnsct.TranasctionId == transactionId
+            ).FirstOrDefault() != null);
+
         return transactionId;
     }
 }

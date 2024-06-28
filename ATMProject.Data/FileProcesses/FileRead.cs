@@ -3,8 +3,6 @@ using ATMProject.Application.Users;
 using ATMProject.Banking;
 using ATMProject.Data.FileProcesses;
 using ATMProject.Data.FileProcesses.FileModels;
-using System.Security.Principal;
-using System.Transactions;
 
 namespace ATMProject.Data.MockDatabase;
 public class FileRead : IReadFile
@@ -14,7 +12,15 @@ public class FileRead : IReadFile
     private readonly IDataStoreService<FileTransactionModel> _transactions;
     private readonly IDataStoreService<FileAuditModel> _audits;
     private readonly ILogger _logger;
-    public FileRead(IDataStoreService<FileUserModel> users, IDataStoreService<FileAccountModel> accounts, IDataStoreService<FileTransactionModel> transactions, IDataStoreService<FileAuditModel> audits, ILogger logger)
+
+    public FileRead
+    (
+        IDataStoreService<FileUserModel> users, 
+        IDataStoreService<FileAccountModel> accounts, 
+        IDataStoreService<FileTransactionModel> transactions, 
+        IDataStoreService<FileAuditModel> audits, 
+        ILogger logger
+    )
     {
         _users = users;
         _accounts = accounts;
@@ -22,6 +28,7 @@ public class FileRead : IReadFile
         _audits = audits;
         _logger = logger;
     }
+
     public void ReadAllFilesContents()
     {
         string FOLDER_DIRECTORY = "C:\\Users\\Ethan\\source\\repos\\ATMProject\\ATMProject\\Resources\\";
@@ -32,7 +39,12 @@ public class FileRead : IReadFile
         string AUDITS_FILE = Path.Combine(FOLDER_DIRECTORY, "Audits.txt");
 
 
-        if (!File.Exists(USERS_FILE) || !File.Exists(ACCOUNTS_FILE) || !File.Exists(TRANSACTIONS_FILE) || !File.Exists(AUDITS_FILE))
+        if (
+            !File.Exists(USERS_FILE) || 
+            !File.Exists(ACCOUNTS_FILE) || 
+            !File.Exists(TRANSACTIONS_FILE) || 
+            !File.Exists(AUDITS_FILE)
+        )
         {
             throw new Exception("Error: Unable to locate all necessary files");
         }
@@ -48,7 +60,17 @@ public class FileRead : IReadFile
                     UserRole userRole = (UserRole)Enum.Parse(typeof(UserRole), userProperties[3]);
                     DateTime creationDate = DateTime.Parse(userProperties[8]);
 
-                    _users.AddItem(new FileUserModel(userProperties[0], userProperties[1], userProperties[2], userRole, userProperties[4], userProperties[5], userProperties[6], userProperties[7], creationDate));
+                    _users.AddItem(new FileUserModel(
+                        userProperties[0], 
+                        userProperties[1], 
+                        userProperties[2], 
+                        userRole, 
+                        userProperties[4], 
+                        userProperties[5], 
+                        userProperties[6], 
+                        userProperties[7], 
+                        creationDate
+                    ));
                 }
             }
         }
@@ -63,11 +85,19 @@ public class FileRead : IReadFile
                 string[] accountProperties = line.Split('|');
                 if (accountProperties.Length == 5 && int.TryParse(accountProperties[0], out _))
                 {
-                    AccountType type = (AccountType)Enum.Parse(typeof(AccountType), accountProperties[2]);
+                    AccountType type = (AccountType)Enum.Parse(
+                        typeof(AccountType), accountProperties[2]
+                    );
                     double balance = Convert.ToDouble(accountProperties[3]);
                     DateTime creationDate = DateTime.Parse(accountProperties[4]);
 
-                    _accounts.AddItem(new FileAccountModel(accountProperties[0], accountProperties[1], type, balance, creationDate));
+                    _accounts.AddItem(new FileAccountModel(
+                        accountProperties[0], 
+                        accountProperties[1], 
+                        type, 
+                        balance, 
+                        creationDate)
+                    );
                 }
             }
         }
@@ -82,13 +112,23 @@ public class FileRead : IReadFile
                 string[] transactionProperties = line.Split('|');
                 if (transactionProperties.Length == 7 && int.TryParse(transactionProperties[0], out _))
                 {
-                    TransactionType type = (TransactionType)Enum.Parse(typeof(TransactionType), transactionProperties[2]);
+                    TransactionType type = (TransactionType)Enum.Parse(
+                        typeof(TransactionType), transactionProperties[2]
+                    );
                     double amount = Convert.ToDouble(transactionProperties[3]);
                     double previousBalance = Convert.ToDouble(transactionProperties[4]);
                     double newBalance = Convert.ToDouble(transactionProperties[5]);
                     DateTime transactionDate = DateTime.Parse(transactionProperties[6]);
 
-                    _transactions.AddItem(new FileTransactionModel(transactionProperties[0], transactionProperties[1], type, amount, previousBalance, newBalance, transactionDate));
+                    _transactions.AddItem(new FileTransactionModel(
+                        transactionProperties[0], 
+                        transactionProperties[1], 
+                        type, 
+                        amount, 
+                        previousBalance, 
+                        newBalance, 
+                        transactionDate
+                    ));
                 }
             }
         }
@@ -103,10 +143,18 @@ public class FileRead : IReadFile
                 string[] auditsProperties = line.Split('|');
                 if (auditsProperties.Length == 5 && int.TryParse(auditsProperties[0], out _))
                 {
-                    AdminInteraction interaction = (AdminInteraction)Enum.Parse(typeof(AdminInteraction), auditsProperties[3]);
+                    AdminInteraction interaction = (AdminInteraction)Enum.Parse(
+                        typeof(AdminInteraction), auditsProperties[3]
+                    );
                     DateTime auditDate = DateTime.Parse(auditsProperties[4]);
 
-                    _audits.AddItem(new FileAuditModel(auditsProperties[0], auditsProperties[1], auditsProperties[2], interaction, auditDate));
+                    _audits.AddItem(new FileAuditModel(
+                        auditsProperties[0], 
+                        auditsProperties[1], 
+                        auditsProperties[2], 
+                        interaction, 
+                        auditDate
+                    ));
                 }
             }
         }

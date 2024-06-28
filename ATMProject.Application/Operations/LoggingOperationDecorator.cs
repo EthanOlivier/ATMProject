@@ -9,7 +9,8 @@ public class LoggingOperationDecorator<TRequest, TResponse> : IOperation<TReques
     private readonly IUserContextService _userContextService;
     private readonly ILogger _logger;
 
-    public LoggingOperationDecorator(IOperation<TRequest, TResponse> innerOperation, IUserContextService userContextService, ILogger logger)
+    public LoggingOperationDecorator(IOperation<TRequest, TResponse> innerOperation,
+        IUserContextService userContextService, ILogger logger)
     {
         _innerOperation = innerOperation;
         _userContextService = userContextService;

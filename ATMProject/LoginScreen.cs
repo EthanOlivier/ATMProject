@@ -33,11 +33,13 @@ public class LoginScreen : IScreen
             {
                 _userContextService.SetUserContext(result.ResultData);
 
-                if (_userContextService.GetUserContext().UserRole == Application.Users.UserRole.Basic)
+                if (_userContextService.GetUserContext().UserRole
+                    == Application.Users.UserRole.Basic)
                 {
                     _screenManager.ShowScreen(ScreenNames.BasicOverview);
                 }
-                else if (_userContextService.GetUserContext().UserRole == Application.Users.UserRole.Admin)
+                else if (_userContextService.GetUserContext().UserRole
+                    == Application.Users.UserRole.Admin)
                 {
                     _screenManager.ShowScreen(ScreenNames.AdminOverview);
                 }

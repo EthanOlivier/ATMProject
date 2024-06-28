@@ -2,14 +2,19 @@
 
 namespace ATMProject.Composition;
 
-public record ServiceLocatorScreenGetterServiceConfiguration(Dictionary<ScreenNames, Type> ScreenTypeLookup);
+public record ServiceLocatorScreenGetterServiceConfiguration(
+    Dictionary<ScreenNames, Type> ScreenTypeLookup
+);
 
 public class ServiceLocatorScreenGetter : IScreenGetter
 {
     private Dictionary<ScreenNames, Type> _screenTypeLookup;
     private IServiceProvider _serviceProvider;
 
-    public ServiceLocatorScreenGetter(ServiceLocatorScreenGetterServiceConfiguration serviceConfig, IServiceProvider serviceProvider)
+    public ServiceLocatorScreenGetter(
+        ServiceLocatorScreenGetterServiceConfiguration serviceConfig,
+        IServiceProvider serviceProvider
+        )
     {
         _screenTypeLookup = serviceConfig.ScreenTypeLookup;
         _serviceProvider = serviceProvider;

@@ -13,7 +13,15 @@ public class WithdrawalScreen : IScreen
     private readonly IScreenGetter _screenGetter;
     private readonly ILogger _logger;
     private readonly IOperation<IWithdrawFromAccountOperation.Request, IResult> _withdrawalFromAccountOperation;
-    public WithdrawalScreen(IUserRepository userRepository, IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenFactory, ILogger logger, IWithdrawFromAccountOperation modifyWithdrawalData)
+    public WithdrawalScreen
+    (
+        IUserRepository userRepository, 
+        IUserContextService userContextService, 
+        IScreenManager screenManager, 
+        IScreenGetter screenFactory, 
+        ILogger logger, 
+        IWithdrawFromAccountOperation modifyWithdrawalData
+    )
     {
         _userRepository = userRepository;
         _userContextService = userContextService;
@@ -22,8 +30,12 @@ public class WithdrawalScreen : IScreen
         _logger = logger;
 
         _withdrawalFromAccountOperation = modifyWithdrawalData;
-        _withdrawalFromAccountOperation = new LoggingOperationDecorator<IWithdrawFromAccountOperation.Request, IResult>(_withdrawalFromAccountOperation, _userContextService, _logger);
-        _withdrawalFromAccountOperation = new AuthorizationOperationDecorator<IWithdrawFromAccountOperation.Request, IResult>(_withdrawalFromAccountOperation, _userContextService);
+        _withdrawalFromAccountOperation = new LoggingOperationDecorator
+            <IWithdrawFromAccountOperation.Request, IResult>
+            (_withdrawalFromAccountOperation, _userContextService, _logger);
+        _withdrawalFromAccountOperation = new AuthorizationOperationDecorator
+            <IWithdrawFromAccountOperation.Request, IResult>
+            (_withdrawalFromAccountOperation, _userContextService);
     }
     public record ViewModel
     (
@@ -39,13 +51,17 @@ public class WithdrawalScreen : IScreen
         string account = ChooseAccount(GetData());
         double amount = GetAmount();
 
-        _withdrawalFromAccountOperation.Execute(new IWithdrawFromAccountOperation.Request(account, amount));
+        _withdrawalFromAccountOperation.Execute(
+            new IWithdrawFromAccountOperation.Request(account, amount)
+        );
         
         _screenManager.ShowScreen(ScreenNames.BasicOverview);
     }
     private IEnumerable<ViewModel> GetData()
     {
-        var accountData = _userRepository.GetUserAccountsByUserId(_userContextService.GetUserContext().UserId);
+        var accountData = _userRepository.GetUserAccountsByUserId(
+            _userContextService.GetUserContext().UserId
+        );
 
         accountData = accountData.Where(acct => acct.Balance > 0);
 

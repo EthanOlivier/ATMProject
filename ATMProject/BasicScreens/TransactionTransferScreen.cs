@@ -14,7 +14,15 @@ public class TransactionTransferScreen : IScreen
     private readonly ILogger _logger;
     private readonly IOperation<ITransferBetweenAccountsOperation.Request, IResult> _transferBetweenAccountsOperation;
 
-    public TransactionTransferScreen(IUserRepository userRepository, IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenFactory, ILogger logger, ITransferBetweenAccountsOperation modifyTransferData)
+    public TransactionTransferScreen
+    (
+        IUserRepository userRepository, 
+        IUserContextService userContextService, 
+        IScreenManager screenManager, 
+        IScreenGetter screenFactory, 
+        ILogger logger, 
+        ITransferBetweenAccountsOperation modifyTransferData
+    )
     {
         _userRepository = userRepository;
         _userContextService = userContextService;
@@ -23,8 +31,12 @@ public class TransactionTransferScreen : IScreen
         _logger = logger;
 
         _transferBetweenAccountsOperation = modifyTransferData;
-        _transferBetweenAccountsOperation = new LoggingOperationDecorator<ITransferBetweenAccountsOperation.Request, IResult>(_transferBetweenAccountsOperation, _userContextService, _logger);
-        _transferBetweenAccountsOperation = new AuthorizationOperationDecorator<ITransferBetweenAccountsOperation.Request, IResult>(_transferBetweenAccountsOperation, _userContextService);
+        _transferBetweenAccountsOperation = new LoggingOperationDecorator
+            <ITransferBetweenAccountsOperation.Request, IResult>
+            (_transferBetweenAccountsOperation, _userContextService, _logger);
+        _transferBetweenAccountsOperation = new AuthorizationOperationDecorator
+            <ITransferBetweenAccountsOperation.Request, IResult>
+            (_transferBetweenAccountsOperation, _userContextService);
     }
     public record ViewModel
     (
@@ -43,13 +55,16 @@ public class TransactionTransferScreen : IScreen
         (withdrawalAccount, depositAccount, withdrawalAccountBalance) = ChooseAccounts(GetData());
         amount = GetAmount(withdrawalAccountBalance);
 
-        _transferBetweenAccountsOperation.Execute(new ITransferBetweenAccountsOperation.Request(withdrawalAccount, depositAccount, amount));
+        _transferBetweenAccountsOperation.Execute(
+            new ITransferBetweenAccountsOperation.Request(withdrawalAccount, depositAccount, amount)
+        );
         
         _screenManager.ShowScreen(ScreenNames.BasicOverview);
     }
     private IEnumerable<ViewModel> GetData()
     {
-        var accountData = _userRepository.GetUserAccountsByUserId(_userContextService.GetUserContext().UserId);
+        var accountData = _userRepository.GetUserAccountsByUserId(
+            _userContextService.GetUserContext().UserId);
 
         return accountData.Select(accountData => new ViewModel(
             Id: accountData.AccountId,
@@ -107,7 +122,8 @@ public class TransactionTransferScreen : IScreen
                     }
                     else
                     {
-                        if (!double.TryParse(withdrawalableAccounts.Where(acct => acct.Id == withdrawalAccount).FirstOrDefault()!.Balance, out withdrawalAccountBalance))
+                        if (!double.TryParse(withdrawalableAccounts.Where(acct => acct.Id == withdrawalAccount)
+                            .FirstOrDefault()!.Balance, out withdrawalAccountBalance))
                         {
                             throw new Exception("Error: Unable to find given account");
                         }

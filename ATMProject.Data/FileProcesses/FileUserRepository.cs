@@ -13,12 +13,19 @@ public class FileUserRepository : IDataSource
     private readonly HashSet<FileUserModel> _users;
     private readonly HashSet<FileAccountModel> _accounts;
     private readonly HashSet<FileTransactionModel> _transactions;
-    public FileUserRepository(IDataStoreService<FileUserModel> users, IDataStoreService<FileAccountModel> accounts, IDataStoreService<FileTransactionModel> transactions)
+
+    public FileUserRepository
+    (
+        IDataStoreService<FileUserModel> users, 
+        IDataStoreService<FileAccountModel> accounts, 
+        IDataStoreService<FileTransactionModel> transactions
+    )
     {
         _users = users.GetModels();
         _accounts = accounts.GetModels();
         _transactions = transactions.GetModels();
     }
+
     public UserModel GetUserInfoByUserId(string userId)
     {
         FileUserModel bUser = _users.Where(user => user.UserId == userId).FirstOrDefault()!;
@@ -38,6 +45,7 @@ public class FileUserRepository : IDataSource
                 CreationDate: bUser.CreationDate
         );
     }
+
     public IEnumerable<AccountModel> GetAccountsByUserId(string userId)
     {
         var dbAccounts = _accounts.Where(acct => acct.UserId == userId).ToArray();
@@ -47,7 +55,9 @@ public class FileUserRepository : IDataSource
             return null;
         }
 
-        var dbTransactions = _transactions.Where(tran => dbAccounts.Any(acct => acct.AccountId == tran.AccountId)).ToArray();
+        var dbTransactions = _transactions.Where(
+            tran => dbAccounts.Any(acct => acct.AccountId == tran.AccountId)
+        ).ToArray();
 
         return dbAccounts.Select(account => new AccountModel(
             AccountId: account.AccountId,

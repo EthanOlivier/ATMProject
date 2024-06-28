@@ -18,7 +18,17 @@ public class AddAccountScreen : IReceivableScreen
     private readonly ILogger _logger;
     private readonly IFindUser _findUser;
     private readonly IOperation<IAddAccount.Request, IResult> _addAccountOperation;
-    public AddAccountScreen(IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenGetter, IUserRepository userRepository, ILogger logger, IFindUser findUser, IAddAccount addAccount)
+
+    public AddAccountScreen
+    (
+        IUserContextService userContextService, 
+        IScreenManager screenManager, 
+        IScreenGetter screenGetter, 
+        IUserRepository userRepository, 
+        ILogger logger, 
+        IFindUser findUser, 
+        IAddAccount addAccount
+    )
     {
         _userContextService = userContextService;
         _screenManager = screenManager;
@@ -28,9 +38,12 @@ public class AddAccountScreen : IReceivableScreen
         _findUser = findUser;
 
         _addAccountOperation = addAccount;
-        _addAccountOperation = new LoggingOperationDecorator<IAddAccount.Request, IResult>(_addAccountOperation, _userContextService, _logger);
-        _addAccountOperation = new AuthorizationOperationDecorator<IAddAccount.Request, IResult>(_addAccountOperation, _userContextService);
+        _addAccountOperation = new LoggingOperationDecorator<IAddAccount.Request, 
+            IResult>(_addAccountOperation, _userContextService, _logger);
+        _addAccountOperation = new AuthorizationOperationDecorator<IAddAccount.Request, 
+            IResult>(_addAccountOperation, _userContextService);
     }
+
     private record ViewModel
     (
         string Name,
@@ -83,7 +96,9 @@ public class AddAccountScreen : IReceivableScreen
 
         (AccountType accountType, double balance) = EnterAccountInfo();
 
-        _addAccountOperation.Execute(new IAddAccount.Request(UserId, accountType, balance, _userContextService.GetUserContext().UserId));
+        _addAccountOperation.Execute(new IAddAccount.Request(
+            UserId, accountType, balance, _userContextService.GetUserContext().UserId
+        ));
 
         if (wasSupplied)
         {
@@ -174,7 +189,12 @@ public class AddAccountScreen : IReceivableScreen
         double dblBalance = 0.0;
         string type = "";
 
-        while (type.ToUpper() != "C" && type.ToUpper() != "S" && type.ToUpper() != "MMA" && type.ToUpper() != "CD" && type.ToUpper() != "X")
+        while (type.ToUpper() != "C" && 
+            type.ToUpper() != "S" && 
+            type.ToUpper() != "MMA" && 
+            type.ToUpper() != "CD" && 
+            type.ToUpper() != "X"
+        )
         {
             if (type != "")
             {

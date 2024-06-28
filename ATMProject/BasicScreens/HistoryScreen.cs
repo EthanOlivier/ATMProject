@@ -10,7 +10,14 @@ public class HistoryScreen : IScreen
     private readonly IScreenGetter _screenGetter;
     private readonly ILogger _logger;
 
-    public HistoryScreen(IUserRepository userRepository, IUserContextService userContextService, IScreenManager screenManager, IScreenGetter screenFactory, ILogger logger)
+    public HistoryScreen
+    (
+        IUserRepository userRepository, 
+        IUserContextService userContextService, 
+        IScreenManager screenManager, 
+        IScreenGetter screenFactory, 
+        ILogger logger
+    )
     {
         _userRepository = userRepository;
         _userContextService = userContextService;
@@ -46,7 +53,9 @@ public class HistoryScreen : IScreen
     }
     private IEnumerable<ViewModel> GetData()
     {
-        var accountData = _userRepository.GetUserAccountsByUserId(_userContextService.GetUserContext().UserId);
+        var accountData = _userRepository.GetUserAccountsByUserId(
+            _userContextService.GetUserContext().UserId
+        );
 
         return accountData.Select(accountData => new ViewModel(
             Id: accountData.AccountId,
@@ -129,7 +138,9 @@ public class HistoryScreen : IScreen
         {
             foreach (var transaction in account.Transactions)
             {
-                Console.Write($"{transaction.Type} of ${transaction.Amount} on {transaction.DateTime}. Previous Balance: ${transaction.PreviousBalance}. New Balance: ${transaction.NewBalance}\n");
+                Console.Write($"{transaction.Type} of ${transaction.Amount} on {transaction.DateTime}. " +
+                    $"Previous Balance: ${transaction.PreviousBalance}. " +
+                    $"New Balance: ${transaction.NewBalance}\n");
             }
         }
         else
